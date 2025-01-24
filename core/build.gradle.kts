@@ -12,6 +12,8 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.vanniktech.mavenPublish)
+    alias(libs.plugins.jetbrainsCompose)
+    alias(libs.plugins.compose.compiler)
 }
 
 group = libraryGroup
@@ -21,7 +23,6 @@ kotlin {
     jvm()
     androidTarget {
         publishLibraryVariants("release")
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget.set(defaultJvmTarget)
         }
@@ -34,12 +35,17 @@ kotlin {
         browser()
         binaries.executable()
     }
-    linuxX64()
 
     sourceSets {
         val commonMain by getting {
             dependencies {
-                //put your multiplatform dependencies here
+                implementation(compose.runtime)
+                implementation(compose.foundation)
+                implementation(compose.material3)
+                implementation(compose.material)
+                implementation(compose.ui)
+                implementation(compose.components.resources)
+                implementation(libs.kotlinX.dateTime)
             }
         }
         val commonTest by getting {
@@ -47,29 +53,6 @@ kotlin {
                 //implementation(libs.kotlin.test)
             }
         }
-        /*
-
-        val desktopMain by creating {
-            dependsOn(commonMain)
-        }
-        val desktopTest by creating {
-            dependsOn(commonTest)
-        }
-
-        // Bestehende JVM und Linux SourceSets anpassen
-        val jvmMain by getting {
-            dependsOn(desktopMain)
-        }
-        val jvmTest by getting {
-            dependsOn(desktopTest)
-        }
-
-        val linuxX64Main by getting {
-            dependsOn(desktopMain)
-        }
-        val linuxX64Test by getting {
-            dependsOn(desktopTest)
-        }*/
     }
 }
 
