@@ -4,8 +4,9 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 val libraryGroup: String by project
 val libraryVersion: String by project
+val libraryJvm: String by project
 val basePackage = "$libraryGroup.core"
-val jvmTarget: JvmTarget by rootProject.extra
+val defaultJvmTarget: JvmTarget  = JvmTarget.fromTarget(libraryJvm)
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
@@ -21,13 +22,13 @@ kotlin {
         publishLibraryVariants("release")
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
-            jvmTarget.set(jvmTarget)
+            jvmTarget.set(defaultJvmTarget)
         }
     }
     iosX64()
     iosArm64()
     iosSimulatorArm64()
-    linuxX64()
+    //linuxX64()
 
     sourceSets {
         val commonMain by getting {
@@ -37,9 +38,10 @@ kotlin {
         }
         val commonTest by getting {
             dependencies {
-                implementation(libs.kotlin.test)
+                //implementation(libs.kotlin.test)
             }
         }
+        /*
 
         val desktopMain by creating {
             dependsOn(commonMain)
@@ -61,7 +63,7 @@ kotlin {
         }
         val linuxX64Test by getting {
             dependsOn(desktopTest)
-        }
+        }*/
     }
 }
 
@@ -75,7 +77,6 @@ android {
 
 mavenPublishing {
     publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
-
     signAllPublications()
 
     coordinates(group.toString(), "core", version.toString())
@@ -106,4 +107,21 @@ mavenPublishing {
             developerConnection = "scm:git:ssh://git@github.com:KotlinWizzard/KMPToolkit.git"
         }
     }
+
+
+    /*
+    repositories {
+        maven {
+            name = "Sonatype"
+            url = if (version.toString().endsWith("SNAPSHOT")) {
+                uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+            } else {
+                uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            }
+            credentials {
+                username = env.SONATYPE_USERNAME.value
+                password = env.SONATYPE_PASSWORD.value
+            }
+        }
+    }*/
 }
