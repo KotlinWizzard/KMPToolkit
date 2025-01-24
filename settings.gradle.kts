@@ -17,4 +17,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "KMPToolkit"
 include(":core")
+include(":navigation")
 include(":sample:composeApp")

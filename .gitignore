@@ -13,3 +13,4 @@ xcuserdata
 *.gpg
 *.env
 secrets.gradle.properties
+default

@@ -48,6 +48,7 @@ kotlin {
             dependencies {
                 //put your multiplatform dependencies here
                 implementation(project(":core"))
+                implementation(project(":navigation"))
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.material3)
