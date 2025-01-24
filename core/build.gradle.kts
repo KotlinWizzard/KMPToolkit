@@ -1,5 +1,6 @@
 import com.vanniktech.maven.publish.SonatypeHost
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 val libraryGroup: String by project
@@ -28,7 +29,12 @@ kotlin {
     iosX64()
     iosArm64()
     iosSimulatorArm64()
-    //linuxX64()
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
+        binaries.executable()
+    }
+    linuxX64()
 
     sourceSets {
         val commonMain by getting {
