@@ -1,6 +1,6 @@
 package states.events
 
-import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.staticCompositionLocalOf
 
-val LocalSharedScreenEventManager = compositionLocalOf { SharedScreenEventManager() }
+val LocalSharedScreenEventManager = staticCompositionLocalOf { SharedScreenEventManager.INSTANCE }
 

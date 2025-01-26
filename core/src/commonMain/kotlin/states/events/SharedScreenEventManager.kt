@@ -62,4 +62,8 @@ class SharedScreenEventManager(private val bufferSize: Int = Int.MAX_VALUE) {
             onDispose { job.cancel() }
         }
     }
+
+    companion object{
+        val INSTANCE = SharedScreenEventManager()
+    }
 }
