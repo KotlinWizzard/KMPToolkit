@@ -80,7 +80,7 @@ fun <T> T.useDebounceWithUpdatedState(
 ): T {
     val state by rememberUpdatedState(this)
     var updateState by remember { mutableStateOf(this) }
-    
+
     DisposableEffect(state) {
         val job =
             coroutineScope.launch {

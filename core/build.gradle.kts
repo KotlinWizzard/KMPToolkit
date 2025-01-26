@@ -14,6 +14,7 @@ plugins {
     alias(libs.plugins.vanniktech.mavenPublish)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.jetbrains.serialization) apply true
 }
 
 group = libraryGroup
@@ -46,6 +47,11 @@ kotlin {
                 implementation(compose.ui)
                 implementation(compose.components.resources)
                 implementation(libs.kotlinX.dateTime)
+                implementation(libs.serialization.core)
+                implementation(libs.serialization.json)
+                implementation(libs.kotlinx.io.core)
+                implementation(libs.coroutines.core)
+                implementation(libs.stdlib)
             }
         }
         val commonTest by getting {
