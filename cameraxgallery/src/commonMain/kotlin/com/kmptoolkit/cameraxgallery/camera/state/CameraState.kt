@@ -19,6 +19,7 @@ class CameraState(
         protected set
 
     private val imageCaptureState = CameraCaptureState.Image(onCapture = {
+
         onCapture(it)
     }, imageCompressionMode = imageCompressionMode)
     private val videoCaptureState = CameraCaptureState.Video(onCapture = {

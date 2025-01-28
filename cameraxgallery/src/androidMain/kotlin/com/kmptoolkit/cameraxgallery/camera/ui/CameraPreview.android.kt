@@ -133,7 +133,7 @@ private fun HandleTriggerImageCapture(
     imageCapture: ImageCapture
 ) {
     val cache = LocalCache.current
-    SideEffect {
+    DisposableEffect(cameraCaptureState.triggerCaptureAnchor) {
         val triggerCapture = {
             imageCapture.takePicture(
                 executor,
@@ -146,15 +146,9 @@ private fun HandleTriggerImageCapture(
             )
         }
         cameraCaptureState.triggerCaptureAnchor = triggerCapture
-
-
+        onDispose { cameraCaptureState.triggerCaptureAnchor = null }
     }
 
-    DisposableEffect(cameraCaptureState) {
-        onDispose {
-            cameraCaptureState.triggerCaptureAnchor = null
-        }
-    }
 }
 
 @Composable

@@ -20,7 +20,7 @@ sealed class CameraCaptureState(protected open val onCapture: (String?) -> Unit)
 
     internal var onFrame: ((frame: ByteArray) -> Unit)? = null
 
-    fun capture() {
+    open fun capture() {
         isCapturing = true
     }
 
@@ -43,6 +43,11 @@ sealed class CameraCaptureState(protected open val onCapture: (String?) -> Unit)
         override val onCapture: (String?) -> Unit,
         internal var imageCompressionMode:ImageCompressionMode = ImageCompressionMode.None
     ) : CameraCaptureState(onCapture) {
+
+        override fun capture() {
+            super.capture()
+            triggerCaptureAnchor?.invoke()
+        }
 
         internal var triggerCaptureAnchor: (() -> Unit)? = null
 
