@@ -16,13 +16,19 @@ import com.kmptoolkit.core.presentation.theme.ToolkitTheme
 fun CameraPreviewLayout(
     modifier: Modifier = Modifier,
     cameraState: CameraState,
-    containerColor:Color = ToolkitTheme.colorScheme.background,
+    containerColor: Color = ToolkitTheme.colorScheme.background,
+    overlay: @Composable BoxScope.() -> Unit = {},
     bottomBar: @Composable BoxScope.() -> Unit = {}
 ) {
     Column(modifier = modifier.background(containerColor)) {
-        Box(Modifier.weight(1F).fillMaxWidth().cameraCaptureAnimation(cameraState,containerColor)) {
+        Box(
+            Modifier.weight(1F).fillMaxWidth().cameraCaptureAnimation(cameraState, containerColor)
+        ) {
             CameraPreview(modifier = Modifier.matchParentSize(), cameraState = cameraState)
             CameraFocusPreview(modifier = Modifier.matchParentSize(), cameraState = cameraState)
+            Box(Modifier.matchParentSize()) {
+                overlay(this)
+            }
         }
         Box(modifier = Modifier.fillMaxWidth().background(containerColor)) {
             bottomBar(this)
