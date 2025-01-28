@@ -23,8 +23,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.LayoutDirection
-import extensions.currentOrThrow
-import extensions.toPx
+import com.kmptoolkit.core.extensions.currentOrThrow
+import com.kmptoolkit.core.extensions.toPx
 
 @Composable
 fun FocusLayout(content: @Composable () -> Unit) {

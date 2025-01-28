@@ -58,6 +58,7 @@ kotlin {
                 //put your multiplatform dependencies here
                 implementation(project(":core"))
                 implementation(project(":navigation"))
+                implementation(project(":cameraxgallery"))
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.material3)

@@ -1,10 +1,13 @@
 package com.kmptoolkit.cameraxgallery.camera.state
 
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.kmptoolkit.core.extensions.formattedMinuteSecondsString
 import com.kmptoolkit.core.service.image.ImageCacheService
 import com.kmptoolkit.core.service.image.ImageCompressor
+import kotlin.time.Duration.Companion.nanoseconds
 
 sealed class CameraCaptureState(protected open val onCapture: (String?) -> Unit) {
     var isCapturing: Boolean by mutableStateOf(false)
@@ -33,7 +36,7 @@ sealed class CameraCaptureState(protected open val onCapture: (String?) -> Unit)
         if (isCapturing) {
             stopCapturing()
         } else {
-            stopCapturing()
+            capture()
         }
     }
 
@@ -58,6 +61,11 @@ sealed class CameraCaptureState(protected open val onCapture: (String?) -> Unit)
     data class Video(override val onCapture: (String?) -> Unit) : CameraCaptureState(onCapture) {
         var recordedDurationNanos by mutableStateOf(0L)
             internal set
+
+        val minuteSecondsText:String? by derivedStateOf {
+            if(!isCapturing) return@derivedStateOf null
+            recordedDurationNanos.nanoseconds.formattedMinuteSecondsString()
+        }
 
         override fun cleanup() {
             recordedDurationNanos = 0

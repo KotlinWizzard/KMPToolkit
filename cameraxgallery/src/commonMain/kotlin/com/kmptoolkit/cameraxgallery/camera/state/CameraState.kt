@@ -46,6 +46,7 @@ class CameraState(
     }
 
     fun toggleCapture(mode: CameraCaptureMode) {
+        if (!isCameraReady) return
         if (mode != cameraCaptureMode && captureState.isCapturing){
             return
         }
@@ -89,7 +90,7 @@ class CameraState(
 
 @Composable
 fun rememberCameraState(
-    initialCameraMode: CameraMode,
+    initialCameraMode: CameraMode=CameraMode.Back,
     imageCacheService: ImageCacheService = ImageCacheService(),
     onCapture: (CameraCaptureOutput) -> Unit,
 ): CameraState =

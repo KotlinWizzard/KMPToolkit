@@ -7,7 +7,7 @@ val libraryGroup: String by project
 val libraryVersion: String by project
 val libraryJvm: String by project
 val basePackage = "$libraryGroup.navigation"
-val defaultJvmTarget: JvmTarget  = JvmTarget.fromTarget(libraryJvm)
+val defaultJvmTarget: JvmTarget = JvmTarget.fromTarget(libraryJvm)
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
@@ -52,11 +52,24 @@ kotlin {
                 implementation(libs.kotlinx.io.core)
                 implementation(libs.coroutines.core)
                 implementation(libs.stdlib)
+                api(libs.voyager.navigator)
+                api(libs.voyager.screenmodel)
+                api(libs.voyager.bottomSheetNavigator)
+                api(libs.voyager.tabNavigator)
+                api(libs.voyager.transitions)
+                api(libs.koin.core)
+                api(libs.koin.compose)
             }
         }
         val commonTest by getting {
             dependencies {
                 //implementation(libs.kotlin.test)
+            }
+        }
+
+        val androidMain by getting {
+            dependencies {
+                api(libs.koin.android)
             }
         }
     }

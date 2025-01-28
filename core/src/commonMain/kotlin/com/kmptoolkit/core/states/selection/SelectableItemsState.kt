@@ -5,7 +5,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
-import classes.LazyLayoutKeyProvider
+import com.kmptoolkit.core.classes.LazyLayoutKeyProvider
 
 
 class SelectableItemsState<Item : LazyLayoutKeyProvider>(

@@ -4,9 +4,6 @@ import androidx.compose.runtime.MutableState
 import kotlin.math.PI
 import kotlin.math.pow
 import kotlin.math.roundToInt
-import kotlin.time.Duration
-import kotlin.time.DurationUnit
-import kotlin.time.ExperimentalTime
 
 fun Float.convertMeterToKilometer() = div(1000)
 
@@ -32,7 +29,4 @@ fun MutableState<Boolean>.toggle() {
 fun Boolean.toggle() = !this
 
 
-
-@OptIn(ExperimentalTime::class)
-fun DurationUnit.millis(value: Int) = Duration.convert(value.toDouble(), this, DurationUnit.MILLISECONDS).toLong()
 

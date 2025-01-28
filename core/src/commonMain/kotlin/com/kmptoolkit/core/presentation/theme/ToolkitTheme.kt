@@ -7,7 +7,8 @@ import androidx.compose.material3.Shapes
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import presentation.components.focus.FocusLayout
+import com.kmptoolkit.core.presentation.components.focus.FocusLayout
+
 
 val ToolkitTheme: MaterialTheme
     get() = MaterialTheme
@@ -29,15 +30,17 @@ fun ToolkitTheme(
         LocalSpacing provides spacing,
         LocalElevation provides elevation,
         LocalIconSize provides iconSize,
-        LocalThemeStyle provides if (darkTheme) ThemeStyle.Dark else ThemeStyle.Light,
+        LocalThemeStyle provides ThemeStyles(
+            dark = ThemeStyle.Dark(darkColorScheme.invoke()),
+            light = ThemeStyle.Light(lightColorScheme.invoke()),
+            current = if (darkTheme) ThemeStyle.Dark(darkColorScheme.invoke()) else ThemeStyle.Light(
+                lightColorScheme.invoke()
+            )
+        ),
     ) {
         ScreenSizeProvider {
 
-            val colorScheme =
-                when {
-                    darkTheme -> darkColorScheme
-                    else -> lightColorScheme
-                }.invoke()
+            val colorScheme = LocalThemeStyle.current.current.colorScheme
             MaterialTheme(
                 colorScheme = colorScheme,
                 typography = Typography(),
@@ -48,4 +51,26 @@ fun ToolkitTheme(
             )
         }
     }
+}
+
+@Composable
+fun ToolkitDarkScreen(
+    content: @Composable () -> Unit,
+) {
+    MaterialTheme(
+        colorScheme = LocalThemeStyle.current.dark.colorScheme,
+        shapes = ToolkitTheme.shapes,
+        content=content
+    )
+}
+
+@Composable
+fun ToolkitLightScreen(
+    content: @Composable () -> Unit,
+) {
+    MaterialTheme(
+        colorScheme = LocalThemeStyle.current.dark.colorScheme,
+        shapes = ToolkitTheme.shapes,
+        content=content
+    )
 }

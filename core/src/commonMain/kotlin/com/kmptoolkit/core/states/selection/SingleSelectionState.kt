@@ -4,7 +4,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import classes.LazyLayoutKeyProvider
+import com.kmptoolkit.core.classes.LazyLayoutKeyProvider
 
 
 class SingleSelectionState<Item : LazyLayoutKeyProvider>(

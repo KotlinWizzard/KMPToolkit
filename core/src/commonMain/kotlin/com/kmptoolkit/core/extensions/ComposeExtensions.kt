@@ -29,8 +29,6 @@ import androidx.compose.ui.unit.Dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import presentation.components.gradient.GradientAngle
-
 
 @Composable
 fun String.hexToColor(): Color? {

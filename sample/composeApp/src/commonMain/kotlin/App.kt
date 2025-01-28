@@ -4,6 +4,8 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import com.kmptoolkit.core.presentation.theme.LocalScreenSize
 import com.kmptoolkit.core.presentation.theme.ToolkitTheme
+import com.kmptoolkit.navigation.AppNavigator
+import screens.TemplateScreen
 
 
 @Composable
@@ -12,7 +14,6 @@ fun App() {
         lightColorScheme = { lightColorScheme() },
         darkColorScheme = { darkColorScheme() },
     ) {
-        val screenSize = LocalScreenSize.current
-        Text("ScreenSize: $screenSize")
+        AppNavigator(TemplateScreen())
     }
 }

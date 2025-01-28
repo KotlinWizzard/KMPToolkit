@@ -19,24 +19,32 @@ import androidx.compose.material3.RippleConfiguration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.kmptoolkit.cameraxgallery.camera.state.CameraCaptureMode
+import com.kmptoolkit.cameraxgallery.camera.state.CameraCaptureState
 import com.kmptoolkit.cameraxgallery.camera.state.CameraState
 import com.kmptoolkit.core.extensions.clickableWithRipple
+import com.kmptoolkit.core.extensions.rememberDerivedStateOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CameraCaptureButton(
     color: Color = Color.White,
     size: Dp = 80.dp,
-    cameraState: CameraState
+    cameraState: CameraState,
+    videoColor: Color = Color.Red
 ) {
     val border = 4.dp
     val interactionSource = remember { MutableInteractionSource() }
@@ -58,6 +66,18 @@ fun CameraCaptureButton(
         }
     }
 
+    val isVideoCapturing by rememberUpdatedState( cameraState.captureState.isCapturing &&  cameraState.captureState is CameraCaptureState.Video)
+
+    LaunchedEffect(
+        cameraState.captureState.isCapturing
+    ){
+        println("TEST_CAMERA isCapturing: ${cameraState.captureState.isCapturing}")
+    }
+    LaunchedEffect(isVideoCapturing){
+        println("TEST_CAMERA isVideoCapturing: $isVideoCapturing")
+    }
+    val rippleAlpha= if(isVideoCapturing) 0.4F else 0.6F
+
     CompositionLocalProvider(LocalRippleConfiguration provides captureRipple(color)) {
         Box(
             contentAlignment = Alignment.Center,
@@ -74,9 +94,13 @@ fun CameraCaptureButton(
                     .indication(
                         interactionSource, androidx.compose.material3.ripple(
                             bounded = true,
-                            color = color.copy(alpha = 0.8F)
+                            color = color.copy(rippleAlpha)
                         )
                     )
+                    .drawWithContent {
+                        drawContent()
+                        drawCircle(videoColor.copy(alpha = 0.9F), alpha = if(isVideoCapturing) 1F else 0F, radius = this.size.minDimension/4F)
+                    }
                     .pointerInput(Unit) {
                         detectTapGestures(onLongPress = {
                             cameraState.toggleCapture(CameraCaptureMode.Video)
