@@ -1,8 +1,11 @@
 package com.kmptoolkit.cameraxgallery.camera.ui
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.indication
@@ -10,6 +13,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ripple.RippleAlpha
@@ -25,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.BlendMode
@@ -66,17 +71,8 @@ fun CameraCaptureButton(
         }
     }
 
-    val isVideoCapturing by rememberUpdatedState( cameraState.captureState.isCapturing &&  cameraState.captureState is CameraCaptureState.Video)
-
-    LaunchedEffect(
-        cameraState.captureState.isCapturing
-    ){
-        println("TEST_CAMERA isCapturing: ${cameraState.captureState.isCapturing}")
-    }
-    LaunchedEffect(isVideoCapturing){
-        println("TEST_CAMERA isVideoCapturing: $isVideoCapturing")
-    }
-    val rippleAlpha= if(isVideoCapturing) 0.4F else 0.6F
+    val isVideoCapturing by rememberUpdatedState(cameraState.captureState.isCapturing && cameraState.captureState is CameraCaptureState.Video)
+    val rippleAlpha = if (isVideoCapturing) 0.3F else 0.6F
 
     CompositionLocalProvider(LocalRippleConfiguration provides captureRipple(color)) {
         Box(
@@ -97,10 +93,6 @@ fun CameraCaptureButton(
                             color = color.copy(rippleAlpha)
                         )
                     )
-                    .drawWithContent {
-                        drawContent()
-                        drawCircle(videoColor.copy(alpha = 0.9F), alpha = if(isVideoCapturing) 1F else 0F, radius = this.size.minDimension/4F)
-                    }
                     .pointerInput(Unit) {
                         detectTapGestures(onLongPress = {
                             cameraState.toggleCapture(CameraCaptureMode.Video)
@@ -113,7 +105,19 @@ fun CameraCaptureButton(
                             interactionSource.emit(PressInteraction.Release(press))
                         })
                     },
-            )
+            ) {
+                AnimatedVisibility(
+                    isVideoCapturing,
+                    modifier = Modifier.align(Alignment.Center).fillMaxSize(0.6F)
+                ) {
+                    Box(
+                        Modifier.matchParentSize().background(
+                            videoColor,
+                            CircleShape,
+                        )
+                    )
+                }
+            }
         }
     }
 }

@@ -4,6 +4,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import com.kmptoolkit.core.presentation.theme.LocalScreenSize
 import com.kmptoolkit.core.presentation.theme.ToolkitTheme
+import com.kmptoolkit.core.service.image.CacheServiceProvider
 import com.kmptoolkit.navigation.AppNavigator
 import screens.TemplateScreen
 
@@ -14,6 +15,8 @@ fun App() {
         lightColorScheme = { lightColorScheme() },
         darkColorScheme = { darkColorScheme() },
     ) {
-        AppNavigator(TemplateScreen())
+        CacheServiceProvider {
+            AppNavigator(TemplateScreen())
+        }
     }
 }

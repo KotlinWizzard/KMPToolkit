@@ -188,10 +188,11 @@ private fun HandleTriggerVideoCapture(
             }
         }
     }
+    val cache = LocalCache.current.videoCache
     DisposableEffect(cameraCaptureState.isCapturing) {
         if (cameraCaptureState.isCapturing) {
             activeRecording = startRecording(
-                "/media/video/test_${UUID.generate()}.mp4",
+                cache.getFullPathFromFilename(cache.generateFilename()),
                 videoCapture,
                 context,
                 videoRecordingListener

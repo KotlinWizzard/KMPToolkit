@@ -9,7 +9,7 @@ import com.kmptoolkit.cameraxgallery.camera.state.CameraState
 @Composable
 fun CameraPreviewLayout(modifier: Modifier=Modifier,cameraState: CameraState){
     Box(modifier.cameraCaptureAnimation(cameraState)){
-        CameraPreview(modifier = modifier.align(Alignment.Center), cameraState = cameraState)
-        CameraFocusPreview(modifier = modifier, cameraState = cameraState)
+        CameraPreview(modifier = Modifier.matchParentSize(), cameraState = cameraState)
+        CameraFocusPreview(modifier = Modifier.matchParentSize(), cameraState = cameraState)
     }
 }

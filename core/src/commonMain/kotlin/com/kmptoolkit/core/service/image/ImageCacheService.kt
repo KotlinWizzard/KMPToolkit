@@ -62,6 +62,7 @@ sealed class CacheService(
     fun generateFilename(extension: String = defaultFileExtension): String =
         "${filenamePrefix}_${UUID.generate()}$extension"
 
+    fun getFullPathFromFilename(filename: String) = getPathFromFilename(filename).toString()
 
     private fun getPathFromFilename(filename: String) = getTempDirOrCreate() / filename.toPath()
 
@@ -144,7 +145,7 @@ sealed class CacheService(
             get() = "image"
 
         companion object {
-            const val DEFAULT_BASE_PATH = "media/image"
+            const val DEFAULT_BASE_PATH = "media-image"
         }
     }
 
@@ -158,7 +159,7 @@ sealed class CacheService(
             get() = "video"
 
         companion object {
-            const val DEFAULT_BASE_PATH = "media/video"
+            const val DEFAULT_BASE_PATH = "media-video"
         }
     }
 }
