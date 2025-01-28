@@ -7,11 +7,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import com.kmptoolkit.core.service.image.ImageCacheService
 
 class CameraState(
     internal var onCapture: (CameraCaptureOutput) -> Unit,
-    imageCacheService: ImageCacheService = ImageCacheService(),
     imageCompressionMode: ImageCompressionMode = ImageCompressionMode.None,
     initialCameraMode: CameraMode
 ) {
@@ -22,7 +20,7 @@ class CameraState(
 
     private val imageCaptureState = CameraCaptureState.Image(onCapture = {
         onCapture(it)
-    }, imageCacheService = imageCacheService, imageCompressionMode = imageCompressionMode)
+    }, imageCompressionMode = imageCompressionMode)
     private val videoCaptureState = CameraCaptureState.Video(onCapture = {
         onCapture(it)
     })
@@ -91,7 +89,6 @@ class CameraState(
 @Composable
 fun rememberCameraState(
     initialCameraMode: CameraMode=CameraMode.Back,
-    imageCacheService: ImageCacheService = ImageCacheService(),
     onCapture: (CameraCaptureOutput) -> Unit,
 ): CameraState =
     rememberSaveable(
@@ -99,7 +96,6 @@ fun rememberCameraState(
     ) {
         CameraState(
             onCapture = onCapture,
-            imageCacheService = imageCacheService,
             initialCameraMode = initialCameraMode
         )
     }.apply {

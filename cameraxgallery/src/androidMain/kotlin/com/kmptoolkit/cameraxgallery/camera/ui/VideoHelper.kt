@@ -20,7 +20,11 @@ internal fun startRecording(
     context: Context,
     videoRecordingListener: Consumer<VideoRecordEvent>
 ): Recording {
-    val outputOptions = FileOutputOptions.Builder(File(filePath)).build()
+    val outputOptions = FileOutputOptions.Builder(File(filePath).apply {
+        if(!this.exists()){
+            createNewFile()
+        }
+    }).build()
     return videoCapture.output
         .prepareRecording(context, outputOptions)
         .apply {

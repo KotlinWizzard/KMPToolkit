@@ -1,6 +1,9 @@
 package com.kmptoolkit.core.service.image
 
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
 import com.kmptoolkit.core.extensions.millis
 import com.kmptoolkit.core.service.file.SYSTEM
 import com.kmptoolkit.core.service.uuid.UUID
@@ -13,10 +16,40 @@ import okio.use
 import kotlin.time.DurationUnit
 
 
-class ImageCacheService(basePath: String="media", private val cacheDeletionTimeoutMillis: Long? = DurationUnit.DAYS.millis(1)) {
-    private val tempDir = FileSystem.SYSTEM_TEMPORARY_DIRECTORY / basePath.toPath()
+val LocalCache = staticCompositionLocalOf<CacheProvider> {
+    error("No cache provided")
+}
 
-    private val defaultFileExtension = ".jpg"
+@Composable
+fun CacheServiceProvider(
+    imageCacheBasePath: String = CacheService.Image.DEFAULT_BASE_PATH,
+    videoCacheBasePath: String = CacheService.Video.DEFAULT_BASE_PATH,
+    content: @Composable () -> Unit
+) {
+    CompositionLocalProvider(
+        LocalCache provides CacheProvider(
+            CacheService.Image(imageCacheBasePath),
+            CacheService.Video(videoCacheBasePath)
+        ),
+        content
+    )
+}
+
+data class CacheProvider(val imageCache: CacheService.Image, val videoCache: CacheService.Video) {
+    fun readCachedFileOrNull(path: String): ByteArray? {
+        return imageCache.readCachedFileOrNull(path)
+    }
+}
+
+
+sealed class CacheService(
+    basePath: String,
+    protected open val cacheDeletionTimeoutMillis: Long?
+) {
+    private val tempDir = FileSystem.SYSTEM_TEMPORARY_DIRECTORY / basePath.toPath()
+    val fullPath = tempDir.toString()
+    abstract val defaultFileExtension: String
+    abstract val filenamePrefix: String
 
     private fun getTempDirOrCreate(): Path {
         val system = FileSystem.SYSTEM
@@ -27,7 +60,7 @@ class ImageCacheService(basePath: String="media", private val cacheDeletionTimeo
     }
 
     fun generateFilename(extension: String = defaultFileExtension): String =
-        "image_${UUID.generate()}$extension"
+        "${filenamePrefix}_${UUID.generate()}$extension"
 
 
     private fun getPathFromFilename(filename: String) = getTempDirOrCreate() / filename.toPath()
@@ -51,7 +84,7 @@ class ImageCacheService(basePath: String="media", private val cacheDeletionTimeo
     }
 
     private fun cleanupOldFiles() {
-        if(cacheDeletionTimeoutMillis==null) return
+        val cacheDeletionTimeoutMillis = cacheDeletionTimeoutMillis ?: return
         val system = FileSystem.SYSTEM
         if (!system.exists(tempDir)) return
         system.listRecursively(tempDir).toList().forEach { path ->
@@ -68,7 +101,7 @@ class ImageCacheService(basePath: String="media", private val cacheDeletionTimeo
                     try {
                         system.delete(path)
                     } catch (e: Exception) {
-                       e.printStackTrace()
+                        e.printStackTrace()
                     }
                 }
             }
@@ -100,4 +133,34 @@ class ImageCacheService(basePath: String="media", private val cacheDeletionTimeo
     init {
         cleanupOldFiles()
     }
+
+    class Image(
+        basePath: String = DEFAULT_BASE_PATH,
+        override val cacheDeletionTimeoutMillis: Long? = DurationUnit.DAYS.millis(1),
+    ) : CacheService(basePath, cacheDeletionTimeoutMillis) {
+        override val defaultFileExtension: String
+            get() = ".jpg"
+        override val filenamePrefix: String
+            get() = "image"
+
+        companion object {
+            const val DEFAULT_BASE_PATH = "media/image"
+        }
+    }
+
+    class Video(
+        basePath: String = DEFAULT_BASE_PATH,
+        override val cacheDeletionTimeoutMillis: Long? = DurationUnit.DAYS.millis(1)
+    ) : CacheService(basePath, cacheDeletionTimeoutMillis) {
+        override val defaultFileExtension: String
+            get() = ".mp4"
+        override val filenamePrefix: String
+            get() = "video"
+
+        companion object {
+            const val DEFAULT_BASE_PATH = "media/video"
+        }
+    }
 }
+
+

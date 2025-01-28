@@ -1,16 +1,9 @@
 package com.kmptoolkit.cameraxgallery.camera.ui
 
-import android.content.Context
 import androidx.camera.core.CameraControl
-import androidx.camera.core.CameraSelector
 import androidx.camera.core.FocusMeteringAction
-import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCapture.OutputFileOptions
 import androidx.camera.core.Preview
-import androidx.camera.core.resolutionselector.AspectRatioStrategy
-import androidx.camera.core.resolutionselector.ResolutionSelector
-import androidx.camera.core.resolutionselector.ResolutionStrategy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.video.Recorder
 import androidx.camera.video.Recording
@@ -24,10 +17,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -36,14 +27,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.coerceAtMost
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.util.Consumer
-import com.kmptoolkit.cameraxgallery.camera.state.CameraCaptureMode
 import com.kmptoolkit.cameraxgallery.camera.state.CameraCaptureState
 import com.kmptoolkit.cameraxgallery.camera.state.CameraFocusStatus
-import com.kmptoolkit.cameraxgallery.camera.state.CameraMode
 import com.kmptoolkit.cameraxgallery.camera.state.CameraState
-import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.withContext
-import java.util.concurrent.Executor
+import com.kmptoolkit.core.service.image.LocalCache
+import com.kmptoolkit.core.service.uuid.UUID
 import java.util.concurrent.Executors
 
 @Composable
@@ -144,12 +132,15 @@ private fun HandleTriggerImageCapture(
     cameraCaptureState: CameraCaptureState.Image,
     imageCapture: ImageCapture
 ) {
+    val cache = LocalCache.current
     SideEffect {
         val triggerCapture = {
             imageCapture.takePicture(
                 executor,
                 ImageCaptureCallback(
-                    cameraCaptureState::onCapture,
+                    {
+                        cameraCaptureState.onCapture(it, cache.imageCache)
+                    },
                     cameraCaptureState::stopCapturing
                 ),
             )
@@ -179,7 +170,7 @@ private fun HandleTriggerVideoCapture(
                 is VideoRecordEvent.Finalize -> if (event.hasError()) {
                     println("TEST_VIDEO: capture error ${event.cause}")
                     cameraCaptureState.onCapture(null)
-                    if(cameraCaptureState.isCapturing) {
+                    if (cameraCaptureState.isCapturing) {
                         cameraCaptureState.stopCapturing()
                     }
 
@@ -197,17 +188,22 @@ private fun HandleTriggerVideoCapture(
             }
         }
     }
-   DisposableEffect(cameraCaptureState.isCapturing) {
+    DisposableEffect(cameraCaptureState.isCapturing) {
         if (cameraCaptureState.isCapturing) {
-            activeRecording = startRecording("", videoCapture, context, videoRecordingListener)
+            activeRecording = startRecording(
+                "/media/video/test_${UUID.generate()}.mp4",
+                videoCapture,
+                context,
+                videoRecordingListener
+            )
         } else {
             activeRecording?.stop()
             activeRecording = null
         }
-       onDispose {
-           activeRecording?.stop()
-           activeRecording = null
-       }
+        onDispose {
+            activeRecording?.stop()
+            activeRecording = null
+        }
     }
 }
 
