@@ -46,8 +46,13 @@ class CameraState(
     }
 
     fun toggleCapture(mode: CameraCaptureMode) {
+        if (mode != cameraCaptureMode && captureState.isCapturing){
+            return
+        }
         val currentCaptureState = when (mode) {
-            CameraCaptureMode.Image -> imageCaptureState
+            CameraCaptureMode.Image -> {
+                imageCaptureState
+            }
             CameraCaptureMode.Video -> videoCaptureState
         }
         captureState = currentCaptureState
