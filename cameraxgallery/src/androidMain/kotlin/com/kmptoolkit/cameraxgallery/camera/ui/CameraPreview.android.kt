@@ -172,12 +172,19 @@ private fun HandleTriggerVideoCapture(
     videoCapture: VideoCapture<Recorder>
 ) {
     val context = LocalContext.current
+    var activeRecording: Recording? by remember { mutableStateOf(null) }
     val videoRecordingListener = remember {
         Consumer<VideoRecordEvent> { event ->
             when (event) {
                 is VideoRecordEvent.Finalize -> if (event.hasError()) {
+                    println("TEST_VIDEO: capture error ${event.cause}")
                     cameraCaptureState.onCapture(null)
+                    if(cameraCaptureState.isCapturing) {
+                        cameraCaptureState.stopCapturing()
+                    }
+
                 } else {
+                    println("TEST_VIDEO: capture success")
                     cameraCaptureState.onCapture(event.outputResults.outputUri.path)
                 }
 
@@ -185,18 +192,22 @@ private fun HandleTriggerVideoCapture(
                 is VideoRecordEvent.Status -> {
                     cameraCaptureState.recordedDurationNanos =
                         event.recordingStats.recordedDurationNanos
+                    println("TEST_VIDEO: capture status ${event.recordingStats.recordedDurationNanos}")
                 }
             }
         }
     }
-    var activeRecording: Recording? by remember { mutableStateOf(null) }
-    LaunchedEffect(cameraCaptureState.isCapturing) {
+   DisposableEffect(cameraCaptureState.isCapturing) {
         if (cameraCaptureState.isCapturing) {
             activeRecording = startRecording("", videoCapture, context, videoRecordingListener)
         } else {
             activeRecording?.stop()
             activeRecording = null
         }
+       onDispose {
+           activeRecording?.stop()
+           activeRecording = null
+       }
     }
 }
 
