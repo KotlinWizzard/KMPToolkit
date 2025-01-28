@@ -121,7 +121,6 @@ fun CameraCaptureButton(
                             }
                             tryAwaitRelease()
                             interactionSource.emit(PressInteraction.Release(press))
-                            println("TEST_GESTURE release")
                             when (cameraCaptureButtonMode) {
                                 CameraCaptureButtonMode.Image -> cameraState.toggleCapture(
                                     CameraCaptureMode.Image

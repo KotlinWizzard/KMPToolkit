@@ -61,18 +61,39 @@ class CameraState(
         }
     }
 
-    fun toggleCapture(mode: CameraCaptureMode) {
-        if (!isCameraReady) return
-        if (mode != cameraCaptureMode && captureState.isCapturing) {
-            return
-        }
-        val currentCaptureState = when (mode) {
-            CameraCaptureMode.Image -> {
-                imageCaptureState
-            }
+    fun capture(mode: CameraCaptureMode){
+        if(!canChangeCaptureState(mode)) return
+        val currentCaptureState = getCaptureStateByMode(mode)
+        captureState = currentCaptureState
+        currentCaptureState.capture()
+    }
 
-            CameraCaptureMode.Video -> videoCaptureState
+    fun stopCapturing(mode: CameraCaptureMode){
+        if(!canChangeCaptureState(mode)) return
+        val currentCaptureState = getCaptureStateByMode(mode)
+        captureState = currentCaptureState
+        currentCaptureState.stopCapturing()
+    }
+
+    private fun canChangeCaptureState(mode: CameraCaptureMode):Boolean{
+        if (!isCameraReady) return false
+        if (mode != cameraCaptureMode && captureState.isCapturing) {
+            return false
         }
+        return true
+    }
+
+    private fun getCaptureStateByMode(mode: CameraCaptureMode) = when (mode) {
+        CameraCaptureMode.Image -> {
+            imageCaptureState
+        }
+
+        CameraCaptureMode.Video -> videoCaptureState
+    }
+
+    fun toggleCapture(mode: CameraCaptureMode) {
+        if(!canChangeCaptureState(mode)) return
+        val currentCaptureState = getCaptureStateByMode(mode)
         captureState = currentCaptureState
         currentCaptureState.toggleCapture()
     }
