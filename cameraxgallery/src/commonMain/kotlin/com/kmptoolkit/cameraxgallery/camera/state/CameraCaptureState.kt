@@ -66,6 +66,7 @@ sealed class CameraCaptureState(protected open val onCapture: (String?) -> Unit)
             internal set
 
         val minuteSecondsText:String? by derivedStateOf {
+            println("=== minutes: $recordedDurationNanos, isCapturing:$isCapturing")
             if(!isCapturing) return@derivedStateOf null
             recordedDurationNanos.nanoseconds.formattedMinuteSecondsString()
         }

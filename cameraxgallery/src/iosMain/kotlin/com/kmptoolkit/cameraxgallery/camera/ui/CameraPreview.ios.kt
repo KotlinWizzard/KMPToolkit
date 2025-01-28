@@ -12,6 +12,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.InternalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.uikit.InterfaceOrientation
+import androidx.compose.ui.uikit.InterfaceOrientation.*
 import androidx.compose.ui.viewinterop.UIKitInteropProperties
 import androidx.compose.ui.viewinterop.UIKitView
 import com.kmptoolkit.cameraxgallery.camera.state.CameraCaptureOutput
@@ -26,6 +27,8 @@ import kotlinx.cinterop.ObjCAction
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.useContents
 import kotlinx.cinterop.usePinned
+import kotlinx.coroutines.delay
+import kotlinx.datetime.Clock
 import platform.AVFoundation.AVCaptureConnection
 import platform.AVFoundation.AVCaptureDevice
 import platform.AVFoundation.AVCaptureDeviceDiscoverySession.Companion.discoverySessionWithDeviceTypes
@@ -39,6 +42,8 @@ import platform.AVFoundation.AVCaptureDeviceTypeBuiltInDuoCamera
 import platform.AVFoundation.AVCaptureDeviceTypeBuiltInTripleCamera
 import platform.AVFoundation.AVCaptureDeviceTypeBuiltInUltraWideCamera
 import platform.AVFoundation.AVCaptureDeviceTypeBuiltInWideAngleCamera
+import platform.AVFoundation.AVCaptureFileOutput
+import platform.AVFoundation.AVCaptureFileOutputRecordingDelegateProtocol
 import platform.AVFoundation.AVCaptureFocusModeContinuousAutoFocus
 import platform.AVFoundation.AVCaptureInput
 import platform.AVFoundation.AVCaptureMovieFileOutput
@@ -85,6 +90,7 @@ import platform.Foundation.NSError
 import platform.Foundation.NSNotification
 import platform.Foundation.NSNotificationCenter
 import platform.Foundation.NSSelectorFromString
+import platform.Foundation.NSTimer
 import platform.Foundation.NSURL
 import platform.Foundation.dataWithBytes
 import platform.UIKit.UIColor
@@ -108,7 +114,8 @@ import platform.darwin.dispatch_group_leave
 import platform.darwin.dispatch_group_notify
 import platform.darwin.dispatch_queue_create
 import platform.posix.memcpy
-
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.DurationUnit
 
 
 private val deviceTypes =
@@ -163,6 +170,7 @@ private fun RealDeviceCamera(
         }
     val capturePhotoOutput = remember { AVCapturePhotoOutput() }
     val videoOutput = remember { AVCaptureVideoDataOutput() }
+    val videoOutputFile = remember { AVCaptureMovieFileOutput() }
 
     val captureState = state.captureState
 
@@ -182,7 +190,10 @@ private fun RealDeviceCamera(
                camera = camera, capturePhotoOutput = capturePhotoOutput
             )
         }
-        is CameraCaptureState.Video -> TODO()
+        is CameraCaptureState.Video -> {
+            HandleTriggerVideoCapture(captureState, videoOutputFile)
+        }
+
     }
 
 
@@ -194,8 +205,9 @@ private fun RealDeviceCamera(
                     deviceInputWithDevice(device = camera, error = null)!!
                 captureSession.addInput(captureDeviceInput)
                 captureSession.addOutput(capturePhotoOutput)
+                captureSession.addOutput(videoOutputFile)
 
-                if (captureSession.canAddOutput(videoOutput)) {
+                if (captureSession.canAddOutput(videoOutputFile)) {
                     val captureQueue = dispatch_queue_create("sampleBufferQueue", attr = null)
                     videoOutput.setSampleBufferDelegate(frameAnalyzerDelegate, captureQueue)
                     videoOutput.alwaysDiscardsLateVideoFrames = true
@@ -495,6 +507,80 @@ private fun HandleTriggerImageCapture(
     DisposableEffect(cameraCaptureState) {
         onDispose {
             cameraCaptureState.triggerCaptureAnchor = null
+        }
+    }
+}
+
+@Composable
+fun HandleTriggerVideoCapture(
+    cameraCaptureState: CameraCaptureState.Video,
+    videoOutput: AVCaptureMovieFileOutput
+) {
+    val cache = LocalCache.current.videoCache
+
+    var isRecording by remember { mutableStateOf(false) }
+    var outputFilePath by remember { mutableStateOf<String?>(null) }
+    var startTime by remember { mutableStateOf<Long?>(null) }
+
+    val startRecording: () -> Unit = {
+        val outputFile = cache.getFullPathFromFilename(cache.generateFilename())
+        outputFilePath = outputFile
+        val connection = videoOutput.connectionWithMediaType(AVMediaTypeVideo)
+
+        connection?.videoOrientation = AVCaptureVideoOrientationPortrait
+        if (videoOutput.isRecording()) {
+            videoOutput.stopRecording()
+        }
+
+        videoOutput.startRecordingToOutputFileURL(
+            NSURL.fileURLWithPath(outputFile),
+            recordingDelegate = object : NSObject(), AVCaptureFileOutputRecordingDelegateProtocol {
+                override fun captureOutput(
+                    output: AVCaptureFileOutput,
+                    didFinishRecordingToOutputFileAtURL: NSURL,
+                    fromConnections: List<*>,
+                    error: NSError?
+                ) {
+                    if (error != null) {
+                        println("Capture error: ${error.localizedDescription}")
+                        cameraCaptureState.onCapture(null)
+                    } else {
+                        println("Capture success")
+                        cameraCaptureState.onCapture(outputFile)
+                    }
+                    cameraCaptureState.stopCapturing()
+                }
+            }
+        )
+        startTime = Clock.System.now().toEpochMilliseconds()
+        isRecording = true
+    }
+
+    val stopRecording: () -> Unit = {
+        if (videoOutput.isRecording()) {
+            videoOutput.stopRecording()
+        }
+        isRecording = false
+        startTime = null
+    }
+
+    // Update duration periodically
+    LaunchedEffect(startTime) {
+        while (startTime != null) {
+            val elapsedNanos = Clock.System.now().toEpochMilliseconds() - (startTime ?: 0)
+            cameraCaptureState.recordedDurationNanos = elapsedNanos
+                .milliseconds.toLong(DurationUnit.NANOSECONDS)
+            delay(1000L) // Update every second
+        }
+    }
+    DisposableEffect(cameraCaptureState.isCapturing) {
+        if (cameraCaptureState.isCapturing) {
+            startRecording()
+        } else {
+            stopRecording()
+        }
+        onDispose {
+            stopRecording()
         }
     }
 }
