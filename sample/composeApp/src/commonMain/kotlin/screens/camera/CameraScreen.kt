@@ -26,10 +26,8 @@ class CameraScreen : Screen {
         ToolkitDarkScreen {
             ToolkitScaffold(topBar = {
                 BackButtonToolbar("Camera")
-            }) { it ->
-                val cameraState = rememberCameraState(onCapture = { res->
-                    println("TEST_CAMERA: onCapture: $res")
-                })
+            }) {
+                val cameraState = rememberCameraState(onCapture = {println("=== image: $it")})
                 Column(
                     Modifier.fillMaxSize().background(Color.Black)
                         .padding(top = it.calculateTopPadding())
