@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -24,15 +23,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.Dp
@@ -40,8 +35,13 @@ import androidx.compose.ui.unit.dp
 import com.kmptoolkit.cameraxgallery.camera.state.CameraCaptureMode
 import com.kmptoolkit.cameraxgallery.camera.state.CameraCaptureState
 import com.kmptoolkit.cameraxgallery.camera.state.CameraState
-import com.kmptoolkit.core.extensions.clickableWithRipple
-import com.kmptoolkit.core.extensions.rememberDerivedStateOf
+
+
+enum class CameraCaptureButtonMode {
+    Image,
+    Video,
+    Combined
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,7 +49,8 @@ fun CameraCaptureButton(
     color: Color = Color.White,
     size: Dp = 80.dp,
     cameraState: CameraState,
-    videoColor: Color = Color.Red
+    videoColor: Color = Color.Red,
+    cameraCaptureButtonMode: CameraCaptureButtonMode = CameraCaptureButtonMode.Combined
 ) {
     val border = 4.dp
     val interactionSource = remember { MutableInteractionSource() }
@@ -95,14 +96,43 @@ fun CameraCaptureButton(
                     )
                     .pointerInput(Unit) {
                         detectTapGestures(onLongPress = {
-                            cameraState.toggleCapture(CameraCaptureMode.Video)
+                            if (cameraCaptureButtonMode == CameraCaptureButtonMode.Combined) {
+                                cameraState.toggleCapture(
+                                    CameraCaptureMode.Video
+                                )
+                            }
+
                         }, onTap = {
-                            cameraState.toggleCapture(CameraCaptureMode.Image)
+                            if (cameraCaptureButtonMode == CameraCaptureButtonMode.Combined) {
+                                cameraState.toggleCapture(
+                                    CameraCaptureMode.Image
+                                )
+                            }
+
                         }, onPress = { offset ->
                             val press = PressInteraction.Press(offset)
                             interactionSource.emit(press)
+                            when (cameraCaptureButtonMode) {
+                                CameraCaptureButtonMode.Video -> cameraState.toggleCapture(
+                                    CameraCaptureMode.Video
+                                )
+
+                                else -> Unit
+                            }
                             tryAwaitRelease()
                             interactionSource.emit(PressInteraction.Release(press))
+                            println("TEST_GESTURE release")
+                            when (cameraCaptureButtonMode) {
+                                CameraCaptureButtonMode.Image -> cameraState.toggleCapture(
+                                    CameraCaptureMode.Image
+                                )
+
+                                CameraCaptureButtonMode.Video -> cameraState.toggleCapture(
+                                    CameraCaptureMode.Video
+                                )
+
+                                else -> Unit
+                            }
                         })
                     },
             ) {

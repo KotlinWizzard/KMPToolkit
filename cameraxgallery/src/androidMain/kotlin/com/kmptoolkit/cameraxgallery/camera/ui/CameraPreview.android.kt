@@ -161,29 +161,32 @@ private fun HandleTriggerVideoCapture(
     val videoRecordingListener = remember {
         Consumer<VideoRecordEvent> { event ->
             when (event) {
-                is VideoRecordEvent.Finalize -> if (event.hasError()) {
-                    println("TEST_VIDEO: capture error ${event.cause}")
-                    cameraCaptureState.onCapture(null)
-                    if (cameraCaptureState.isCapturing) {
-                        cameraCaptureState.stopCapturing()
-                    }
+                is VideoRecordEvent.Start -> {
+                    cameraCaptureState.isCaptureDisable = true
+                }
+                is VideoRecordEvent.Finalize -> {
+                    if (event.hasError()) {
+                        cameraCaptureState.onCapture(null)
+                        if (cameraCaptureState.isCapturing) {
+                            cameraCaptureState.stopCapturing()
+                        }
 
-                } else {
-                    println("TEST_VIDEO: capture success")
-                    cameraCaptureState.onCapture(event.outputResults.outputUri.path)
+                    } else {
+                        cameraCaptureState.onCapture(event.outputResults.outputUri.path)
+                    }
+                    cameraCaptureState.isCaptureDisable = false
                 }
 
                 is VideoRecordEvent.Pause -> Unit
                 is VideoRecordEvent.Status -> {
                     cameraCaptureState.recordedDurationNanos =
                         event.recordingStats.recordedDurationNanos
-                    println("TEST_VIDEO: capture status ${event.recordingStats.recordedDurationNanos}")
                 }
             }
         }
     }
     val cache = LocalCache.current.videoCache
-    DisposableEffect(cameraCaptureState.isCapturing) {
+    LaunchedEffect(cameraCaptureState.isCapturing) {
         if (cameraCaptureState.isCapturing) {
             activeRecording = startRecording(
                 cache.getFullPathFromFilename(cache.generateFilename()),
@@ -195,9 +198,14 @@ private fun HandleTriggerVideoCapture(
             activeRecording?.stop()
             activeRecording = null
         }
+    }
+
+    DisposableEffect(cameraCaptureState){
         onDispose {
             activeRecording?.stop()
             activeRecording = null
+            cameraCaptureState.stopCapturing()
+            cameraCaptureState.isCaptureDisable = false
         }
     }
 }

@@ -12,9 +12,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import cafe.adriel.voyager.core.screen.Screen
+import com.kmptoolkit.cameraxgallery.camera.state.CameraCaptureMode
 import com.kmptoolkit.cameraxgallery.camera.state.CameraCaptureState
 import com.kmptoolkit.cameraxgallery.camera.state.rememberCameraState
 import com.kmptoolkit.cameraxgallery.camera.ui.CameraCaptureButton
+import com.kmptoolkit.cameraxgallery.camera.ui.CameraCaptureButtonMode
 import com.kmptoolkit.cameraxgallery.camera.ui.CameraPreviewLayout
 import com.kmptoolkit.core.presentation.theme.ToolkitDarkScreen
 import com.kmptoolkit.core.presentation.theme.ToolkitScaffold
@@ -46,7 +48,7 @@ class CameraScreen : Screen {
                                 ""
                             }
                             Text("${cameraState.cameraCaptureMode}: $text", color = Color.White)
-                            CameraCaptureButton(cameraState = cameraState)
+                            CameraCaptureButton(cameraState = cameraState, cameraCaptureButtonMode = CameraCaptureButtonMode.Video)
                         }
                     })
 

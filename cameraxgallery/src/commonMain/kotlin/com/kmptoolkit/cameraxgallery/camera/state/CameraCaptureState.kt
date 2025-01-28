@@ -65,6 +65,12 @@ sealed class CameraCaptureState(protected open val onCapture: (String?) -> Unit)
         var recordedDurationNanos by mutableStateOf(0L)
             internal set
 
+        internal var isCaptureDisable by mutableStateOf(false)
+        override fun capture() {
+            if(isCaptureDisable) return
+            super.capture()
+        }
+
         val minuteSecondsText:String? by derivedStateOf {
             println("=== minutes: $recordedDurationNanos, isCapturing:$isCapturing")
             if(!isCapturing) return@derivedStateOf null
