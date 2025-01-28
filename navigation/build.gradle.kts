@@ -12,6 +12,9 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.vanniktech.mavenPublish)
+    alias(libs.plugins.jetbrainsCompose)
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.jetbrains.serialization) apply true
 }
 
 group = libraryGroup
@@ -21,7 +24,6 @@ kotlin {
     jvm()
     androidTarget {
         publishLibraryVariants("release")
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget.set(defaultJvmTarget)
         }
@@ -34,12 +36,22 @@ kotlin {
         browser()
         binaries.executable()
     }
-    linuxX64()
 
     sourceSets {
         val commonMain by getting {
             dependencies {
-                //put your multiplatform dependencies here
+                implementation(compose.runtime)
+                implementation(compose.foundation)
+                implementation(compose.material3)
+                implementation(compose.material)
+                implementation(compose.ui)
+                implementation(compose.components.resources)
+                implementation(libs.kotlinX.dateTime)
+                implementation(libs.serialization.core)
+                implementation(libs.serialization.json)
+                implementation(libs.kotlinx.io.core)
+                implementation(libs.coroutines.core)
+                implementation(libs.stdlib)
             }
         }
         val commonTest by getting {
@@ -47,29 +59,6 @@ kotlin {
                 //implementation(libs.kotlin.test)
             }
         }
-        /*
-
-        val desktopMain by creating {
-            dependsOn(commonMain)
-        }
-        val desktopTest by creating {
-            dependsOn(commonTest)
-        }
-
-        // Bestehende JVM und Linux SourceSets anpassen
-        val jvmMain by getting {
-            dependsOn(desktopMain)
-        }
-        val jvmTest by getting {
-            dependsOn(desktopTest)
-        }
-
-        val linuxX64Main by getting {
-            dependsOn(desktopMain)
-        }
-        val linuxX64Test by getting {
-            dependsOn(desktopTest)
-        }*/
     }
 }
 
@@ -92,14 +81,6 @@ mavenPublishing {
         description = "Voyager navigation extensions library for Kotlin Multiplatform."
         inceptionYear = "2025"
         url = "https://github.com/KotlinWizzard/KMPToolkit"
-        /*
-        licenses {
-            license {
-                name = "XXX"
-                url = "YYY"
-                distribution = "ZZZ"
-            }
-        }*/
         developers {
             developer {
                 id = "KotlinWizzard"
@@ -113,21 +94,4 @@ mavenPublishing {
             developerConnection = "scm:git:ssh://git@github.com:KotlinWizzard/KMPToolkit.git"
         }
     }
-
-
-    /*
-    repositories {
-        maven {
-            name = "Sonatype"
-            url = if (version.toString().endsWith("SNAPSHOT")) {
-                uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-            } else {
-                uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-            }
-            credentials {
-                username = env.SONATYPE_USERNAME.value
-                password = env.SONATYPE_PASSWORD.value
-            }
-        }
-    }*/
 }

@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 val libraryGroup: String by project
 val libraryVersion: String by project
 val libraryJvm: String by project
-val basePackage = "$libraryGroup.core"
+val basePackage = "$libraryGroup.cameraxgallery"
 val defaultJvmTarget: JvmTarget  = JvmTarget.fromTarget(libraryJvm)
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -21,7 +21,6 @@ group = libraryGroup
 version = libraryVersion
 
 kotlin {
-    jvm()
     androidTarget {
         publishLibraryVariants("release")
         compilerOptions {
@@ -31,11 +30,7 @@ kotlin {
     iosX64()
     iosArm64()
     iosSimulatorArm64()
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        browser()
-        binaries.executable()
-    }
+
 
     sourceSets {
         val commonMain by getting {
@@ -74,11 +69,11 @@ mavenPublishing {
     publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
     signAllPublications()
 
-    coordinates(group.toString(), "core", version.toString())
+    coordinates(group.toString(), "cameraxgallery", version.toString())
 
     pom {
-        name = "KMPToolkit Core"
-        description = "A core library for Kotlin Multiplatform."
+        name = "KMPToolkit cameraXgallery"
+        description = "A library for camera and gallery in Kotlin Multiplatform."
         inceptionYear = "2025"
         url = "https://github.com/KotlinWizzard/KMPToolkit"
         developers {
