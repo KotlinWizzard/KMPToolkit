@@ -52,6 +52,8 @@ kotlin {
                 implementation(libs.kotlinx.io.core)
                 implementation(libs.coroutines.core)
                 implementation(libs.stdlib)
+                implementation(libs.okio)
+                implementation(libs.uuid)
             }
         }
         val commonTest by getting {

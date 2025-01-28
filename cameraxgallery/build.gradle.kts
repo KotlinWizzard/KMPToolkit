@@ -47,6 +47,7 @@ kotlin {
                 implementation(libs.kotlinx.io.core)
                 implementation(libs.coroutines.core)
                 implementation(libs.stdlib)
+                implementation(project(":core"))
             }
         }
         val commonTest by getting {
