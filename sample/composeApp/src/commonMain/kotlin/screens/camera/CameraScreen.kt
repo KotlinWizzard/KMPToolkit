@@ -27,25 +27,29 @@ class CameraScreen : Screen {
             ToolkitScaffold(topBar = {
                 BackButtonToolbar("Camera")
             }) { it ->
-                val cameraState = rememberCameraState(onCapture = { res->
+                val cameraState = rememberCameraState(onCapture = { res ->
                     println("TEST_CAMERA: onCapture: $res")
                 })
-                Column(
-                    Modifier.fillMaxSize().background(Color.Black)
-                        .padding(top = it.calculateTopPadding())
-                ) {
-                    CameraPreviewLayout(modifier = Modifier.fillMaxWidth().weight(1F), cameraState)
-                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                        val captureState = cameraState.captureState
-                        val text = if(captureState is CameraCaptureState.Video){
-                            captureState.minuteSecondsText?:""
-                        }else{
-                            ""
-                        }
-                        Text("${cameraState.cameraCaptureMode}: $text", color = Color.White)
-                        CameraCaptureButton(cameraState = cameraState)
-                    }
-                }
+
+                    CameraPreviewLayout(
+                        Modifier.fillMaxSize().padding(top = it.calculateTopPadding()),
+                        cameraState = cameraState,
+                        bottomBar = {
+                            Row(
+                                Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                val captureState = cameraState.captureState
+                                val text = if (captureState is CameraCaptureState.Video) {
+                                    captureState.minuteSecondsText ?: ""
+                                } else {
+                                    ""
+                                }
+                                Text("${cameraState.cameraCaptureMode}: $text", color = Color.White)
+                                CameraCaptureButton(cameraState = cameraState)
+                            }
+                        })
+
             }
         }
     }
