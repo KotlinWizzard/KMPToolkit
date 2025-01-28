@@ -1,6 +1,7 @@
 package com.kmptoolkit.cameraxgallery.camera.state
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -9,7 +10,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 
 class CameraState(
-    internal var onCapture: (CameraCaptureOutput) -> Unit,
     imageCompressionMode: ImageCompressionMode = ImageCompressionMode.None,
     initialCameraMode: CameraMode
 ) {
@@ -17,6 +17,10 @@ class CameraState(
         private set
     var isCameraReady: Boolean by mutableStateOf(false)
         protected set
+
+    var cameraCaptureOutputResult by mutableStateOf<CameraCaptureOutput?>(null)
+        private set
+
 
     private val imageCaptureState = CameraCaptureState.Image(onCapture = {
 
@@ -46,15 +50,27 @@ class CameraState(
 
     internal var orientationListenerEnabled by mutableStateOf(false)
 
+    @Composable
+    fun ListenCaptureOutputResult(onCaptureOutputResult: (CameraCaptureOutput) -> Unit) {
+        val result = cameraCaptureOutputResult
+        LaunchedEffect(result) {
+            if (result != null) {
+                onCaptureOutputResult(result)
+            }
+            cameraCaptureOutputResult = null
+        }
+    }
+
     fun toggleCapture(mode: CameraCaptureMode) {
         if (!isCameraReady) return
-        if (mode != cameraCaptureMode && captureState.isCapturing){
+        if (mode != cameraCaptureMode && captureState.isCapturing) {
             return
         }
         val currentCaptureState = when (mode) {
             CameraCaptureMode.Image -> {
                 imageCaptureState
             }
+
             CameraCaptureMode.Video -> videoCaptureState
         }
         captureState = currentCaptureState
@@ -67,14 +83,14 @@ class CameraState(
 
     private fun onCapture(outputFilePath: String?) {
         val output = when (outputFilePath) {
-            null -> CameraCaptureOutput.Error(cameraCaptureMode)
+            null -> CameraCaptureOutput.Error
             else -> CameraCaptureOutput.Success(cameraCaptureMode, outputFilePath)
         }
-        onCapture.invoke(output)
+        cameraCaptureOutputResult = output
     }
 
     companion object {
-        fun saver(onCapture: (CameraCaptureOutput) -> Unit): Saver<CameraState, Int> =
+        fun saver(): Saver<CameraState, Int> =
             Saver(
                 save = {
                     it.cameraMode.id()
@@ -82,7 +98,6 @@ class CameraState(
                 restore = {
                     CameraState(
                         initialCameraMode = cameraModeFromId(it),
-                        onCapture = onCapture,
                     )
                 },
             )
@@ -91,16 +106,12 @@ class CameraState(
 
 @Composable
 fun rememberCameraState(
-    initialCameraMode: CameraMode=CameraMode.Back,
-    onCapture: (CameraCaptureOutput) -> Unit,
+    initialCameraMode: CameraMode = CameraMode.Back,
 ): CameraState =
     rememberSaveable(
-        saver = CameraState.saver(onCapture),
+        saver = CameraState.saver(),
     ) {
         CameraState(
-            onCapture = onCapture,
             initialCameraMode = initialCameraMode
         )
-    }.apply {
-        this.onCapture = onCapture
     }
