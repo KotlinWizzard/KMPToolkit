@@ -44,6 +44,8 @@ class CameraState(
         imageCaptureState.imageCompressionMode = imageCompressionMode
     }
 
+    internal var orientationListenerEnabled by mutableStateOf(false)
+
     fun toggleCapture(mode: CameraCaptureMode) {
         if (!isCameraReady) return
         if (mode != cameraCaptureMode && captureState.isCapturing){
