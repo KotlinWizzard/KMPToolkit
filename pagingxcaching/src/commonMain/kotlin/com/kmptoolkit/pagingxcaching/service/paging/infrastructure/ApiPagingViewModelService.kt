@@ -8,8 +8,8 @@ import com.kmptoolkit.pagingxcaching.service.paging.PageImpl
  * @param DTO is the DTO used in PageDTO
  * @param Actual is the actual model, which will be mapped
  */
-abstract class ApiPagingService<PageDTO : Any, DTO : Any, Actual : Any>(
-) : BasicApiNetworkPagingService<Actual>() {
+abstract class ApiPagingViewModelService<PageDTO : Any, DTO : Any, Actual : Any>(
+) : BasicApiNetworkPagingViewModelService<Actual>() {
     override fun getPagingSource() = ApiPagingSource<Actual> { getPaginatedData(it) }
 
     private suspend fun getPaginatedData(page: Int): PageImpl<Actual> =

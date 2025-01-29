@@ -15,10 +15,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagingApi::class)
-abstract class BasicApiPagingService<Local : Any, Actual : Any> : ServiceWithRefresh() {
+abstract class BasicApiPagingViewModelService<Local : Any, Actual : Any> : ViewModelServiceWithRefresh() {
     val flow = MutableStateFlow<PagingData<Actual>>(PagingData.empty())
-    val coroutineScope
-        get() = screenModelScope
+    private val coroutineScope
+        get() = viewModelServiceScope
     val errorState = ErrorState()
 
     protected abstract val pagingSourceProvider: PagingSourceProvider<Local, Actual>
@@ -38,7 +38,7 @@ abstract class BasicApiPagingService<Local : Any, Actual : Any> : ServiceWithRef
                 pager =
                     ApiComposePager(
                         sourceProvider = pagingSourceProvider,
-                        viewModel = this@BasicApiPagingService,
+                        viewModel = this@BasicApiPagingViewModelService,
                         remoteMediator = remoteMediator,
                     )
             }

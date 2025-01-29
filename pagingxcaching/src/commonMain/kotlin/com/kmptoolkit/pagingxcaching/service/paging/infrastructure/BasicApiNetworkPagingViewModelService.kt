@@ -5,8 +5,8 @@ import androidx.paging.RemoteMediator
 import com.kmptoolkit.pagingxcaching.service.paging.ApiPagingSource
 import com.kmptoolkit.pagingxcaching.service.paging.PagingSourceProvider
 
-abstract class BasicApiNetworkPagingService<Actual : Any> :
-    BasicApiPagingService<Actual, Actual>() {
+abstract class BasicApiNetworkPagingViewModelService<Actual : Any> :
+    BasicApiPagingViewModelService<Actual, Actual>() {
     protected abstract fun getPagingSource(): ApiPagingSource<Actual>
 
     override val pagingSourceProvider: PagingSourceProvider<Actual, Actual>

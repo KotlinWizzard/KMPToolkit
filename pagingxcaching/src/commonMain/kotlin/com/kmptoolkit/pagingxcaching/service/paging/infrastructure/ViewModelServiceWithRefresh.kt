@@ -11,9 +11,9 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-abstract class ServiceWithRefresh {
+abstract class ViewModelServiceWithRefresh {
 
-    abstract val screenModelScope:CoroutineScope
+    abstract val viewModelServiceScope:CoroutineScope
     private val refreshStatusFlow = MutableSharedFlow<RefreshStatus>(replay = 1)
     private val retryStatusFlow = MutableSharedFlow<RetryStatus>(replay = 1)
     val refreshStatus
@@ -28,7 +28,7 @@ abstract class ServiceWithRefresh {
     }
 
     private fun onRefresh(callback: () -> Unit) =
-        screenModelScope.launch(Dispatchers.IO) {
+        viewModelServiceScope.launch(Dispatchers.IO) {
             refreshStatusFlow.collectLatest {
                 if (it == RefreshStatus.Refresh) {
                     withContext(Dispatchers.Main) {
@@ -69,7 +69,7 @@ abstract class ServiceWithRefresh {
     }
 
     private fun onRetry(callback: () -> Unit) =
-        screenModelScope.launch(Dispatchers.IO) {
+        viewModelServiceScope.launch(Dispatchers.IO) {
             retryStatusFlow.collectLatest {
                 if (it == RetryStatus.Retry) {
                     withContext(Dispatchers.Main) {

@@ -6,7 +6,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.RemoteMediator
 import androidx.paging.cachedIn
 import androidx.paging.map
-import com.kmptoolkit.pagingxcaching.service.paging.infrastructure.BasicApiPagingService
+import com.kmptoolkit.pagingxcaching.service.paging.infrastructure.BasicApiPagingViewModelService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.collectLatest
@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalPagingApi::class)
 class ApiComposePager<Local : Any, Actual : Any>(
     var sourceProvider: PagingSourceProvider<Local, Actual>,
-    val viewModel: BasicApiPagingService<Local, Actual>,
+    val viewModel: BasicApiPagingViewModelService<Local, Actual>,
     private val remoteMediator: RemoteMediator<Int, Local>? = null,
     private val pagingConfig: PagingConfig = DEFAULT_PAGING_CONFIG,
 ) {
@@ -38,9 +38,9 @@ class ApiComposePager<Local : Any, Actual : Any>(
         val flow =
             pager
                 .flow
-                .cachedIn(viewModel.screenModelScope)
+                .cachedIn(viewModel.viewModelServiceScope)
                 .map { it.map { local -> sourceProvider.map(local) } }
-        viewModel.screenModelScope.launch(Dispatchers.IO) {
+        viewModel.viewModelServiceScope.launch(Dispatchers.IO) {
             flow.collectLatest {
                 viewModel.flow.value = it
             }

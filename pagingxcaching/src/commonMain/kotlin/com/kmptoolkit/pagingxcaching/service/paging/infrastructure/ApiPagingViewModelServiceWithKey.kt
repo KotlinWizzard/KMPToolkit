@@ -6,8 +6,8 @@ import androidx.compose.runtime.setValue
 import com.kmptoolkit.pagingxcaching.service.paging.ApiPagingSource
 import com.kmptoolkit.pagingxcaching.service.paging.PageImpl
 
-abstract class ApiPagingServiceWithKey<PageDTO : Any, DTO : Any, Actual : Any, Key : Any>(
-) : BasicApiNetworkPagingService<Actual>() {
+abstract class ApiPagingViewModelServiceWithKey<PageDTO : Any, DTO : Any, Actual : Any, Key : Any>(
+) : BasicApiNetworkPagingViewModelService<Actual>() {
     var key: Key? by mutableStateOf(null)
         private set
 
