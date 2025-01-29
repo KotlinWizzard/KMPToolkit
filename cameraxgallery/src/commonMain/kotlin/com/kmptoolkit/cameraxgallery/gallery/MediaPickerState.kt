@@ -15,6 +15,7 @@ import com.kmptoolkit.core.service.image.LocalCache
 
 class MediaPickerState(
     private val imageCompressionMode: ImageCompressionMode = ImageCompressionMode.None,
+    private val earlyLaunch: Boolean = false
 ) {
     private var mediaPickerStatus: MediaPickerStatus by mutableStateOf(MediaPickerStatus.Idle)
 
@@ -110,8 +111,25 @@ class MediaPickerState(
 
     fun launch(
         mediaPickerMediaSelectionType: MediaPickerSelectionType = MediaPickerSelectionType.Image,
+        maxSelection: Int? = null
+    ) {
+        val mode = when (maxSelection?.coerceAtLeast(1)) {
+            null -> MediaPickerSelectionMode.Multiple()
+            1 -> MediaPickerSelectionMode.Single
+            else -> MediaPickerSelectionMode.Multiple(maxSelection)
+        }
+        launch(
+            mediaPickerMediaSelectionType = mediaPickerMediaSelectionType,
+            mediaPickerSelectionMode = mode
+        )
+    }
+
+
+    fun launch(
+        mediaPickerMediaSelectionType: MediaPickerSelectionType = MediaPickerSelectionType.Image,
         mediaPickerSelectionMode: MediaPickerSelectionMode = MediaPickerSelectionMode.Single,
     ) {
+        if (!earlyLaunch && registeredLauncherKey == null) return
         if (mediaPickerStatus is LaunchRequested) return
         if (mediaPickerResult != null) {
             mediaPickerResult = null
@@ -131,9 +149,12 @@ class MediaPickerState(
 }
 
 @Composable
-fun rememberMediaPickerState(imageCompressionMode: ImageCompressionMode = ImageCompressionMode.None) =
+fun rememberMediaPickerState(
+    imageCompressionMode: ImageCompressionMode = ImageCompressionMode.None,
+    earlyLaunch: Boolean = false
+) =
     remember {
-        MediaPickerState(imageCompressionMode)
+        MediaPickerState(imageCompressionMode = imageCompressionMode, earlyLaunch = earlyLaunch)
     }
 
 

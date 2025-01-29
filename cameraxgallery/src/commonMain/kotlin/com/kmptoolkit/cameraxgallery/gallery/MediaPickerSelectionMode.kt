@@ -5,6 +5,6 @@ sealed class MediaPickerSelectionMode {
     data class Multiple(val maxSelection: Int = INFINITY) : MediaPickerSelectionMode()
 
     companion object {
-        internal const val INFINITY = -1
+        internal const val INFINITY = 0
     }
 }
