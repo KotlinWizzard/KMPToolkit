@@ -49,7 +49,7 @@ class MediaPickerState(
         val key = registeredLauncherKey
         DisposableEffect(key) {
             onDispose {
-                if(key==launcherKey) {
+                if (key == launcherKey) {
                     registeredLauncherKey = null
                 }
             }
@@ -135,37 +135,5 @@ fun rememberMediaPickerState(imageCompressionMode: ImageCompressionMode = ImageC
     remember {
         MediaPickerState(imageCompressionMode)
     }
-
-sealed class MediaPickerStatus {
-    data object Idle : MediaPickerStatus()
-    data class LaunchRequested(
-        val mediaPickerMediaSelectionType: MediaPickerSelectionType = MediaPickerSelectionType.Image,
-        val mediaPickerSelectionMode: MediaPickerSelectionMode = MediaPickerSelectionMode.Single
-    ) : MediaPickerStatus()
-}
-
-
-internal class MediaPickerLauncherState {
-    var status by mutableStateOf(MediaPickerLauncherStatus.Idle)
-        private set
-
-    fun requestLaunch() {
-        status = MediaPickerLauncherStatus.LaunchRequested
-    }
-
-    fun launch() {
-        status = MediaPickerLauncherStatus.Launched
-    }
-
-    fun reset() {
-        status = MediaPickerLauncherStatus.Idle
-    }
-}
-
-internal enum class MediaPickerLauncherStatus {
-    Idle,
-    LaunchRequested,
-    Launched
-}
 
 
