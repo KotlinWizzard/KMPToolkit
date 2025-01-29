@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 val libraryGroup: String by project
 val libraryVersion: String by project
 val libraryJvm: String by project
-val basePackage = "$libraryGroup.core"
+val basePackage = "$libraryGroup.default"
 val defaultJvmTarget: JvmTarget  = JvmTarget.fromTarget(libraryJvm)
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -74,11 +74,11 @@ mavenPublishing {
     publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
     signAllPublications()
 
-    coordinates(group.toString(), "core", version.toString())
+    coordinates(group.toString(), "default", version.toString())
 
     pom {
-        name = "KMPToolkit Core"
-        description = "A core library for Kotlin Multiplatform."
+        name = "KMPToolkit Default"
+        description = "A default library for Kotlin Multiplatform."
         inceptionYear = "2025"
         url = "https://github.com/KotlinWizzard/KMPToolkit"
         developers {
