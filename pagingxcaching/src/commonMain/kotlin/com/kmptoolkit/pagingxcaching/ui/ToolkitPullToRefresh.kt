@@ -58,10 +58,9 @@ fun <Actual : Any> ToolkitPullToRefresh(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 sealed class ToolkitPullToRefreshMode {
     data object None : ToolkitPullToRefreshMode()
-    data class PullToRefresh(
+    data class PullToRefresh @OptIn(ExperimentalMaterial3Api::class) constructor(
         val distanceThreshold: Dp = PositionalThreshold,
         val indicatorColor: @Composable () -> Color = {ToolkitTheme.colorScheme.primary},
         val indicatorBackground: @Composable () -> Color = {ToolkitTheme.colorScheme.surface},

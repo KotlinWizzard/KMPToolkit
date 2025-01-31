@@ -18,7 +18,7 @@ fun <Actual : Any> ToolkitPagingLayout(
     pagingItems: LazyPagingItems<Actual> = viewModel.lazyPagingItems,
     errorState: ErrorState = viewModel.errorState,
     pullToRefreshMode: ToolkitPullToRefreshMode = ToolkitPullToRefreshMode.None,
-    errorDefaults: ToolkitErrorDefaults,
+    errorDefaults: ToolkitErrorDefaults = LocalErrorDefaults.current,
     content: @Composable BoxScope.(LazyPagingItems<Actual>) -> Unit,
 ) {
     viewModel.ListenRefresh {

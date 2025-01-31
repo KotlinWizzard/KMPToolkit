@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.kmptoolkit.core.extensions.clickableWithoutRipple
@@ -15,14 +16,17 @@ import com.kmptoolkit.pagingxcaching.state.error.ErrorState
 fun ToolkitErrorOverlayLayout(
     modifier: Modifier = Modifier,
     errorState: ErrorState,
-    errorDefaults: ToolkitErrorDefaults,
-    content:@Composable () -> Unit
+    errorDefaults: ToolkitErrorDefaults= LocalErrorDefaults.current,
+    content: @Composable () -> Unit
 ) {
     ToolkitOverlayLayout(modifier, content = {
         content()
     }, overlay = {
         if (errorState.isVisible) {
-            Box(Modifier.matchParentSize().clickableWithoutRipple(onClick = {}).background(errorDefaults.backgroundColor())) {
+            Box(
+                Modifier.matchParentSize().clickableWithoutRipple(onClick = {})
+                    .background(errorDefaults.backgroundColor())
+            ) {
                 val errorType = errorState.errorType
                 when {
                     errorState.isLoading -> {
@@ -56,5 +60,11 @@ data class ToolkitErrorDefaults(
             get() = ToolkitTheme.colorScheme.primary
     }
 }
+
+val LocalErrorDefaults = compositionLocalOf<ToolkitErrorDefaults>(defaultFactory = {
+    ToolkitErrorDefaults(
+        errorOverlay = {}
+    )
+})
 
 
