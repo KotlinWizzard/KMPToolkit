@@ -5,7 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.kmptoolkit.core.extensions.formattedMinuteSecondsString
-import com.kmptoolkit.core.service.image.CacheService
+import com.kmptoolkit.core.service.image.MediaCacheService
 import kotlin.time.Duration.Companion.nanoseconds
 
 sealed class CameraCaptureState(protected open val onCapture: (String?) -> Unit) {
@@ -51,7 +51,7 @@ sealed class CameraCaptureState(protected open val onCapture: (String?) -> Unit)
 
         internal var triggerCaptureAnchor: (() -> Unit)? = null
 
-        internal fun onCapture(image: ByteArray?, imageCacheService: CacheService.Image) {
+        internal fun onCapture(image: ByteArray?, imageCacheService: MediaCacheService.Image) {
             if (image != null) {
                 val compressedBytes = imageCompressionMode.compress(image)
                 onCapture(filePath = imageCacheService.cacheFileTemporary(content = compressedBytes))

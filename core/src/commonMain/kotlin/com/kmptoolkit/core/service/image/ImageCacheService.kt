@@ -16,33 +16,32 @@ import okio.use
 import kotlin.time.DurationUnit
 
 
-val LocalCache = staticCompositionLocalOf<CacheProvider> {
+val LocalCache = staticCompositionLocalOf<MediaCache> {
     error("No cache provided")
 }
 
 @Composable
 fun CacheServiceProvider(
-    imageCacheBasePath: String = CacheService.Image.DEFAULT_BASE_PATH,
-    videoCacheBasePath: String = CacheService.Video.DEFAULT_BASE_PATH,
+    imageCacheBasePath: String = MediaCacheService.Image.DEFAULT_BASE_PATH,
+    videoCacheBasePath: String = MediaCacheService.Video.DEFAULT_BASE_PATH,
     content: @Composable () -> Unit
 ) {
     CompositionLocalProvider(
-        LocalCache provides CacheProvider(
-            CacheService.Image(imageCacheBasePath),
-            CacheService.Video(videoCacheBasePath)
+        LocalCache provides MediaCache(
+            MediaCacheService.Image(imageCacheBasePath),
+            MediaCacheService.Video(videoCacheBasePath)
         ),
         content
     )
 }
 
-data class CacheProvider(val imageCache: CacheService.Image, val videoCache: CacheService.Video) {
-    fun readCachedFileOrNull(path: String): ByteArray? {
-        return imageCache.readCachedFileOrNull(path)
-    }
-}
+data class MediaCache(
+    val imageCache: MediaCacheService.Image,
+    val videoCache: MediaCacheService.Video
+)
 
 
-sealed class CacheService(
+sealed class MediaCacheService(
     basePath: String,
     protected open val cacheDeletionTimeoutMillis: Long?
 ) {
@@ -54,7 +53,7 @@ sealed class CacheService(
     private fun getTempDirOrCreate(): Path {
         val system = FileSystem.SYSTEM
         if (!system.exists(tempDir)) {
-            system.createDirectory(tempDir)
+            system.createDirectories(tempDir)
         }
         return tempDir
     }
@@ -64,25 +63,8 @@ sealed class CacheService(
 
     fun getFullPathFromFilename(filename: String) = getPathFromFilename(filename).toString()
 
-    private fun getPathFromFilename(filename: String) = getTempDirOrCreate() / filename.toPath()
+    protected fun getPathFromFilename(filename: String) = getTempDirOrCreate() / filename.toPath()
 
-    fun cacheFileTemporary(
-        content: ByteArray,
-        maxCacheBytes: MaxByteCompression? = null,
-        filename: String = generateFilename(),
-    ): String {
-        val tempFilePath = getPathFromFilename(filename)
-        val bytes =
-            if (maxCacheBytes != null) {
-                ImageCompressor.compressImage(content, maxCacheBytes)
-            } else {
-                content
-            }
-        FileSystem.SYSTEM.sink(tempFilePath).buffer().use { sink ->
-            sink.write(bytes)
-        }
-        return tempFilePath.toString()
-    }
 
     private fun cleanupOldFiles() {
         val cacheDeletionTimeoutMillis = cacheDeletionTimeoutMillis ?: return
@@ -111,25 +93,10 @@ sealed class CacheService(
 
     fun getUriIfExists(filename: String) = getPathIfExists(getPathFromFilename(filename))
 
-    private fun getPathIfExists(path: Path): String? {
-        if (FileSystem.SYSTEM.exists(path)) return path.toString()
-        return null
-    }
 
     fun readCachedFileByFilename(filename: String): ByteArray =
         readCachedFile((tempDir / filename.toPath()).toString())
 
-    private fun readCachedFile(path: String): ByteArray =
-        FileSystem.SYSTEM.source(path.toPath()).buffer().use { source ->
-            source.readByteArray()
-        }
-
-    fun readCachedFileOrNull(path: String): ByteArray? {
-        if (getPathIfExists(path.toPath()) == null) return null
-        return FileSystem.SYSTEM.source(path.toPath()).buffer().use { source ->
-            source.readByteArray()
-        }
-    }
 
     init {
         cleanupOldFiles()
@@ -138,11 +105,29 @@ sealed class CacheService(
     class Image(
         basePath: String = DEFAULT_BASE_PATH,
         override val cacheDeletionTimeoutMillis: Long? = DurationUnit.DAYS.millis(1),
-    ) : CacheService(basePath, cacheDeletionTimeoutMillis) {
+    ) : MediaCacheService(basePath, cacheDeletionTimeoutMillis) {
         override val defaultFileExtension: String
             get() = ".jpg"
         override val filenamePrefix: String
             get() = "image"
+
+        fun cacheFileTemporary(
+            content: ByteArray,
+            maxCacheBytes: MaxByteCompression? = null,
+            filename: String = generateFilename(),
+        ): String {
+            val tempFilePath = getPathFromFilename(filename)
+            val bytes =
+                if (maxCacheBytes != null) {
+                    ImageCompressor.compressImage(content, maxCacheBytes)
+                } else {
+                    content
+                }
+            FileSystem.SYSTEM.sink(tempFilePath).buffer().use { sink ->
+                sink.write(bytes)
+            }
+            return tempFilePath.toString()
+        }
 
         companion object {
             const val DEFAULT_BASE_PATH = "media-image"
@@ -152,14 +137,83 @@ sealed class CacheService(
     class Video(
         basePath: String = DEFAULT_BASE_PATH,
         override val cacheDeletionTimeoutMillis: Long? = DurationUnit.DAYS.millis(1)
-    ) : CacheService(basePath, cacheDeletionTimeoutMillis) {
+    ) : MediaCacheService(basePath, cacheDeletionTimeoutMillis) {
         override val defaultFileExtension: String
             get() = ".mp4"
         override val filenamePrefix: String
             get() = "video"
 
+        fun cacheFileTemporary(
+            content: ByteArray,
+            filename: String = generateFilename(),
+        ): String {
+            val tempFilePath = getPathFromFilename(filename)
+            val bytes = content
+
+            FileSystem.SYSTEM.sink(tempFilePath).buffer().use { sink ->
+                sink.write(bytes)
+            }
+            return tempFilePath.toString()
+        }
+
         companion object {
             const val DEFAULT_BASE_PATH = "media-video"
+        }
+    }
+
+    companion object {
+        val SYSTEM_TEMPORARY_DIRECTORY = FileSystem.SYSTEM_TEMPORARY_DIRECTORY.toString()
+
+        private fun getPathIfExists(path: Path): String? {
+            if (FileSystem.SYSTEM.exists(path)) return path.toString()
+            return null
+        }
+
+        fun getPathIfExists(path: String): String? {
+            if (FileSystem.SYSTEM.exists(path.toPath())) return path.toPath().toString()
+            return null
+        }
+
+        fun doesPathExists(path: String): Boolean {
+            return FileSystem.SYSTEM.exists(path.toPath())
+        }
+
+        private fun readCachedFile(path: String): ByteArray =
+            FileSystem.SYSTEM.source(path.toPath()).buffer().use { source ->
+                source.readByteArray()
+            }
+
+        fun readCachedFileOrNull(path: String): ByteArray? {
+            if (getPathIfExists(path.toPath()) == null) return null
+            return FileSystem.SYSTEM.source(path.toPath()).buffer().use { source ->
+                source.readByteArray()
+            }
+        }
+
+        private fun createDirectory(path: Path, recursive: Boolean = true):Path {
+            if(FileSystem.SYSTEM.exists(path)) return path
+            if (recursive) {
+                FileSystem.SYSTEM.createDirectories(path)
+            } else {
+                FileSystem.SYSTEM.createDirectory(path)
+            }
+            return path
+        }
+
+        fun createDirectory(path: String, recursive: Boolean = true):String {
+          return  createDirectory(path = path.toPath(), recursive = recursive).toString()
+        }
+
+        fun storeFile(
+            content: ByteArray,
+            path: String
+        ): String {
+            val tempFilePath = createDirectory(path = path.toPath(), recursive = true)
+            val bytes = content
+            FileSystem.SYSTEM.sink(tempFilePath).buffer().use { sink ->
+                sink.write(bytes)
+            }
+            return tempFilePath.toString()
         }
     }
 }
