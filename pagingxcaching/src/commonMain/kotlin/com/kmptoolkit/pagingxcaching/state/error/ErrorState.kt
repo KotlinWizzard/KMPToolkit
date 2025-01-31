@@ -1,5 +1,6 @@
 package com.kmptoolkit.pagingxcaching.state.error
 
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,6 +13,10 @@ open class ErrorState(private val ignoredErrors: List<ApiResult.Error> = emptyLi
         protected set
     var errorType by mutableStateOf<ApiResult.Error?>(null)
         protected set
+
+    val isVisible by derivedStateOf {
+        isLoading || errorType != null
+    }
 
     override fun onApiCallStarted() {
         isLoading = true
