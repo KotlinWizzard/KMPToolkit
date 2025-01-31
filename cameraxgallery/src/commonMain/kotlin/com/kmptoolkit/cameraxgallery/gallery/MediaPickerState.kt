@@ -155,6 +155,8 @@ fun rememberMediaPickerState(
 ) =
     remember {
         MediaPickerState(imageCompressionMode = imageCompressionMode, earlyLaunch = earlyLaunch)
+    }.apply {
+        RegisterLauncher()
     }
 
 
