@@ -42,6 +42,10 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                implementation(libs.androidxKmp.lifecycle.viewmodelCompose)
+                implementation(libs.androidxKmp.lifecycle.viewmodel)
+                implementation(libs.androidxKmp.lifecycle.runtimeCompose)
+                implementation(libs.androidxKmp.core.bundle)
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.material3)

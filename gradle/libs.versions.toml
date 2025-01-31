@@ -21,6 +21,7 @@ androidx-lifecycle = "2.8.7"
 lifecycle = "2.8.7"
 androidxKmp-bundle = "1.0.0"
 androidxKmp-lifecycle = "2.8.0"
+room = "2.7.0-alpha10"
 
 [libraries]
 stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
@@ -57,6 +58,8 @@ androidxKmp-core-bundle = { module = "org.jetbrains.androidx.core:core-bundle", 
 androidxKmp-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidxKmp-lifecycle" }
 androidxKmp-lifecycle-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel", version.ref = "androidxKmp-lifecycle" }
 androidxKmp-lifecycle-viewmodelCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidxKmp-lifecycle" }
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+room-paging = { module = "androidx.room:room-paging", version.ref = "room" }
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }

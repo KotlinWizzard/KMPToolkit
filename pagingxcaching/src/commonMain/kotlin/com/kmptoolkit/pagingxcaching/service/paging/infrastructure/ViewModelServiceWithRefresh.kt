@@ -11,9 +11,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-abstract class ViewModelServiceWithRefresh {
+abstract class ViewModelServiceWithRefresh: ViewModelService {
 
-    abstract val viewModelServiceScope:CoroutineScope
     private val refreshStatusFlow = MutableSharedFlow<RefreshStatus>(replay = 1)
     private val retryStatusFlow = MutableSharedFlow<RetryStatus>(replay = 1)
     val refreshStatus

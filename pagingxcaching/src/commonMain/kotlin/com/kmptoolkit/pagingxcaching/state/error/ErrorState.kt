@@ -23,6 +23,21 @@ open class ErrorState(private val ignoredErrors: List<ApiResult.Error> = emptyLi
                 errorType = result
             }
         }
+        when(result){
+            is ApiResult.Error ->{
+                if (!ignoredErrors.contains(result)) {
+                    errorType = result
+                }
+                isLoading = false
+            }
+            is ApiResult.Success ->{
+               onSuccess()
+            }
+        }
+    }
+
+    override fun onSuccess() {
         isLoading = false
+        errorType = null
     }
 }

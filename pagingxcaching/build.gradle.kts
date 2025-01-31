@@ -67,6 +67,8 @@ kotlin {
                 implementation(libs.ktor.client.logging)
                 implementation(libs.ktor.serializationKotlinxJson)
                 implementation(libs.androidx.paging.common)
+                implementation(libs.room.runtime)
+                implementation(libs.room.paging)
             }
         }
         val commonTest by getting {
