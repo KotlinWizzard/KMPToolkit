@@ -6,11 +6,11 @@ data class PageImpl<T>(
     val pageNumber: Int,
     val pageSize: Int,
     val totalElements: Long,
-    val empty: Boolean= content.isEmpty(),
+    val empty: Boolean = content.isEmpty(),
     val first: Boolean = pageNumber <= 0,
-    val last: Boolean =  pageNumber == maxPages(pageSize, totalElements) - 1,
+    val last: Boolean = pageNumber == maxPages(pageSize, totalElements) - 1,
     val numberOfElements: Int = content.size,
-    val totalPages: Int = maxPages(pageSize,totalElements),
+    val totalPages: Int = maxPages(pageSize, totalElements),
 ) {
 
 
@@ -72,6 +72,20 @@ data class PageImpl<T>(
             totalPages = totalPages,
             pageSize = pageSize
         )
+    }
+
+    companion object {
+        fun <T> byContent(
+            content: MutableList<T>,
+            pageNumber: Int, pageSize: Int, totalElements: Long,
+        ): PageImpl<T> {
+            return PageImpl(
+                content = content,
+                pageNumber = pageNumber,
+                pageSize = pageSize,
+                totalElements = totalElements
+            )
+        }
     }
 
 }
