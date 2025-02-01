@@ -11,6 +11,7 @@ import com.kmptoolkit.pagingxcaching.service.cache.dao.CachedPagingDaoWithRoomDa
 import com.kmptoolkit.pagingxcaching.service.cache.infrastructure.CacheFetcher
 import com.kmptoolkit.pagingxcaching.service.cache.infrastructure.CachedRefreshAction
 import com.kmptoolkit.pagingxcaching.service.cache.mediator.PagingKeyProvider
+import com.kmptoolkit.pagingxcaching.service.cache.mediator.PagingPrimaryKeyProvider
 import com.kmptoolkit.pagingxcaching.service.cache.mediator.RemoteKeyPagingMediator
 import com.kmptoolkit.pagingxcaching.service.paging.PageImpl
 import com.kmptoolkit.pagingxcaching.service.paging.PagingSourceProvider
@@ -18,7 +19,7 @@ import com.kmptoolkit.pagingxcaching.service.room.key.PagingQueryKey
 import com.kmptoolkit.pagingxcaching.service.room.remotekey.RemoteKeyDao
 import kotlin.reflect.KClass
 
-abstract class ApiCachedViewModelService<PageDTO : Any, DTO : Any, Actual : LazyLayoutKeyProvider, Key : PagingQueryKey, Local : Any>(
+abstract class ApiCachedViewModelService<PageDTO : Any, DTO : Any, Actual : LazyLayoutKeyProvider, Key : PagingQueryKey, Local : PagingPrimaryKeyProvider>(
     protected val dao: CachedPagingDaoWithRoomDao<Key, *, Local, Actual>,
     protected val remoteKeyDao: RemoteKeyDao,
     protected val cachedRefreshAction: CachedRefreshAction,

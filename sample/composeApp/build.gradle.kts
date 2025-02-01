@@ -58,6 +58,7 @@ kotlin {
                 implementation(project(":core"))
                 implementation(project(":navigation"))
                 implementation(project(":cameraxgallery"))
+                implementation(project(":pagingxcaching"))
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.material3)

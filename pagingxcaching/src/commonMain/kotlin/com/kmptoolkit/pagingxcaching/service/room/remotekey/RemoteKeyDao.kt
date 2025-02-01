@@ -1,6 +1,7 @@
 package com.kmptoolkit.pagingxcaching.service.room.remotekey
 
 import com.kmptoolkit.core.classes.LazyLayoutKeyProvider
+import com.kmptoolkit.pagingxcaching.service.cache.mediator.PagingPrimaryKeyProvider
 import com.kmptoolkit.pagingxcaching.service.room.key.PagingPrimaryKey
 import com.kmptoolkit.pagingxcaching.service.room.key.PagingQueryKey
 import kotlinx.coroutines.CoroutineScope
@@ -13,7 +14,7 @@ class RemoteKeyDao(
     val scope: CoroutineScope = CoroutineScope(Dispatchers.IO),
 ) {
     fun mapToRemoteKey(
-        keyProvider: LazyLayoutKeyProvider,
+        keyProvider: PagingPrimaryKeyProvider,
         pagingQueryKey: PagingQueryKey,
         details: RemoteKeyDetails,
     ): RemoteKey {
@@ -29,16 +30,15 @@ class RemoteKeyDao(
     }
 
     private fun constructKey(
-        keyProvider: LazyLayoutKeyProvider,
+        keyProvider: PagingPrimaryKeyProvider,
         pagingQueryKey: PagingQueryKey,
     ): String =
         pagingQueryKey.getQueryType() + ":" + pagingQueryKey.getQueryHash() + ":" +
                 keyProvider
-                    .getKey()
-                    .toString()
+                    .getPagingPrimaryKey().asString()
 
     fun insert(
-        keyProvider: LazyLayoutKeyProvider,
+        keyProvider: PagingPrimaryKeyProvider,
         pagingQueryKey: PagingQueryKey,
         details: RemoteKeyDetails,
     ) {
@@ -68,7 +68,7 @@ class RemoteKeyDao(
     suspend fun delete(remoteKey: RemoteKey) = remoteKeyRoomDao.delete(remoteKey)
 
     suspend fun deleteById(
-        keyProvider: LazyLayoutKeyProvider,
+        keyProvider: PagingPrimaryKeyProvider,
         pagingQueryKey: PagingQueryKey,
     ) = remoteKeyRoomDao.deleteById(constructKey(keyProvider, pagingQueryKey))
 
@@ -81,7 +81,7 @@ class RemoteKeyDao(
 
 
     suspend fun getRemoteKeyById(
-        keyProvider: LazyLayoutKeyProvider,
+        keyProvider: PagingPrimaryKeyProvider,
         pagingQueryKey: PagingQueryKey,
     ): RemoteKey? = remoteKeyRoomDao.selectById(constructKey(keyProvider, pagingQueryKey))
 }

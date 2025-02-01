@@ -20,7 +20,7 @@ import kotlinx.datetime.Clock
 import kotlinx.io.IOException
 
 @OptIn(ExperimentalPagingApi::class)
-class RemoteKeyPagingMediator<Key : PagingQueryKey, Local : Any, Model : LazyLayoutKeyProvider>(
+class RemoteKeyPagingMediator<Key : PagingQueryKey, Local : PagingPrimaryKeyProvider, Model : LazyLayoutKeyProvider>(
     val dao: CachedPagingDaoWithRoomDao<Key, *, Local, Model>,
     private val remoteKeyDao: RemoteKeyDao,
     private val pagingKeyProvider: PagingKeyProvider<Key>,
@@ -70,9 +70,9 @@ class RemoteKeyPagingMediator<Key : PagingQueryKey, Local : Any, Model : LazyLay
             dao.withTransaction {
                 if (loadType == LoadType.REFRESH &&
                     (
-                        refreshAction is CachedRefreshAction.RefreshAndDeleteOnTime ||
-                            refreshAction is CachedRefreshAction.RefreshAndDelete
-                    ) &&
+                            refreshAction is CachedRefreshAction.RefreshAndDeleteOnTime ||
+                                    refreshAction is CachedRefreshAction.RefreshAndDelete
+                            ) &&
                     refreshMode != RefreshMode.IGNORE_DELETE
                 ) {
                     remoteKeyDao.getAllMatchingRemoteKeys(pagingKey).fastForEach { remoteKey ->
@@ -86,14 +86,14 @@ class RemoteKeyPagingMediator<Key : PagingQueryKey, Local : Any, Model : LazyLay
                 content.forEach {
                     dao.insertOrUpdate(it)
                     remoteKeyDao.insert(
-                        it,
+                        it.toLocal(),
                         pagingKey,
                         details =
-                            RemoteKeyDetails(
-                                currentPage = page,
-                                previousPage = dataPage.previousPageNumber,
-                                nextPage = dataPage.nextPageNumber,
-                            ),
+                        RemoteKeyDetails(
+                            currentPage = page,
+                            previousPage = dataPage.previousPageNumber,
+                            nextPage = dataPage.nextPageNumber,
+                        ),
                     )
                 }
             }
@@ -111,7 +111,7 @@ class RemoteKeyPagingMediator<Key : PagingQueryKey, Local : Any, Model : LazyLay
             MediatorResult.Error(e)
         } catch (e: ResponseEmptyException) {
             return MediatorResult.Error(e)
-        }  catch (e: Exception) {
+        } catch (e: Exception) {
             return MediatorResult.Error(e)
         }
     }
@@ -146,9 +146,11 @@ class RemoteKeyPagingMediator<Key : PagingQueryKey, Local : Any, Model : LazyLay
             val pagingKey = pagingKey ?: return@let null
             state.closestItemToPosition(position)?.let { local ->
                 val item = dao.converter.mapLocalToOutput(local)
-                remoteKeyDao.getRemoteKeyById(item, pagingKey)
+                remoteKeyDao.getRemoteKeyById(item.toLocal(), pagingKey)
             }
         }
+
+    private fun Model.toLocal() = dao.converter.mapOutputToLocal(this)
 
     private suspend fun getRemoteKeyForFirstItem(state: PagingState<Int, Local>): RemoteKey? =
         state.pages
@@ -159,7 +161,7 @@ class RemoteKeyPagingMediator<Key : PagingQueryKey, Local : Any, Model : LazyLay
             ?.let { local ->
                 val pagingKey = pagingKey ?: return@let null
                 val item = dao.converter.mapLocalToOutput(local)
-                remoteKeyDao.getRemoteKeyById(item, pagingKey)
+                remoteKeyDao.getRemoteKeyById(item.toLocal(), pagingKey)
             }
 
     private suspend fun getRemoteKeyForLastItem(state: PagingState<Int, Local>): RemoteKey? =
@@ -171,7 +173,7 @@ class RemoteKeyPagingMediator<Key : PagingQueryKey, Local : Any, Model : LazyLay
             ?.let { local ->
                 val pagingKey = pagingKey ?: return@let null
                 val item = dao.converter.mapLocalToOutput(local)
-                remoteKeyDao.getRemoteKeyById(item, pagingKey)
+                remoteKeyDao.getRemoteKeyById(item.toLocal(), pagingKey)
             }
 
     enum class RefreshMode {
