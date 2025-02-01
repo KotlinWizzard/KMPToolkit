@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,8 +29,7 @@ import androidx.core.util.Consumer
 import com.kmptoolkit.cameraxgallery.camera.state.CameraCaptureState
 import com.kmptoolkit.cameraxgallery.camera.state.CameraFocusStatus
 import com.kmptoolkit.cameraxgallery.camera.state.CameraState
-import com.kmptoolkit.core.service.image.LocalCache
-import com.kmptoolkit.core.service.uuid.UUID
+import com.kmptoolkit.core.service.media.LocalCache
 import java.util.concurrent.Executors
 
 @Composable

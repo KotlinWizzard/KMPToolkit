@@ -10,8 +10,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.kmptoolkit.cameraxgallery.camera.state.ImageCompressionMode
 import com.kmptoolkit.cameraxgallery.gallery.MediaPickerStatus.LaunchRequested
-import com.kmptoolkit.core.service.image.MediaCache
-import com.kmptoolkit.core.service.image.LocalCache
+import com.kmptoolkit.core.service.media.MediaCache
+import com.kmptoolkit.core.service.media.LocalCache
 
 class MediaPickerState(
     private val imageCompressionMode: ImageCompressionMode = ImageCompressionMode.None,
@@ -88,14 +88,14 @@ class MediaPickerState(
         val resultData = result.map {
             when (it.second) {
                 MediaPickerMediaType.Image -> MediaPickerResultData(
-                    file = cache.imageCache.cacheFileTemporary(
+                    filePath = cache.imageCache.cacheFileTemporary(
                         imageCompressionMode.compress(it.first)
                     ), mediaType = it.second
                 )
 
                 MediaPickerMediaType.Video -> {
                     MediaPickerResultData(
-                        file = cache.videoCache.cacheFileTemporary(
+                        filePath = cache.videoCache.cacheFileTemporary(
                             it.first
                         ), mediaType = it.second
                     )

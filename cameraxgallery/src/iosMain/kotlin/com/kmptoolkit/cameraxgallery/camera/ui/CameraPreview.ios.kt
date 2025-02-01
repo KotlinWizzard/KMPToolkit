@@ -9,18 +9,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.InternalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.uikit.InterfaceOrientation
-import androidx.compose.ui.uikit.InterfaceOrientation.*
 import androidx.compose.ui.viewinterop.UIKitInteropProperties
 import androidx.compose.ui.viewinterop.UIKitView
-import com.kmptoolkit.cameraxgallery.camera.state.CameraCaptureOutput
 import com.kmptoolkit.cameraxgallery.camera.state.CameraCaptureState
 import com.kmptoolkit.cameraxgallery.camera.state.CameraFocusStatus
 import com.kmptoolkit.cameraxgallery.camera.state.CameraMode
 import com.kmptoolkit.cameraxgallery.camera.state.CameraState
-import com.kmptoolkit.core.service.image.LocalCache
+import com.kmptoolkit.core.service.media.LocalCache
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCAction
@@ -58,7 +54,6 @@ import platform.AVFoundation.AVCaptureTorchModeOff
 import platform.AVFoundation.AVCaptureTorchModeOn
 import platform.AVFoundation.AVCaptureVideoDataOutput
 import platform.AVFoundation.AVCaptureVideoDataOutputSampleBufferDelegateProtocol
-import platform.AVFoundation.AVCaptureVideoOrientation
 import platform.AVFoundation.AVCaptureVideoOrientationLandscapeLeft
 import platform.AVFoundation.AVCaptureVideoOrientationLandscapeRight
 import platform.AVFoundation.AVCaptureVideoOrientationPortrait
@@ -90,7 +85,6 @@ import platform.Foundation.NSError
 import platform.Foundation.NSNotification
 import platform.Foundation.NSNotificationCenter
 import platform.Foundation.NSSelectorFromString
-import platform.Foundation.NSTimer
 import platform.Foundation.NSURL
 import platform.Foundation.dataWithBytes
 import platform.UIKit.UIColor

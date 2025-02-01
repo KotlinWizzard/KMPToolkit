@@ -5,7 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.kmptoolkit.core.extensions.formattedMinuteSecondsString
-import com.kmptoolkit.core.service.image.MediaCacheService
+import com.kmptoolkit.core.service.media.MediaCacheService
 import kotlin.time.Duration.Companion.nanoseconds
 
 sealed class CameraCaptureState(protected open val onCapture: (String?) -> Unit) {

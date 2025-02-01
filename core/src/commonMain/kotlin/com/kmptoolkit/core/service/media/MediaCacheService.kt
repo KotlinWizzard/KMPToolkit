@@ -1,11 +1,10 @@
-package com.kmptoolkit.core.service.image
+package com.kmptoolkit.core.service.media
 
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.staticCompositionLocalOf
 import com.kmptoolkit.core.extensions.millis
 import com.kmptoolkit.core.service.file.SYSTEM
+import com.kmptoolkit.core.service.image.ImageCompressor
+import com.kmptoolkit.core.service.image.MaxByteCompression
 import com.kmptoolkit.core.service.uuid.UUID
 import kotlinx.datetime.Clock
 import okio.FileSystem
@@ -14,31 +13,6 @@ import okio.Path.Companion.toPath
 import okio.buffer
 import okio.use
 import kotlin.time.DurationUnit
-
-
-val LocalCache = staticCompositionLocalOf<MediaCache> {
-    error("No cache provided")
-}
-
-@Composable
-fun CacheServiceProvider(
-    imageCacheBasePath: String = MediaCacheService.Image.DEFAULT_BASE_PATH,
-    videoCacheBasePath: String = MediaCacheService.Video.DEFAULT_BASE_PATH,
-    content: @Composable () -> Unit
-) {
-    CompositionLocalProvider(
-        LocalCache provides MediaCache(
-            MediaCacheService.Image(imageCacheBasePath),
-            MediaCacheService.Video(videoCacheBasePath)
-        ),
-        content
-    )
-}
-
-data class MediaCache(
-    val imageCache: MediaCacheService.Image,
-    val videoCache: MediaCacheService.Video
-)
 
 
 sealed class MediaCacheService(
