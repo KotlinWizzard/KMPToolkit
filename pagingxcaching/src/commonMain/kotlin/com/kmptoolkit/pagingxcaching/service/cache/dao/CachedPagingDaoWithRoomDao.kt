@@ -3,6 +3,7 @@ package com.kmptoolkit.pagingxcaching.service.cache.dao
 import androidx.paging.PagingSource
 import com.kmptoolkit.pagingxcaching.service.cache.converter.CacheConverter
 import com.kmptoolkit.pagingxcaching.service.room.dao.RoomPagingDao
+import com.kmptoolkit.pagingxcaching.service.room.key.PagingPrimaryKey
 import com.kmptoolkit.pagingxcaching.service.room.key.PagingQueryKey
 import kotlinx.coroutines.flow.Flow
 
@@ -45,5 +46,7 @@ abstract class CachedPagingDaoWithRoomDao<Key : PagingQueryKey, Network : Any, L
 
     fun selectPagingSource(key: Key): PagingSource<Int, Local> = dao.selectPagingSource(key)
 
-    abstract suspend fun deleteByPrimaryKey(key: String)
+    suspend fun deleteByPrimaryKey(key: PagingPrimaryKey) {
+        dao.deleteByPrimaryKey(key)
+    }
 }

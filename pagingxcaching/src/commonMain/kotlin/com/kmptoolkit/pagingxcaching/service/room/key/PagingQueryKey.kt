@@ -10,4 +10,6 @@ abstract class PagingQueryKey : QueryKey() {
     override fun getQueryIdentifier(): String = getQueryHash()
 
     open fun getQueryType(): String = this::class.simpleName ?: ""
+
 }
+

@@ -11,6 +11,7 @@ import com.kmptoolkit.pagingxcaching.service.cache.infrastructure.CacheFetcher
 import com.kmptoolkit.pagingxcaching.service.cache.infrastructure.CachedRefreshAction
 import com.kmptoolkit.pagingxcaching.service.paging.exceptions.ResponseEmptyException
 import com.kmptoolkit.pagingxcaching.service.room.key.NotInitialized
+import com.kmptoolkit.pagingxcaching.service.room.key.PagingPrimaryKey
 import com.kmptoolkit.pagingxcaching.service.room.key.PagingQueryKey
 import com.kmptoolkit.pagingxcaching.service.room.remotekey.RemoteKey
 import com.kmptoolkit.pagingxcaching.service.room.remotekey.RemoteKeyDao

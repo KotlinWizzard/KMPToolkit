@@ -1,6 +1,7 @@
 package com.kmptoolkit.pagingxcaching.service.room.remotekey
 
 import com.kmptoolkit.core.classes.LazyLayoutKeyProvider
+import com.kmptoolkit.pagingxcaching.service.room.key.PagingPrimaryKey
 import com.kmptoolkit.pagingxcaching.service.room.key.PagingQueryKey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -71,7 +72,13 @@ class RemoteKeyDao(
         pagingQueryKey: PagingQueryKey,
     ) = remoteKeyRoomDao.deleteById(constructKey(keyProvider, pagingQueryKey))
 
-    fun getKeyByRemoteKey(remoteKey: RemoteKey): String? = remoteKey.remoteKeyData.split(":").lastOrNull()
+    private fun getKeyStringByRemoteKey(remoteKey: RemoteKey): String? =
+        remoteKey.remoteKeyData.split(":").lastOrNull()
+
+    fun getKeyByRemoteKey(remoteKey: RemoteKey) = getKeyStringByRemoteKey(remoteKey)?.let {
+        PagingPrimaryKey.fromString(it)
+    }
+
 
     suspend fun getRemoteKeyById(
         keyProvider: LazyLayoutKeyProvider,
