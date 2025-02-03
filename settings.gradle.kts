@@ -19,4 +19,5 @@ rootProject.name = "KMPToolkit"
 include(":core")
 include(":navigation")
 include(":cameraxgallery")
+include(":pagingxcaching")
 include(":sample:composeApp")

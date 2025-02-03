@@ -1,7 +1,5 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 val libraryGroup: String by project
 val libraryJvm: String by project
@@ -15,7 +13,7 @@ plugins {
 }
 
 kotlin {
-    jvm("desktop")
+    //jvm("desktop")
     androidTarget {
         compilerOptions {
             jvmTarget.set(defaultJvmTarget)
@@ -31,6 +29,7 @@ kotlin {
             isStatic = true
         }
     }
+    /*
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         moduleName = "composeApp"
@@ -49,7 +48,7 @@ kotlin {
             }
         }
         binaries.executable()
-    }
+    }*/
 
 
     sourceSets {
@@ -59,12 +58,14 @@ kotlin {
                 implementation(project(":core"))
                 implementation(project(":navigation"))
                 implementation(project(":cameraxgallery"))
+                implementation(project(":pagingxcaching"))
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.material3)
                 implementation(compose.material)
                 implementation(compose.ui)
                 implementation(compose.components.resources)
+                implementation(libs.coroutines.core)
             }
         }
 
@@ -77,11 +78,12 @@ kotlin {
             }
         }
 
+        /*
         val desktopMain by getting {
             dependencies {
                 implementation(compose.desktop.currentOs)
             }
-        }
+        }*/
     }
 }
 
