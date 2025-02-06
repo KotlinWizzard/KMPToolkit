@@ -23,7 +23,7 @@ class MediaPickerState(
 
     private val mediaPickerLauncherState = MediaPickerLauncherState()
 
-    var mediaPickerResult by mutableStateOf<io.github.kotlinwizzard.kmptoolkit.cameraxgallery.gallery.MediaPickerResult?>(null)
+    var mediaPickerResult by mutableStateOf<MediaPickerResult?>(null)
         private set
     private var registeredLauncherKey by mutableStateOf<String?>(null)
 
@@ -72,7 +72,7 @@ class MediaPickerState(
     }
 
     @Composable
-    fun ListenMediaPickerResult(onResult: (io.github.kotlinwizzard.kmptoolkit.cameraxgallery.gallery.MediaPickerResult) -> Unit) {
+    fun ListenMediaPickerResult(onResult: (MediaPickerResult) -> Unit) {
         RegisterLauncher()
         val result = mediaPickerResult
         LaunchedEffect(
@@ -90,14 +90,14 @@ class MediaPickerState(
     ) {
         val resultData = result.map {
             when (it.second) {
-                MediaPickerMediaType.Image -> io.github.kotlinwizzard.kmptoolkit.cameraxgallery.gallery.MediaPickerResultData(
+                MediaPickerMediaType.Image -> MediaPickerResultData(
                     filePath = cache.imageCache.cacheFileTemporary(
                         imageCompressionMode.compress(it.first)
                     ), mediaType = it.second
                 )
 
                 MediaPickerMediaType.Video -> {
-                    io.github.kotlinwizzard.kmptoolkit.cameraxgallery.gallery.MediaPickerResultData(
+                    MediaPickerResultData(
                         filePath = cache.videoCache.cacheFileTemporary(
                             it.first
                         ), mediaType = it.second
@@ -106,8 +106,8 @@ class MediaPickerState(
             }
         }
         mediaPickerResult = when (resultData.isEmpty()) {
-            true -> io.github.kotlinwizzard.kmptoolkit.cameraxgallery.gallery.MediaPickerResult.Cancelled
-            false -> io.github.kotlinwizzard.kmptoolkit.cameraxgallery.gallery.MediaPickerResult.Data(resultData)
+            true -> MediaPickerResult.Cancelled
+            false -> MediaPickerResult.Data(resultData)
         }
         reset()
     }
