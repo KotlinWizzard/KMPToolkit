@@ -12,14 +12,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import cafe.adriel.voyager.core.screen.Screen
-import com.kmptoolkit.cameraxgallery.camera.state.CameraCaptureMode
-import com.kmptoolkit.cameraxgallery.camera.state.CameraCaptureState
-import com.kmptoolkit.cameraxgallery.camera.state.rememberCameraState
-import com.kmptoolkit.cameraxgallery.camera.ui.CameraCaptureButton
-import com.kmptoolkit.cameraxgallery.camera.ui.CameraCaptureButtonMode
-import com.kmptoolkit.cameraxgallery.camera.ui.CameraPreviewLayout
-import com.kmptoolkit.core.presentation.theme.ToolkitDarkScreen
-import com.kmptoolkit.core.presentation.theme.ToolkitScaffold
+import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.camera.state.CameraCaptureMode
+import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.camera.state.CameraCaptureState
+import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.camera.state.rememberCameraState
+import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.camera.ui.CameraCaptureButton
+import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.camera.ui.CameraCaptureButtonMode
+import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.camera.ui.CameraPreviewLayout
+import io.github.kotlinwizzard.kmptoolkit.core.presentation.theme.ToolkitDarkScreen
+import io.github.kotlinwizzard.kmptoolkit.core.presentation.theme.ToolkitScaffold
 import presentation.BackButtonToolbar
 
 class CameraScreen : Screen {

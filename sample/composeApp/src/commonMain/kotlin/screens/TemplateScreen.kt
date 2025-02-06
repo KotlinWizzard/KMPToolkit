@@ -11,11 +11,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
-import com.kmptoolkit.core.extensions.currentOrThrow
-import com.kmptoolkit.core.presentation.theme.ToolkitScaffold
-import com.kmptoolkit.core.presentation.theme.ToolkitTheme
-import com.kmptoolkit.core.presentation.theme.spacing
-import com.kmptoolkit.navigation.LocalAppNavigator
+import io.github.kotlinwizzard.kmptoolkit.core.extensions.currentOrThrow
+import io.github.kotlinwizzard.kmptoolkit.core.presentation.theme.ToolkitScaffold
+import io.github.kotlinwizzard.kmptoolkit.core.presentation.theme.ToolkitTheme
+import io.github.kotlinwizzard.kmptoolkit.core.presentation.theme.spacing
+import io.github.kotlinwizzard.kmptoolkit.navigation.LocalAppNavigator
 import screens.camera.CameraScreen
 import screens.camera.GalleryScreen
 

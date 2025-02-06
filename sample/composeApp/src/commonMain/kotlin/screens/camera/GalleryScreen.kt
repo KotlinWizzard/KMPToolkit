@@ -8,12 +8,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
-import com.kmptoolkit.cameraxgallery.gallery.MediaPickerSelectionMode
-import com.kmptoolkit.cameraxgallery.gallery.MediaPickerSelectionType
-import com.kmptoolkit.cameraxgallery.gallery.rememberMediaPickerState
-import com.kmptoolkit.core.presentation.theme.ToolkitScaffold
-import com.kmptoolkit.core.presentation.theme.ToolkitTheme
-import com.kmptoolkit.core.presentation.theme.spacing
+import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.gallery.MediaPickerSelectionMode
+import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.gallery.MediaPickerSelectionType
+import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.gallery.rememberMediaPickerState
+import io.github.kotlinwizzard.kmptoolkit.core.presentation.theme.ToolkitScaffold
+import io.github.kotlinwizzard.kmptoolkit.core.presentation.theme.ToolkitTheme
+import io.github.kotlinwizzard.kmptoolkit.core.presentation.theme.spacing
 import presentation.BackButtonToolbar
 import screens.SimpleTextButton
 

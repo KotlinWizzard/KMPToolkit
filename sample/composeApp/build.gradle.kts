@@ -123,7 +123,7 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.kmptoolkit.sample"
+            packageName = "io.github.kotlinwizzard.kmptoolkit.sample"
             packageVersion = "1.0.0"
         }
     }
