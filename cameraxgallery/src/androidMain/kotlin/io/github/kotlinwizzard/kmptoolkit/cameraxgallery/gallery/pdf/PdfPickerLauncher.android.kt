@@ -183,7 +183,12 @@ private fun PdfRenderer.getPageAsBitmap(pageIndex: Int = 0): Bitmap {
     val mBitmap = Bitmap.createBitmap(page.width, page.height, Bitmap.Config.ARGB_8888)
     val canvas = Canvas(mBitmap)
     canvas.drawColor(Color.WHITE)
+    val originalWidth = page.width
+    val originalHeight = page.height
+    val scaleFactor = 800f / maxOf(originalWidth, originalHeight)
+    val targetWidth = (originalWidth * scaleFactor).toInt()
+    val targetHeight = (originalHeight * scaleFactor).toInt()
     page.render(mBitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
     page.close()
-    return mBitmap
+    return Bitmap.createScaledBitmap(mBitmap, targetWidth,targetHeight, true)
 }
