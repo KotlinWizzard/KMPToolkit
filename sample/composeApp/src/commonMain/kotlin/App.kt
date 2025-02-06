@@ -1,9 +1,9 @@
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import com.kmptoolkit.core.presentation.theme.ToolkitTheme
-import com.kmptoolkit.core.service.media.CacheServiceProvider
-import com.kmptoolkit.navigation.AppNavigator
+import io.github.kotlinwizzard.kmptoolkit.core.presentation.theme.ToolkitTheme
+import io.github.kotlinwizzard.kmptoolkit.core.service.media.CacheServiceProvider
+import io.github.kotlinwizzard.kmptoolkit.navigation.AppNavigator
 import screens.TemplateScreen
 
 

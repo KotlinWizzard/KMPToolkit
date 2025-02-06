@@ -5,7 +5,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.navigator.LocalNavigator
-import com.kmptoolkit.core.extensions.currentOrThrow
+import io.github.kotlinwizzard.kmptoolkit.core.extensions.currentOrThrow
 
 @Composable
 fun BackButtonToolbar(text:String){
