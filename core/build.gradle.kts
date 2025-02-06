@@ -97,14 +97,13 @@ mavenPublishing {
         description = "A core library for Kotlin Multiplatform."
         inceptionYear = "2025"
         url = "https://github.com/KotlinWizzard/KMPToolkit"
-        /*
+
         licenses {
             license {
-                name = "XXX"
-                url = "YYY"
-                distribution = "ZZZ"
+                name = "Apache License 2.0"
+                url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
             }
-        }*/
+        }
         developers {
             developer {
                 id = "KotlinWizzard"
