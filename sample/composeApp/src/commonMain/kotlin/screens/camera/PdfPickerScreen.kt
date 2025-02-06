@@ -77,12 +77,12 @@ class PdfPickerScreen : Screen {
 
                 Column(Modifier.fillMaxWidth().weight(1F)) {
                     Text("Current Previews:")
-                    LazyRow(Modifier.weight(1F).fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    LazyColumn(Modifier.weight(1F).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                         val items = currentResult?.results
                         if(items!=null) {
                             items(items){ data->
                                 PdfPickerResultPreview(
-                                    modifier = Modifier.size(60.dp),
+                                    modifier = Modifier.size(160.dp),
                                     pdfPickerResultData = data
                                 )
                             }
