@@ -12,6 +12,7 @@ fun App() {
     ToolkitTheme(
         lightColorScheme = { lightColorScheme() },
         darkColorScheme = { darkColorScheme() },
+        darkTheme = false
     ) {
         CacheServiceProvider {
             AppNavigator(TemplateScreen())

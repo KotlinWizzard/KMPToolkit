@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -18,6 +20,7 @@ import io.github.kotlinwizzard.kmptoolkit.core.presentation.theme.spacing
 import io.github.kotlinwizzard.kmptoolkit.navigation.LocalAppNavigator
 import screens.camera.CameraScreen
 import screens.camera.GalleryScreen
+import screens.camera.PdfPickerScreen
 
 
 class TemplateScreen : Screen {
@@ -25,7 +28,9 @@ class TemplateScreen : Screen {
     override fun Content() {
         ToolkitScaffold {
             Column(
-                Modifier.fillMaxSize().padding(ToolkitTheme.spacing.medium),
+                Modifier.fillMaxSize().padding(ToolkitTheme.spacing.medium).verticalScroll(
+                    rememberScrollState()
+                ),
                 verticalArrangement = Arrangement.spacedBy(
                     ToolkitTheme.spacing.medium
                 ),
@@ -33,6 +38,7 @@ class TemplateScreen : Screen {
             ) {
                 TemplateItem(CameraScreen(), "Camera sample")
                 TemplateItem(GalleryScreen(), "Gallery sample")
+                TemplateItem(PdfPickerScreen(), "PDF-Picker sample")
             }
         }
     }

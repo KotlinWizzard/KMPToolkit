@@ -26,8 +26,8 @@ class GalleryScreen : Screen {
         }) {
             val mediaPickerState = rememberMediaPickerState()
             mediaPickerState.RegisterLauncher()
-            mediaPickerState.ListenMediaPickerResult {
-                println("TEST_MEDIA_PICKER_RESULT = $it")
+            mediaPickerState.ListenMediaPickerResult { result->
+                println("MediaPickerResult = $result")
             }
             Column(
                 Modifier.fillMaxSize().padding(top = it.calculateTopPadding()),
@@ -52,7 +52,7 @@ class GalleryScreen : Screen {
 
                 SimpleTextButton(onClick = {
                     mediaPickerState.launch(
-                        mediaPickerMediaSelectionType = MediaPickerSelectionType.Combined,
+                        mediaPickerMediaSelectionType = MediaPickerSelectionType.ImageAndVideo,
                         mediaPickerSelectionMode = MediaPickerSelectionMode.Single
                     )
                 }, text = "Pick single image or video")
@@ -73,7 +73,7 @@ class GalleryScreen : Screen {
 
                 SimpleTextButton(onClick = {
                     mediaPickerState.launch(
-                        mediaPickerMediaSelectionType = MediaPickerSelectionType.Combined,
+                        mediaPickerMediaSelectionType = MediaPickerSelectionType.ImageAndVideo,
                         mediaPickerSelectionMode = MediaPickerSelectionMode.Multiple()
                     )
                 }, text = "Pick multiple images or videos")

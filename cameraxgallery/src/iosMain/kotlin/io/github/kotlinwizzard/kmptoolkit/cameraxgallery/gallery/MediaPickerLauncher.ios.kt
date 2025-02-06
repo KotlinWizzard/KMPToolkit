@@ -44,9 +44,8 @@ internal actual fun launchMediaPicker(
 }
 
 
-@OptIn(ExperimentalForeignApi::class)
 @Composable
-internal fun startMediaPickerLauncher(
+private fun startMediaPickerLauncher(
     selectionMode: MediaPickerSelectionMode,
     selectionType:MediaPickerSelectionType,
     mediaPickerLauncherState: MediaPickerLauncherState,
@@ -113,7 +112,7 @@ internal fun startMediaPickerLauncher(
 }
 
 @OptIn(ExperimentalForeignApi::class)
-private fun NSData.toByteArray():ByteArray?{
+internal fun NSData.toByteArray():ByteArray?{
     return this.bytes().toByteArray(this.length())
 }
 
@@ -127,7 +126,7 @@ private fun CPointer<out CPointed>?.toByteArray(size:ULong): ByteArray? {
 }
 
 @OptIn(ExperimentalForeignApi::class)
-private fun UIImage.toByteArray(compressionQuality: Double=1.0): ByteArray {
+internal fun UIImage.toByteArray(compressionQuality: Double=1.0): ByteArray {
     val validCompressionQuality = compressionQuality.coerceIn(0.0, 1.0)
     val jpegData = UIImageJPEGRepresentation(this, validCompressionQuality)!!
     return ByteArray(jpegData.length.toInt()).apply {
@@ -192,7 +191,7 @@ private fun getPhPickerConfiguration(mode: MediaPickerSelectionMode, type: Media
         val filter = when(type){
             MediaPickerSelectionType.Image -> PHPickerFilter.imagesFilter
             MediaPickerSelectionType.Video -> PHPickerFilter.videosFilter
-            MediaPickerSelectionType.Combined -> PHPickerFilter.anyFilterMatchingSubfilters(listOf( PHPickerFilter.imagesFilter, PHPickerFilter.videosFilter))
+            MediaPickerSelectionType.ImageAndVideo -> PHPickerFilter.anyFilterMatchingSubfilters(listOf( PHPickerFilter.imagesFilter, PHPickerFilter.videosFilter))
         }
         setSelectionLimit(selectionLimit = limit)
         setFilter(filter = filter)
