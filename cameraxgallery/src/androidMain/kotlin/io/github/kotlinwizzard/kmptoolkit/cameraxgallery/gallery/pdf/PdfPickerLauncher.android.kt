@@ -2,11 +2,13 @@ package io.github.kotlinwizzard.kmptoolkit.cameraxgallery.gallery.pdf
 
 import android.content.ContentResolver
 import android.content.Context
+import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
+import android.provider.MediaStore
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -123,8 +125,11 @@ private fun Uri?.toPdfPickerResultData(
         val contentResolver = context.contentResolver
         val parcelFileDescriptor = contentResolver.openFileDescriptor(this, "r") ?: return null
         val bytes = readBytes(contentResolver) ?: return null
+        val filename =
+            filename(contentResolver) ?: pdfCache.generateFilename()
         val pdfFilePath = pdfCache.cacheFileTemporary(
-            bytes
+            bytes,
+            filename
         )
         val renderer = PdfRenderer(parcelFileDescriptor)
         val totalPages = renderer.pageCount
@@ -136,9 +141,22 @@ private fun Uri?.toPdfPickerResultData(
         PdfPickerResultData(
             filePath = pdfFilePath,
             pages = totalPages,
-            previewImageFilePath = imagePreviewPath
+            previewImageFilePath = imagePreviewPath, filename = filename
         )
     }.getOrNull()
+}
+
+private fun Uri.filename(contentResolver: ContentResolver): String? {
+    val projection = arrayOf(MediaStore.MediaColumns.DISPLAY_NAME)
+    var fileName: String? = null
+    val cursor: Cursor =
+        contentResolver.query(this, projection, null, null, null) ?: return null
+    cursor.use { metaCursor ->
+        if (metaCursor.moveToFirst()) {
+            fileName = metaCursor.getString(0)
+        }
+    }
+    return fileName
 }
 
 private fun Uri?.readBytes(contentResolver: ContentResolver): ByteArray? {

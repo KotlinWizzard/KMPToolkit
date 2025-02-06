@@ -9,6 +9,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -97,13 +100,17 @@ class PdfPickerScreen : Screen {
         pdfPickerResultData: PdfPickerResultData
     ) {
         val bitmap = pdfPickerResultData.readPreviewImageBytes()?.decodeToImageBitmap() ?: return
-        Box(modifier) {
-            Image(bitmap, contentDescription = null, modifier.matchParentSize())
-            Text(
-                "${pdfPickerResultData.pages}",
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.align(Alignment.BottomEnd).background(ToolkitTheme.colorScheme.background)
-            )
+        Column(Modifier.wrapContentSize()) {
+            Box(modifier) {
+                Image(bitmap, contentDescription = null, modifier.matchParentSize())
+                Text(
+                    "${pdfPickerResultData.pages}",
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.align(Alignment.BottomEnd)
+                        .background(ToolkitTheme.colorScheme.background)
+                )
+            }
+            Text(pdfPickerResultData.filename)
         }
     }
 }

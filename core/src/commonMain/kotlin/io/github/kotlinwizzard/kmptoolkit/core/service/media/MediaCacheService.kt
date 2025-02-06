@@ -190,6 +190,14 @@ sealed class MediaCacheService(
             return storeFile(source, destinationPath)
         }
 
+        fun extractFilename(path: String): String? {
+            val metadata = FileSystem.SYSTEM.metadataOrNull(path.toPath()) ?: return null
+            if (!metadata.isRegularFile || metadata.isDirectory) {
+                return null
+            }
+            return path.toPath().name
+        }
+
         private fun createDirectory(path: Path, recursive: Boolean = true): Path {
             if (FileSystem.SYSTEM.exists(path)) return path
             if (recursive) {

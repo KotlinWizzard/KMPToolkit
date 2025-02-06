@@ -9,6 +9,7 @@ sealed class PdfPickerResult {
 
 data class PdfPickerResultData(
     val filePath: String,
+    val filename: String,
     val previewImageFilePath: String,
     val pages: Int
 ) {
