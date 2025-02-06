@@ -1,9 +1,9 @@
 package io.github.kotlinwizzard.kmptoolkit.cameraxgallery.gallery
 
 sealed class MediaPickerStatus {
-    data object Idle : io.github.kotlinwizzard.kmptoolkit.cameraxgallery.gallery.MediaPickerStatus()
+    data object Idle : MediaPickerStatus()
     data class LaunchRequested(
-        val mediaPickerMediaSelectionType: io.github.kotlinwizzard.kmptoolkit.cameraxgallery.gallery.MediaPickerSelectionType = io.github.kotlinwizzard.kmptoolkit.cameraxgallery.gallery.MediaPickerSelectionType.Image,
-        val mediaPickerSelectionMode: io.github.kotlinwizzard.kmptoolkit.cameraxgallery.gallery.MediaPickerSelectionMode = io.github.kotlinwizzard.kmptoolkit.cameraxgallery.gallery.MediaPickerSelectionMode.Single
-    ) : io.github.kotlinwizzard.kmptoolkit.cameraxgallery.gallery.MediaPickerStatus()
+        val mediaPickerMediaSelectionType: MediaPickerSelectionType = MediaPickerSelectionType.Image,
+        val mediaPickerSelectionMode: MediaPickerSelectionMode = MediaPickerSelectionMode.Single
+    ) : MediaPickerStatus()
 }

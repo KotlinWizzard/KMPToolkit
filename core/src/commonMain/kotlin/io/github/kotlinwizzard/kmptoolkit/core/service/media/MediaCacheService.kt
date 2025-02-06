@@ -32,6 +32,26 @@ sealed class MediaCacheService(
         return tempDir
     }
 
+    fun cacheFileTemporary(
+        content: ByteArray,
+        filename: String = generateFilename(),
+    ): String {
+        val tempFilePath = getPathFromFilename(filename)
+        val bytes = content
+        FileSystem.SYSTEM.sink(tempFilePath).buffer().use { sink ->
+            sink.write(bytes)
+        }
+        return tempFilePath.toString()
+    }
+
+    fun copyFileToCache(sourcePath: String, filename: String = generateFilename()): String? {
+        val tempFilePath = getPathFromFilename(filename)
+        return MediaCacheService.copy(
+            sourcePath,
+            tempFilePath.toString()
+        )
+    }
+
     fun generateFilename(extension: String = defaultFileExtension): String =
         "${filenamePrefix}_${UUID.generate()}$extension"
 
@@ -117,21 +137,22 @@ sealed class MediaCacheService(
         override val filenamePrefix: String
             get() = "video"
 
-        fun cacheFileTemporary(
-            content: ByteArray,
-            filename: String = generateFilename(),
-        ): String {
-            val tempFilePath = getPathFromFilename(filename)
-            val bytes = content
-
-            FileSystem.SYSTEM.sink(tempFilePath).buffer().use { sink ->
-                sink.write(bytes)
-            }
-            return tempFilePath.toString()
-        }
-
         companion object {
             const val DEFAULT_BASE_PATH = "media-video"
+        }
+    }
+
+    class Pdf(
+        basePath: String = DEFAULT_BASE_PATH,
+        override val cacheDeletionTimeoutMillis: Long? = DurationUnit.DAYS.millis(1),
+    ) : MediaCacheService(basePath, cacheDeletionTimeoutMillis) {
+        override val defaultFileExtension: String
+            get() = ".pdf"
+        override val filenamePrefix: String
+            get() = "pdf"
+
+        companion object {
+            const val DEFAULT_BASE_PATH = "media-pdf"
         }
     }
 
@@ -164,8 +185,13 @@ sealed class MediaCacheService(
             }
         }
 
-        private fun createDirectory(path: Path, recursive: Boolean = true):Path {
-            if(FileSystem.SYSTEM.exists(path)) return path
+        fun copy(sourcePath: String, destinationPath: String): String? {
+            val source = readCachedFileOrNull(sourcePath) ?: return null
+            return storeFile(source, destinationPath)
+        }
+
+        private fun createDirectory(path: Path, recursive: Boolean = true): Path {
+            if (FileSystem.SYSTEM.exists(path)) return path
             if (recursive) {
                 FileSystem.SYSTEM.createDirectories(path)
             } else {
@@ -174,8 +200,8 @@ sealed class MediaCacheService(
             return path
         }
 
-        fun createDirectory(path: String, recursive: Boolean = true):String {
-          return  createDirectory(path = path.toPath(), recursive = recursive).toString()
+        fun createDirectory(path: String, recursive: Boolean = true): String {
+            return createDirectory(path = path.toPath(), recursive = recursive).toString()
         }
 
         fun storeFile(

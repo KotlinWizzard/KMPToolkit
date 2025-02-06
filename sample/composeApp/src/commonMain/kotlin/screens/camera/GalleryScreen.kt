@@ -26,8 +26,8 @@ class GalleryScreen : Screen {
         }) {
             val mediaPickerState = rememberMediaPickerState()
             mediaPickerState.RegisterLauncher()
-            mediaPickerState.ListenMediaPickerResult {
-                println("TEST_MEDIA_PICKER_RESULT = $it")
+            mediaPickerState.ListenMediaPickerResult { result->
+                println("MediaPickerResult = $result")
             }
             Column(
                 Modifier.fillMaxSize().padding(top = it.calculateTopPadding()),
