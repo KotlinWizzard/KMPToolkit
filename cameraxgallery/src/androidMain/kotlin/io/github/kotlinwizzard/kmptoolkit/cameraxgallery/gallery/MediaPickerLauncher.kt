@@ -131,5 +131,5 @@ private fun Uri.toResult(context: Context): Pair<ByteArray, MediaPickerMediaType
 private fun MediaPickerSelectionType.toActivityContracts() = when (this) {
     MediaPickerSelectionType.Image -> ActivityResultContracts.PickVisualMedia.ImageOnly
     MediaPickerSelectionType.Video -> ActivityResultContracts.PickVisualMedia.VideoOnly
-    MediaPickerSelectionType.Combined -> ActivityResultContracts.PickVisualMedia.ImageAndVideo
+    MediaPickerSelectionType.ImageAndVideo -> ActivityResultContracts.PickVisualMedia.ImageAndVideo
 }

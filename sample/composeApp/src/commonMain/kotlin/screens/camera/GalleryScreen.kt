@@ -52,7 +52,7 @@ class GalleryScreen : Screen {
 
                 SimpleTextButton(onClick = {
                     mediaPickerState.launch(
-                        mediaPickerMediaSelectionType = MediaPickerSelectionType.Combined,
+                        mediaPickerMediaSelectionType = MediaPickerSelectionType.ImageAndVideo,
                         mediaPickerSelectionMode = MediaPickerSelectionMode.Single
                     )
                 }, text = "Pick single image or video")
@@ -73,7 +73,7 @@ class GalleryScreen : Screen {
 
                 SimpleTextButton(onClick = {
                     mediaPickerState.launch(
-                        mediaPickerMediaSelectionType = MediaPickerSelectionType.Combined,
+                        mediaPickerMediaSelectionType = MediaPickerSelectionType.ImageAndVideo,
                         mediaPickerSelectionMode = MediaPickerSelectionMode.Multiple()
                     )
                 }, text = "Pick multiple images or videos")

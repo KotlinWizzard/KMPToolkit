@@ -192,7 +192,7 @@ private fun getPhPickerConfiguration(mode: MediaPickerSelectionMode, type: Media
         val filter = when(type){
             MediaPickerSelectionType.Image -> PHPickerFilter.imagesFilter
             MediaPickerSelectionType.Video -> PHPickerFilter.videosFilter
-            MediaPickerSelectionType.Combined -> PHPickerFilter.anyFilterMatchingSubfilters(listOf( PHPickerFilter.imagesFilter, PHPickerFilter.videosFilter))
+            MediaPickerSelectionType.ImageAndVideo -> PHPickerFilter.anyFilterMatchingSubfilters(listOf( PHPickerFilter.imagesFilter, PHPickerFilter.videosFilter))
         }
         setSelectionLimit(selectionLimit = limit)
         setFilter(filter = filter)

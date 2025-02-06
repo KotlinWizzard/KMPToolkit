@@ -17,8 +17,8 @@ class MediaPickerState(
     private val imageCompressionMode: ImageCompressionMode = ImageCompressionMode.None,
     private val earlyLaunch: Boolean = false
 ) {
-    private var mediaPickerStatus: io.github.kotlinwizzard.kmptoolkit.cameraxgallery.gallery.MediaPickerStatus by mutableStateOf(
-        io.github.kotlinwizzard.kmptoolkit.cameraxgallery.gallery.MediaPickerStatus.Idle)
+    private var mediaPickerStatus: MediaPickerStatus by mutableStateOf(
+        MediaPickerStatus.Idle)
 
 
     private val mediaPickerLauncherState = MediaPickerLauncherState()
@@ -142,7 +142,7 @@ class MediaPickerState(
     }
 
     private fun reset() {
-        mediaPickerStatus = io.github.kotlinwizzard.kmptoolkit.cameraxgallery.gallery.MediaPickerStatus.Idle
+        mediaPickerStatus = MediaPickerStatus.Idle
         mediaPickerLauncherState.reset()
     }
 
