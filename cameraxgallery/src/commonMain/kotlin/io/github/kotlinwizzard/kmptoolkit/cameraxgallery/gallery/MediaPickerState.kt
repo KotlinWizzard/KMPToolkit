@@ -50,6 +50,9 @@ class MediaPickerState(
         val status = mediaPickerStatus
         val key = registeredLauncherKey
         DisposableEffect(key) {
+            if(registeredLauncherKey==null) {
+                registeredLauncherKey = launcherKey
+            }
             onDispose {
                 if (key == launcherKey) {
                     registeredLauncherKey = null
@@ -58,7 +61,6 @@ class MediaPickerState(
         }
         if (key != null && key != launcherKey) return
         if (status is LaunchRequested) {
-            registeredLauncherKey = launcherKey
             launchMediaPicker(
                 onResult = {
                     onResult(it, cache)
