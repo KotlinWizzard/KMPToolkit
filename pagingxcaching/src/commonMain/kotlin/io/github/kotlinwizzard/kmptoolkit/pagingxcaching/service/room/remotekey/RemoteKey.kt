@@ -5,8 +5,8 @@ import androidx.room.PrimaryKey
 import kotlinx.datetime.Clock
 import kotlin.jvm.JvmOverloads
 
-@Entity(tableName = "remote_keys")
-data class RemoteKey @JvmOverloads constructor(
+@Entity
+data class RemoteKey(
     @PrimaryKey
     val remoteKeyData: String,
     val type: String,
