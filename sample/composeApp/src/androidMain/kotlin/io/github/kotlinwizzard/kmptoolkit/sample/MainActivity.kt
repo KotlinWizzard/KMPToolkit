@@ -5,6 +5,9 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import di.KoinInit
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.Koin
 
 
 class MainActivity : ComponentActivity() {
@@ -14,6 +17,9 @@ class MainActivity : ComponentActivity() {
         intent.setType("application/pdf")
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
         intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+        KoinInit.init {
+            androidContext(this@MainActivity)
+        }
         setContent {
             App()
         }

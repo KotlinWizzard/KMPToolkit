@@ -17,10 +17,10 @@ interface RemoteKeyRoomDao : DaoTypeProvider {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insert(data: RemoteKey)
 
-    @Query("SELECT * FROM remote_keys WHERE remoteKeyData = :id")
+    @Query("SELECT * FROM RemoteKey WHERE remoteKeyData = :id")
     suspend fun selectById(id: String): RemoteKey?
 
-    @Query("SELECT * FROM remote_keys WHERE type = :type AND queryHash = :queryHash  ")
+    @Query("SELECT * FROM RemoteKey WHERE type = :type AND queryHash = :queryHash  ")
     suspend fun selectAllByTypeAndQueryHash(
         type: String,
         queryHash: String,
@@ -29,16 +29,16 @@ interface RemoteKeyRoomDao : DaoTypeProvider {
     @Upsert
     suspend fun insertOrUpdate(data: RemoteKey)
 
-    @Query("DELETE FROM remote_keys WHERE remoteKeyData = :id")
+    @Query("DELETE FROM RemoteKey WHERE remoteKeyData = :id")
     suspend fun deleteById(id: String)
 
-    @Query("DELETE FROM remote_keys WHERE type = :type")
+    @Query("DELETE FROM RemoteKey WHERE type = :type")
     suspend fun deleteAllByType(type: String)
 
-    @Query("DELETE FROM remote_keys")
+    @Query("DELETE FROM RemoteKey")
     suspend fun deleteAll()
 
-    @Query("SELECT creationTime FROM remote_keys WHERE type = :type AND queryHash = :queryHash ORDER BY creationTime LIMIT 1")
+    @Query("SELECT creationTime FROM RemoteKey WHERE type = :type AND queryHash = :queryHash ORDER BY creationTime LIMIT 1")
     suspend fun selectCreationTime(
         type: String,
         queryHash: String,
