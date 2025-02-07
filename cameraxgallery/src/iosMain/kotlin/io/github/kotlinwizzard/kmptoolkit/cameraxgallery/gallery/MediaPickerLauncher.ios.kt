@@ -30,7 +30,7 @@ import platform.posix.memcpy
 @Composable
 internal actual fun launchMediaPicker(
     onResult: (List<Pair<ByteArray, MediaPickerMediaType>>) -> Unit,
-    mediaPickerStatus: io.github.kotlinwizzard.kmptoolkit.cameraxgallery.gallery.MediaPickerStatus.LaunchRequested,
+    mediaPickerStatus: MediaPickerStatus.LaunchRequested,
     mediaPickerLauncherState: MediaPickerLauncherState
 ) {
     val scope = rememberCoroutineScope()

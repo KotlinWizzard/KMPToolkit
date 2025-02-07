@@ -21,7 +21,7 @@ androidx-lifecycle = "2.8.7"
 lifecycle = "2.8.7"
 androidxKmp-bundle = "1.0.0"
 androidxKmp-lifecycle = "2.8.0"
-room = "2.7.0-alpha10"
+room = "2.7.0-alpha13"
 
 [libraries]
 stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }

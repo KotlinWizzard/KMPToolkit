@@ -12,22 +12,22 @@ import kotlinx.coroutines.withContext
 
 suspend fun <R> safeApiCall(
     dispatcher: CoroutineDispatcher = Dispatchers.io,
-    observer: io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.api.ApiResultObserver = io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.api.ApiResultObserver.Companion.Empty,
+    observer: ApiResultObserver = ApiResultObserver.Companion.Empty,
     apiCall: suspend () -> R?,
 ) = withContext(dispatcher) {
     try {
         observer.onApiCallStarted()
         val result = apiCall.invoke()
         if (result != null) {
-            if (io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.api.isBodyEmpty(result)) {
-                io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.api.ApiResult.Empty
+            if (isBodyEmpty(result)) {
+                ApiResult.Empty
             } else {
-                io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.api.ApiResult.Success(
+                ApiResult.Success(
                     result
                 )
             }
         } else {
-            io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.api.ApiResult.Empty
+            ApiResult.Empty
         }
     } catch (throwable: Throwable) {
         when (throwable) {

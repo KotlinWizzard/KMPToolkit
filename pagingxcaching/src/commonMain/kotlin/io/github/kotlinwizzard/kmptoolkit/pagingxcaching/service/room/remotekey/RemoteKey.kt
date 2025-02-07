@@ -3,9 +3,10 @@ package io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.room.remotekey
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.datetime.Clock
+import kotlin.jvm.JvmOverloads
 
-@Entity
-data class RemoteKey(
+@Entity(tableName = "remote_keys")
+data class RemoteKey @JvmOverloads constructor(
     @PrimaryKey
     val remoteKeyData: String,
     val type: String,
