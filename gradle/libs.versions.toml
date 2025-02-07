@@ -22,6 +22,8 @@ lifecycle = "2.8.7"
 androidxKmp-bundle = "1.0.0"
 androidxKmp-lifecycle = "2.8.0"
 room = "2.7.0-alpha13"
+ksp = "2.1.0-1.0.29"
+sqllite = "2.5.0-alpha13"
 
 [libraries]
 stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
@@ -60,6 +62,9 @@ androidxKmp-lifecycle-viewmodel = { module = "org.jetbrains.androidx.lifecycle:l
 androidxKmp-lifecycle-viewmodelCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidxKmp-lifecycle" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-paging = { module = "androidx.room:room-paging", version.ref = "room" }
+room-runtime-android = { module = "androidx.room:room-runtime-android", version.ref = "room" }
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+cache-driver = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqllite" }
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
@@ -68,3 +73,5 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 vanniktech-mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.30.0" }
 jetbrains-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+room = { id = "androidx.room", version.ref = "room" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

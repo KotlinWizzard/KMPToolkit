@@ -1,0 +1,65 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "892820fd98626ac1231254a3520a4d5e",
+    "entities": [
+      {
+        "tableName": "remote_keys",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`remoteKeyData` TEXT NOT NULL, `type` TEXT NOT NULL, `queryHash` TEXT NOT NULL, `currentPage` INTEGER NOT NULL, `previousPage` INTEGER, `nextPage` INTEGER, `creationTime` INTEGER NOT NULL, PRIMARY KEY(`remoteKeyData`))",
+        "fields": [
+          {
+            "fieldPath": "remoteKeyData",
+            "columnName": "remoteKeyData",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "queryHash",
+            "columnName": "queryHash",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "currentPage",
+            "columnName": "currentPage",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "previousPage",
+            "columnName": "previousPage",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "nextPage",
+            "columnName": "nextPage",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "creationTime",
+            "columnName": "creationTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "remoteKeyData"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '892820fd98626ac1231254a3520a4d5e')"
+    ]
+  }
+}

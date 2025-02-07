@@ -10,6 +10,8 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.room)
+    alias(libs.plugins.ksp)
 }
 
 kotlin {
@@ -27,6 +29,7 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
+            linkerOpts.add("-lsqlite3")
         }
     }
     /*
@@ -66,11 +69,21 @@ kotlin {
                 implementation(compose.ui)
                 implementation(compose.components.resources)
                 implementation(libs.coroutines.core)
+                // Room Setup
+                implementation(libs.room.runtime)
+                implementation(libs.room.paging)
+                implementation(libs.cache.driver)
+
+                //DI
+               implementation(libs.koin.core)
+               implementation(libs.koin.compose)
             }
         }
 
         androidMain.dependencies {
             implementation(libs.androidx.activity.compose)
+            runtimeOnly(libs.room.runtime.android)
+            implementation(libs.koin.android)
         }
         val commonTest by getting {
             dependencies {
@@ -129,3 +142,23 @@ compose.desktop {
     }
 }
 
+
+room {
+    schemaDirectory("$projectDir/schemas")
+}
+
+dependencies {
+    // room
+    // Replace it with ->  ksp(libs.room.compiler) when it is stable
+    // add("kspCommonMainMetadata", libs.room.compiler)
+    // kspCommonMainMetadata(libs.room.compiler)
+
+    listOf(
+        "kspAndroid",
+        "kspIosSimulatorArm64",
+        "kspIosX64",
+        "kspIosArm64",
+    ).forEach {
+        add(it, libs.room.compiler)
+    }
+}
