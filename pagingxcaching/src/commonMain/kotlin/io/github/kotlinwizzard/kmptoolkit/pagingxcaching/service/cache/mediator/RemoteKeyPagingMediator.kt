@@ -18,9 +18,10 @@ import kotlinx.datetime.Clock
 import kotlinx.io.IOException
 
 @OptIn(ExperimentalPagingApi::class)
-class RemoteKeyPagingMediator<Key : PagingQueryKey, Local : PagingPrimaryKeyProvider, Model : LazyLayoutKeyProvider>(
+class RemoteKeyPagingMediator<Key : PagingQueryKey,
+        Local : PagingPrimaryKeyProvider, Model : LazyLayoutKeyProvider, RemoteKeyType:RemoteKey>(
     val dao: CachedPagingDaoWithRoomDao<Key, *, Local, Model>,
-    private val remoteKeyDao: RemoteKeyDao,
+    private val remoteKeyDao: RemoteKeyDao<RemoteKeyType>,
     private val pagingKeyProvider: PagingKeyProvider<Key>,
     private val refreshAction: io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.cache.infrastructure.CachedRefreshAction,
     private val fetcher: CacheFetcher.NetworkPage<Key, Model>,
@@ -117,9 +118,15 @@ class RemoteKeyPagingMediator<Key : PagingQueryKey, Local : PagingPrimaryKeyProv
     override suspend fun initialize(): InitializeAction =
         when (refreshAction) {
             io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.cache.infrastructure.CachedRefreshAction.RefreshAndDelete -> InitializeAction.LAUNCH_INITIAL_REFRESH
-            is io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.cache.infrastructure.CachedRefreshAction.RefreshAndDeleteOnTime -> getInitializeActionOnTime(refreshAction.cacheTimeoutMillis)
+            is io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.cache.infrastructure.CachedRefreshAction.RefreshAndDeleteOnTime -> getInitializeActionOnTime(
+                refreshAction.cacheTimeoutMillis
+            )
+
             io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.cache.infrastructure.CachedRefreshAction.RefreshAndUpdate -> InitializeAction.LAUNCH_INITIAL_REFRESH
-            is io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.cache.infrastructure.CachedRefreshAction.RefreshAndUpdateOnTime -> getInitializeActionOnTime(refreshAction.cacheTimeoutMillis)
+            is io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.cache.infrastructure.CachedRefreshAction.RefreshAndUpdateOnTime -> getInitializeActionOnTime(
+                refreshAction.cacheTimeoutMillis
+            )
+
             io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.cache.infrastructure.CachedRefreshAction.RefreshNever -> InitializeAction.SKIP_INITIAL_REFRESH
         }
 

@@ -8,26 +8,37 @@ import androidx.room.Query
 import androidx.room.Upsert
 import io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.room.dao.DaoType
 import io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.room.dao.DaoTypeProvider
+import kotlinx.datetime.Clock
 
 @Dao
-interface RemoteKeyRoomDao : DaoTypeProvider {
+interface RemoteKeyRoomDao<T:RemoteKey> : DaoTypeProvider {
     override val daoType: DaoType
         get() = DaoType.UserData
 
+    fun createRemoteKey(
+       remoteKeyData: String,
+       type: String,
+       queryHash: String,
+        currentPage: Int,
+       previousPage: Int?,
+       nextPage: Int?,
+       creationTime: Long = Clock.System.now().toEpochMilliseconds(),
+    ):T
+
     @Insert(onConflict = OnConflictStrategy.ABORT)
-    suspend fun insert(data: RemoteKey)
+    suspend fun insert(data: T)
 
     @Query("SELECT * FROM RemoteKey WHERE remoteKeyData = :id")
-    suspend fun selectById(id: String): RemoteKey?
+    suspend fun selectById(id: String): T?
 
     @Query("SELECT * FROM RemoteKey WHERE type = :type AND queryHash = :queryHash  ")
     suspend fun selectAllByTypeAndQueryHash(
         type: String,
         queryHash: String,
-    ): List<RemoteKey>
+    ): List<T>
 
     @Upsert
-    suspend fun insertOrUpdate(data: RemoteKey)
+    suspend fun insertOrUpdate(data: T)
 
     @Query("DELETE FROM RemoteKey WHERE remoteKeyData = :id")
     suspend fun deleteById(id: String)
@@ -45,7 +56,7 @@ interface RemoteKeyRoomDao : DaoTypeProvider {
     ): Long?
 
     @Delete
-    suspend fun delete(data: RemoteKey)
+    suspend fun delete(data: T)
 
     override suspend fun clearAll() {
         deleteAll()

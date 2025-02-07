@@ -20,7 +20,7 @@ import kotlin.reflect.KClass
 
 abstract class ApiCachedViewModelService<PageDTO : Any, DTO : Any, Actual : LazyLayoutKeyProvider, Key : PagingQueryKey, Local : PagingPrimaryKeyProvider>(
     protected val dao: CachedPagingDaoWithRoomDao<Key, *, Local, Actual>,
-    protected val remoteKeyDao: RemoteKeyDao,
+    protected val remoteKeyDao: RemoteKeyDao<*>,
     protected val cachedRefreshAction: io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.cache.infrastructure.CachedRefreshAction,
 ) : BasicApiPagingViewModelService<Local, Actual>(),
     PagingKeyProvider<Key> {
