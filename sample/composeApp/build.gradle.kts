@@ -145,5 +145,13 @@ room {
 dependencies {
     // room
     // Replace it with ->  ksp(libs.room.compiler) when it is stable
-     add("kspCommonMainMetadata", libs.room.compiler)
+    // add("kspCommonMainMetadata", libs.room.compiler)
+    listOf(
+        "kspAndroid",
+        "kspIosSimulatorArm64",
+        "kspIosX64",
+        "kspIosArm64",
+    ).forEach {
+        add(it, libs.room.compiler)
+    }
 }

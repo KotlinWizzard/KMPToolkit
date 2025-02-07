@@ -6,13 +6,13 @@ import kotlinx.datetime.Clock
 import kotlin.jvm.JvmOverloads
 
 @Entity
-data class RemoteKey(
+open class RemoteKey(
     @PrimaryKey
-    val remoteKeyData: String,
-    val type: String,
-    val queryHash: String,
-    var currentPage: Int,
-    var previousPage: Int?,
-    val nextPage: Int?,
-    val creationTime: Long = Clock.System.now().toEpochMilliseconds(),
+    open val remoteKeyData: String,
+    open val type: String,
+    open val queryHash: String,
+    open var currentPage: Int,
+    open var previousPage: Int?,
+    open val nextPage: Int?,
+    open val creationTime: Long = Clock.System.now().toEpochMilliseconds(),
 )

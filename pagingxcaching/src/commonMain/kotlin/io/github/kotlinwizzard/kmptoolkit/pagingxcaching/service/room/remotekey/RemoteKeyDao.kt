@@ -8,24 +8,22 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
 
-class RemoteKeyDao(
-    val remoteKeyRoomDao: RemoteKeyRoomDao,
+class RemoteKeyDao<T:RemoteKey>(
+    val remoteKeyRoomDao: RemoteKeyRoomDao<T>,
     val scope: CoroutineScope = CoroutineScope(Dispatchers.IO),
 ) {
     fun mapToRemoteKey(
         keyProvider: PagingPrimaryKeyProvider,
         pagingQueryKey: PagingQueryKey,
         details: RemoteKeyDetails,
-    ): RemoteKey {
+    ):T {
         val key = constructKey(keyProvider, pagingQueryKey)
-        return RemoteKey(
-            remoteKeyData = key,
+        return remoteKeyRoomDao.createRemoteKey(    remoteKeyData = key,
             type = pagingQueryKey.getQueryType(),
             queryHash = pagingQueryKey.getQueryHash(),
             currentPage = details.currentPage,
             nextPage = details.nextPage,
-            previousPage = details.previousPage,
-        )
+            previousPage = details.previousPage,)
     }
 
     private fun constructKey(
@@ -58,13 +56,13 @@ class RemoteKeyDao(
             queryHash = pagingQueryKey.getQueryHash(),
         )
 
-    suspend fun getAllMatchingRemoteKeys(pagingQueryKey: PagingQueryKey): List<RemoteKey> =
+    suspend fun getAllMatchingRemoteKeys(pagingQueryKey: PagingQueryKey): List<T> =
         remoteKeyRoomDao.selectAllByTypeAndQueryHash(
             pagingQueryKey.getQueryType(),
             pagingQueryKey.getQueryHash(),
         )
 
-    suspend fun delete(remoteKey: RemoteKey) = remoteKeyRoomDao.delete(remoteKey)
+    suspend fun delete(remoteKey: T) = remoteKeyRoomDao.delete(remoteKey)
 
     suspend fun deleteById(
         keyProvider: PagingPrimaryKeyProvider,
