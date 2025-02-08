@@ -21,7 +21,7 @@ androidx-lifecycle = "2.8.7"
 lifecycle = "2.8.7"
 androidxKmp-bundle = "1.0.0"
 androidxKmp-lifecycle = "2.8.0"
-room = "2.7.0-alpha13"
+room = "2.7.0-alpha10"
 ksp = "2.1.0-1.0.29"
 sqllite = "2.5.0-alpha13"
 

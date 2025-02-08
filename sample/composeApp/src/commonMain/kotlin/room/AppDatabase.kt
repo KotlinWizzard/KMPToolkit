@@ -9,12 +9,14 @@ import io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.room.remotekey.
 @Database(
     entities = [
       RemoteKeyImpl::class,
+    TestRoomEntity::class
     ],
     version = 1,
 )
 @ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase:RoomDatabase(), RoomDbClearAllTablesFix{
     abstract val remoteKeyDao:RemoteKeyRoomDaoImpl
+    abstract val testRoomDao:TestRoomDao
     override fun clearAllTables() {
     }
     companion object {
