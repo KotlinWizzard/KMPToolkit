@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "0735bc9207e1486adc31ae498771f28b",
+    "identityHash": "3555d43308c0073f6abf90f2089e646f",
     "entities": [
       {
         "tableName": "RemoteKeyImpl",
@@ -55,11 +55,41 @@
             "remoteKeyData"
           ]
         }
+      },
+      {
+        "tableName": "TestRoomEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `data` TEXT NOT NULL, `creationTime` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "data",
+            "columnName": "data",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "creationTime",
+            "columnName": "creationTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0735bc9207e1486adc31ae498771f28b')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3555d43308c0073f6abf90f2089e646f')"
     ]
   }
 }
