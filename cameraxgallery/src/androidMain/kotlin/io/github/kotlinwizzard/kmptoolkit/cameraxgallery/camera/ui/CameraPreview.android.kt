@@ -30,6 +30,7 @@ import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.camera.state.CameraCapt
 import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.camera.state.CameraFocusStatus
 import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.camera.state.CameraState
 import io.github.kotlinwizzard.kmptoolkit.core.service.media.LocalCache
+import io.github.kotlinwizzard.kmptoolkit.core.util.LifecycleEffect
 import java.util.concurrent.Executors
 
 @Composable
@@ -162,6 +163,7 @@ private fun HandleTriggerVideoCapture(
                 is VideoRecordEvent.Start -> {
                     cameraCaptureState.isCaptureDisable = true
                 }
+
                 is VideoRecordEvent.Finalize -> {
                     if (event.hasError()) {
                         cameraCaptureState.onCapture(null)
@@ -198,7 +200,7 @@ private fun HandleTriggerVideoCapture(
         }
     }
 
-    DisposableEffect(cameraCaptureState){
+    DisposableEffect(cameraCaptureState) {
         onDispose {
             activeRecording?.stop()
             activeRecording = null
@@ -210,8 +212,16 @@ private fun HandleTriggerVideoCapture(
 
 @Composable
 private fun ListenTorchState(cameraControl: CameraControl?, cameraState: CameraState) {
-    LaunchedEffect(cameraControl, cameraState.cameraTorchState.isTorchEnabled) {
-        cameraControl?.enableTorch(cameraState.cameraTorchState.isTorchEnabled)
+    if(cameraControl==null) return
+    LifecycleEffect(onResume = {
+        cameraControl.enableTorch(cameraState.cameraTorchState.isTorchEnabled)
+    }, onPause = {
+        cameraControl.enableTorch(false)
+    })
+    DisposableEffect(cameraState.cameraTorchState.isTorchEnabled) {
+        cameraControl.enableTorch(cameraState.cameraTorchState.isTorchEnabled)
+        onDispose {
+        }
     }
 }
 
