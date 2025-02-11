@@ -17,6 +17,7 @@ import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.camera.state.CameraFocu
 import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.camera.state.CameraMode
 import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.camera.state.CameraState
 import io.github.kotlinwizzard.kmptoolkit.core.service.media.LocalCache
+import io.github.kotlinwizzard.kmptoolkit.core.util.LifecycleEffect
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCAction
@@ -121,9 +122,10 @@ private val deviceTypes =
         AVCaptureDeviceTypeBuiltInDuoCamera,
         AVCaptureDeviceTypeBuiltInTripleCamera,
     )
+
 @Composable
 actual fun CameraPreview(
-    modifier: Modifier ,
+    modifier: Modifier,
     cameraState: CameraState,
 ) {
     val camera: AVCaptureDevice? =
@@ -177,13 +179,15 @@ private fun RealDeviceCamera(
 
 
 
-    when(val captureState = state.captureState) {
-        is CameraCaptureState.Image ->  {
+    when (val captureState = state.captureState) {
+        is CameraCaptureState.Image -> {
 
-            HandleTriggerImageCapture(cameraCaptureState = captureState,
-               camera = camera, capturePhotoOutput = capturePhotoOutput
+            HandleTriggerImageCapture(
+                cameraCaptureState = captureState,
+                camera = camera, capturePhotoOutput = capturePhotoOutput
             )
         }
+
         is CameraCaptureState.Video -> {
             HandleTriggerVideoCapture(captureState, videoOutputFile)
         }
@@ -276,14 +280,30 @@ private fun RealDeviceCamera(
             }
         }
     }
-    LaunchedEffect(state.cameraTorchState.isTorchEnabled) {
-        camera.lockForConfiguration(null) // Lock the camera for
+
+    LifecycleEffect(onResume = {
+        camera.lockForConfiguration(null)
         if (state.cameraTorchState.isTorchEnabled) {
             camera.setTorchMode(AVCaptureTorchModeOn)
         } else {
             camera.setTorchMode(AVCaptureTorchModeOff)
         }
         camera.unlockForConfiguration()
+    }, onPause = {
+        camera.lockForConfiguration(null)
+        camera.setTorchMode(AVCaptureTorchModeOff)
+        camera.unlockForConfiguration()
+    })
+    DisposableEffect(state.cameraTorchState.isTorchEnabled) {
+        camera.lockForConfiguration(null)
+        if (state.cameraTorchState.isTorchEnabled) {
+            camera.setTorchMode(AVCaptureTorchModeOn)
+        } else {
+            camera.setTorchMode(AVCaptureTorchModeOff)
+        }
+        camera.unlockForConfiguration()
+        onDispose {
+        }
     }
 
     if (state.orientationListenerEnabled) {
@@ -388,6 +408,7 @@ class PhotoCaptureDelegate(
         onCaptureEnd()
     }
 }
+
 @OptIn(ExperimentalForeignApi::class)
 private inline fun NSData.toByteArray(): ByteArray {
     val size = length.toInt()
@@ -473,26 +494,27 @@ private fun HandleTriggerImageCapture(
     val photoCaptureDelegate =
         remember(cameraCaptureState) {
             PhotoCaptureDelegate(cameraCaptureState::stopCapturing,
-                {cameraCaptureState.onCapture(it, cache)}) }
-
-        val triggerCapture: () -> Unit = {
-            val photoSettings =
-                AVCapturePhotoSettings.photoSettingsWithFormat(
-                    format = mapOf(pair = AVVideoCodecKey to AVVideoCodecTypeJPEG),
-                )
-            if (camera.position == AVCaptureDevicePositionFront) {
-                capturePhotoOutput
-                    .connectionWithMediaType(AVMediaTypeVideo)
-                    ?.automaticallyAdjustsVideoMirroring = false
-                capturePhotoOutput
-                    .connectionWithMediaType(AVMediaTypeVideo)
-                    ?.videoMirrored = true
-            }
-            capturePhotoOutput.capturePhotoWithSettings(
-                settings = photoSettings,
-                delegate = photoCaptureDelegate,
-            )
+                { cameraCaptureState.onCapture(it, cache) })
         }
+
+    val triggerCapture: () -> Unit = {
+        val photoSettings =
+            AVCapturePhotoSettings.photoSettingsWithFormat(
+                format = mapOf(pair = AVVideoCodecKey to AVVideoCodecTypeJPEG),
+            )
+        if (camera.position == AVCaptureDevicePositionFront) {
+            capturePhotoOutput
+                .connectionWithMediaType(AVMediaTypeVideo)
+                ?.automaticallyAdjustsVideoMirroring = false
+            capturePhotoOutput
+                .connectionWithMediaType(AVMediaTypeVideo)
+                ?.videoMirrored = true
+        }
+        capturePhotoOutput.capturePhotoWithSettings(
+            settings = photoSettings,
+            delegate = photoCaptureDelegate,
+        )
+    }
 
     SideEffect {
         cameraCaptureState.triggerCaptureAnchor = triggerCapture

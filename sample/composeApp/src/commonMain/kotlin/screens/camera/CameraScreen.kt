@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
+import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,6 +50,9 @@ class CameraScreen : Screen {
                             }
                             Text("${cameraState.cameraCaptureMode}: $text", color = Color.White)
                             CameraCaptureButton(cameraState = cameraState, cameraCaptureButtonMode = CameraCaptureButtonMode.Video)
+                            Button(onClick = {cameraState.cameraTorchState.toggle()}){
+                                Text("Torch")
+                            }
                         }
                     })
 
