@@ -51,6 +51,7 @@ import platform.AVFoundation.AVCapturePhotoOutput
 import platform.AVFoundation.AVCapturePhotoSettings
 import platform.AVFoundation.AVCaptureSession
 import platform.AVFoundation.AVCaptureSessionPresetPhoto
+import platform.AVFoundation.AVCaptureTorchModeAuto
 import platform.AVFoundation.AVCaptureTorchModeOff
 import platform.AVFoundation.AVCaptureTorchModeOn
 import platform.AVFoundation.AVCaptureVideoDataOutput
@@ -68,6 +69,7 @@ import platform.AVFoundation.focusMode
 import platform.AVFoundation.focusPointOfInterest
 import platform.AVFoundation.focusPointOfInterestSupported
 import platform.AVFoundation.isFocusModeSupported
+import platform.AVFoundation.isTorchModeSupported
 import platform.AVFoundation.position
 import platform.AVFoundation.setTorchMode
 import platform.AVFoundation.torchAvailable
@@ -284,22 +286,60 @@ private fun RealDeviceCamera(
     LifecycleEffect(onResume = {
         camera.lockForConfiguration(null)
         if (state.cameraTorchState.isTorchEnabled) {
-            camera.setTorchMode(AVCaptureTorchModeOn)
+            when {
+                camera.isTorchModeSupported(AVCaptureTorchModeOn) -> camera.setTorchMode(
+                    AVCaptureTorchModeOn
+                )
+
+                camera.isTorchModeSupported(AVCaptureTorchModeAuto) -> camera.setTorchMode(
+                    AVCaptureTorchModeAuto
+                )
+
+                else -> state.cameraTorchState.setTorchAvailability(false)
+            }
         } else {
-            camera.setTorchMode(AVCaptureTorchModeOff)
+            when {
+                camera.isTorchModeSupported(AVCaptureTorchModeOff) -> camera.setTorchMode(
+                    AVCaptureTorchModeOff
+                )
+
+                else -> state.cameraTorchState.setTorchAvailability(false)
+            }
         }
         camera.unlockForConfiguration()
     }, onPause = {
         camera.lockForConfiguration(null)
-        camera.setTorchMode(AVCaptureTorchModeOff)
+        when {
+            camera.isTorchModeSupported(AVCaptureTorchModeOff) -> camera.setTorchMode(
+                AVCaptureTorchModeOff
+            )
+
+            else -> state.cameraTorchState.setTorchAvailability(false)
+        }
         camera.unlockForConfiguration()
     })
     DisposableEffect(state.cameraTorchState.isTorchEnabled) {
         camera.lockForConfiguration(null)
         if (state.cameraTorchState.isTorchEnabled) {
-            camera.setTorchMode(AVCaptureTorchModeOn)
+            when {
+                camera.isTorchModeSupported(AVCaptureTorchModeOn) -> camera.setTorchMode(
+                    AVCaptureTorchModeOn
+                )
+
+                camera.isTorchModeSupported(AVCaptureTorchModeAuto) -> camera.setTorchMode(
+                    AVCaptureTorchModeAuto
+                )
+
+                else -> state.cameraTorchState.setTorchAvailability(false)
+            }
         } else {
-            camera.setTorchMode(AVCaptureTorchModeOff)
+            when {
+                camera.isTorchModeSupported(AVCaptureTorchModeOff) -> camera.setTorchMode(
+                    AVCaptureTorchModeOff
+                )
+
+                else -> state.cameraTorchState.setTorchAvailability(false)
+            }
         }
         camera.unlockForConfiguration()
         onDispose {
