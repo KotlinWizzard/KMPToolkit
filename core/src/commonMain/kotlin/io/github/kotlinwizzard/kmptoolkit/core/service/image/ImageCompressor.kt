@@ -2,6 +2,10 @@ package io.github.kotlinwizzard.kmptoolkit.core.service.image
 
 
 object ImageCompressor {
+
+    fun compressImageByRatio(content: ByteArray, ratio: Float = 1.0F) =
+        compressImage(content = content, compressionRatio = ratio)
+
     fun compressImage(
         content: ByteArray,
         maxBytesCompression: MaxByteCompression = MaxByteCompression(1F, ByteUnit.MB),
