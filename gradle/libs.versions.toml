@@ -24,6 +24,7 @@ androidxKmp-lifecycle = "2.8.0"
 room = "2.7.0-alpha10"
 ksp = "2.1.0-1.0.29"
 sqllite = "2.5.0-alpha13"
+sketch-image = "4.0.0-beta03"
 
 [libraries]
 stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
@@ -65,6 +66,11 @@ room-paging = { module = "androidx.room:room-paging", version.ref = "room" }
 room-runtime-android = { module = "androidx.room:room-runtime-android", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 cache-driver = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqllite" }
+sketch-compose = { module = "io.github.panpf.sketch4:sketch-compose", version.ref = "sketch-image" }
+sketch-svg = { module = "io.github.panpf.sketch4:sketch-svg", version.ref = "sketch-image" }
+sketch-ktor = { module = "io.github.panpf.sketch4:sketch-http-ktor3", version.ref = "sketch-image" }
+sketch-animated = { module = "io.github.panpf.sketch4:sketch-animated-gif", version.ref = "sketch-image" }
+sketch-http = { module = "io.github.panpf.sketch4:sketch-http", version.ref = "sketch-image" }
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
