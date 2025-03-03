@@ -51,7 +51,7 @@ class CameraState(
     internal var orientationListenerEnabled by mutableStateOf(false)
 
     @Composable
-    fun ListenCaptureOutputResult(onCaptureOutputResult: (CameraCaptureOutput) -> Unit) {
+    fun ListenCaptureOutputResult(consume:Boolean=true, onCaptureOutputResult: (CameraCaptureOutput) -> Unit) {
         val result = cameraCaptureOutputResult
         LaunchedEffect(result) {
             if (result != null) {
@@ -73,6 +73,11 @@ class CameraState(
         val currentCaptureState = getCaptureStateByMode(mode)
         captureState = currentCaptureState
         currentCaptureState.stopCapturing()
+    }
+
+
+    fun resetOutput(){
+        cameraCaptureOutputResult = null
     }
 
     private fun canChangeCaptureState(mode: CameraCaptureMode):Boolean{
