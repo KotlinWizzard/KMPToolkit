@@ -77,6 +77,12 @@ kotlin {
                 //DI
                implementation(libs.koin.core)
                implementation(libs.koin.compose)
+                //IMAGE Loading
+                implementation(libs.sketch.compose)
+                implementation(libs.sketch.svg)
+                implementation(libs.sketch.animated)
+                implementation(libs.sketch.http)
+                implementation(libs.sketch.ktor)
             }
         }
 

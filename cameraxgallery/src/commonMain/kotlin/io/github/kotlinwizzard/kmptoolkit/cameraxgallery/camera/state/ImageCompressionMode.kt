@@ -10,7 +10,7 @@ sealed class ImageCompressionMode {
 
     data object None : ImageCompressionMode() {
         override fun compress(bytes: ByteArray): ByteArray {
-            return bytes
+            return  ImageCompressor.compressImageByRatio(bytes, ratio = 1F)
         }
     }
 

@@ -18,7 +18,8 @@ class MediaPickerState(
     private val earlyLaunch: Boolean = false
 ) {
     private var mediaPickerStatus: MediaPickerStatus by mutableStateOf(
-        MediaPickerStatus.Idle)
+        MediaPickerStatus.Idle
+    )
 
 
     private val mediaPickerLauncherState = MediaPickerLauncherState()
@@ -50,7 +51,7 @@ class MediaPickerState(
         val status = mediaPickerStatus
         val key = registeredLauncherKey
         DisposableEffect(key) {
-            if(registeredLauncherKey==null) {
+            if (registeredLauncherKey == null) {
                 registeredLauncherKey = launcherKey
             }
             onDispose {
@@ -80,8 +81,14 @@ class MediaPickerState(
         ) {
             if (result != null) {
                 onResult(result)
+                mediaPickerResult = null
+
             }
         }
+    }
+
+    fun resetResult(){
+        mediaPickerResult = null
     }
 
     internal fun onResult(
