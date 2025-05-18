@@ -59,7 +59,7 @@ internal fun getImageAnalyzer(
     backgroundExecutor: Executor,
 ) = remember(cameraState.captureState.onFrame) {
 
-    cameraState.captureState.onFrame?.let { onFrame ->
+    cameraState.captureState.onFrame.let { onFrame ->
         val analyzer =
             ImageAnalysis
                 .Builder()
@@ -72,7 +72,12 @@ internal fun getImageAnalyzer(
         analyzer.apply {
             setAnalyzer(backgroundExecutor) { imageProxy ->
                 val imageBytes = imageProxy.toByteArray()
-                onFrame(imageBytes)
+                cameraState.imageAnalyzers.forEach {
+                    it.analyze(imageBytes)
+                }
+                if (onFrame != null) {
+                    onFrame(imageBytes)
+                }
             }
         }
     }

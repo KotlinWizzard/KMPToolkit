@@ -175,7 +175,7 @@ private fun RealDeviceCamera(
 
     val frameAnalyzerDelegate =
         remember {
-            CameraFrameAnalyzerDelegate(state.captureState.onFrame)
+            CameraFrameAnalyzerDelegate(state.captureState.onFrame, cameraState =state )
         }
 
 
@@ -501,6 +501,7 @@ class OrientationListener(
 
 class CameraFrameAnalyzerDelegate(
     private val onFrame: ((frame: ByteArray) -> Unit)?,
+    private val cameraState: CameraState
 ) : NSObject(),
     AVCaptureVideoDataOutputSampleBufferDelegateProtocol {
     @OptIn(ExperimentalForeignApi::class)
@@ -521,6 +522,9 @@ class CameraFrameAnalyzerDelegate(
 
         val bytes = data.toByteArray()
         onFrame.invoke(bytes)
+        cameraState.imageAnalyzers.forEach {
+            it.analyze(bytes)
+        }
     }
 }
 

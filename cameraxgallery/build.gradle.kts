@@ -62,6 +62,8 @@ kotlin {
                 implementation(libs.androidx.camera.view)
                 implementation(libs.androidx.camera.camera2)
                 implementation(libs.androidx.activity.compose)
+                implementation(libs.mlkit.textRecognition)
+                implementation(libs.coroutines.playServices)
             }
         }
 

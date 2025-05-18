@@ -25,11 +25,15 @@ room = "2.7.0-alpha10"
 ksp = "2.1.0-1.0.29"
 sqllite = "2.5.0-alpha13"
 sketch-image = "4.0.0-beta03"
+mlkitTextRecognition = "16.0.1"
+coroutinesVersionPlayServices="1.7.1"
 
 [libraries]
+mlkit-textRecognition = { group = "com.google.mlkit", name = "text-recognition", version.ref = "mlkitTextRecognition" }
 stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 kotlinx-io-core = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "kotlinxIoCore" }
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutinesVersion" }
+coroutines-playServices = {module="org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref ="coroutinesVersionPlayServices"}
 serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinxSerialization" }
 serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 kotlinX-dateTime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDateTime" }
