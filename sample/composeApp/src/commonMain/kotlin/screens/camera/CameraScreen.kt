@@ -48,7 +48,7 @@ class CameraScreen : Screen {
                     cameraState = cameraState,
                     bottomBar = {
                         Column(Modifier.fillMaxWidth()) {
-                            Text("AnalzedText: ${imageTextAnalyzer.text ?: ""}")
+                            Text("AnalzedText: ${imageTextAnalyzer.text ?: ""}", color = Color.White)
                             Row(
                                 Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.Center

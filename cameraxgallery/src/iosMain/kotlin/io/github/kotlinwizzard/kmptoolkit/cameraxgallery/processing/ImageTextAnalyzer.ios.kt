@@ -44,7 +44,8 @@ actual class ImageTextAnalyzer {
 
     @OptIn(ExperimentalForeignApi::class)
     fun recognizeText(bytes:ByteArray, onTextGenerated: (text: String?) -> Unit) {
-        val image = bytesToUiImage(bytes)
+        val image = bytesToUiImage(bytes) ?: return
+        println("****capture recognise with bytes!!")
         val cgImage = image.CGImage
 
         val handler = VNImageRequestHandler(cgImage, options = emptyMap<Any?, Any?>())
@@ -56,7 +57,7 @@ actual class ImageTextAnalyzer {
 
             val observations = request?.results as? List<VNRecognizedTextObservation> ?: emptyList()
 
-            val recognizedText = observations.joinToString(", ") { observation ->
+            val recognizedText = observations.joinToString("\n") { observation ->
                 val topCandidate: VNRecognizedText =
                     observation.topCandidates(1u).firstOrNull() as VNRecognizedText
                 topCandidate.string
@@ -76,9 +77,15 @@ actual class ImageTextAnalyzer {
         }
     }
 
-    private fun bytesToUiImage(byteArray: ByteArray):UIImage{
-        val nsData = byteArray.toNSData()
-        return UIImage(nsData)
+    private fun bytesToUiImage(byteArray: ByteArray): UIImage? {
+        if (byteArray.isEmpty()) {
+            return null
+        }
+
+       return kotlin.runCatching {
+            val nsData = byteArray.toNSData()
+            UIImage(nsData)
+        }.getOrNull()
     }
 
 

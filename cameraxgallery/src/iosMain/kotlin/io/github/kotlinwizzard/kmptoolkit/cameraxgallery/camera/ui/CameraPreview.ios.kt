@@ -16,6 +16,7 @@ import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.camera.state.CameraCapt
 import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.camera.state.CameraFocusStatus
 import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.camera.state.CameraMode
 import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.camera.state.CameraState
+import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.gallery.toByteArray
 import io.github.kotlinwizzard.kmptoolkit.core.service.media.LocalCache
 import io.github.kotlinwizzard.kmptoolkit.core.util.LifecycleEffect
 import kotlinx.cinterop.BetaInteropApi
@@ -75,9 +76,13 @@ import platform.AVFoundation.setTorchMode
 import platform.AVFoundation.torchAvailable
 import platform.CoreGraphics.CGPointMake
 import platform.CoreGraphics.CGRectMake
+import platform.CoreImage.CIContext
+import platform.CoreImage.CIImage
+import platform.CoreImage.createCGImage
 import platform.CoreMedia.CMSampleBufferGetImageBuffer
 import platform.CoreMedia.CMSampleBufferRef
 import platform.CoreMedia.kCMPixelFormat_32BGRA
+import platform.CoreVideo.CVImageBufferRef
 import platform.CoreVideo.CVPixelBufferGetBaseAddress
 import platform.CoreVideo.CVPixelBufferGetDataSize
 import platform.CoreVideo.CVPixelBufferLockBaseAddress
@@ -170,8 +175,6 @@ private fun RealDeviceCamera(
     val videoOutput = remember { AVCaptureVideoDataOutput() }
     val videoOutputFile = remember { AVCaptureMovieFileOutput() }
 
-    val captureState = state.captureState
-
 
     val frameAnalyzerDelegate =
         remember {
@@ -207,9 +210,9 @@ private fun RealDeviceCamera(
                 captureSession.addOutput(capturePhotoOutput)
                 captureSession.addOutput(videoOutputFile)
 
-                if (captureSession.canAddOutput(videoOutputFile)) {
+                if (captureSession.canAddOutput(videoOutput)) {
                     val captureQueue = dispatch_queue_create("sampleBufferQueue", attr = null)
-                    videoOutput.setSampleBufferDelegate(frameAnalyzerDelegate, captureQueue)
+                    videoOutput.setSampleBufferDelegate(frameAnalyzerDelegate, queue)
                     videoOutput.alwaysDiscardsLateVideoFrames = true
                     videoOutput.videoSettings =
                         mapOf(
@@ -510,8 +513,17 @@ class CameraFrameAnalyzerDelegate(
         @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
         didOutputSampleBuffer: CMSampleBufferRef?,
         fromConnection: AVCaptureConnection,
-    ) {
-        if (onFrame == null) return
+    ) {  println("****capture onFrame!!!")
+        //if (onFrame == null) return
+        val uiImage = convertSampleBufferToUIImage(sampleBuffer = didOutputSampleBuffer) ?: return
+        val byteArray = uiImage.toByteArray()
+        println("****capture onFrameWithBytes!!!")
+        onFrame?.invoke(byteArray)
+        cameraState.imageAnalyzers.forEach {
+            it.analyze(byteArray)
+        }
+        /*
+        return
 
         val imageBuffer = CMSampleBufferGetImageBuffer(didOutputSampleBuffer) ?: return
         CVPixelBufferLockBaseAddress(imageBuffer, 0uL)
@@ -521,10 +533,28 @@ class CameraFrameAnalyzerDelegate(
         CVPixelBufferUnlockBaseAddress(imageBuffer, 0uL)
 
         val bytes = data.toByteArray()
-        onFrame.invoke(bytes)
+        onFrame?.invoke(bytes)
         cameraState.imageAnalyzers.forEach {
             it.analyze(bytes)
-        }
+        }*/
+    }
+
+    @OptIn(ExperimentalForeignApi::class)
+    private fun convertSampleBufferToUIImage(sampleBuffer: CMSampleBufferRef?): UIImage? {
+        if (sampleBuffer == null) return null
+
+
+        val imageBuffer: CVImageBufferRef = CMSampleBufferGetImageBuffer(sampleBuffer) ?: return null
+
+
+        val ciImage = CIImage.imageWithCVPixelBuffer(imageBuffer)
+        val ciContext = CIContext()
+
+
+        val cgImage = ciContext.createCGImage(ciImage, ciImage.extent)
+
+
+        return UIImage(cgImage)
     }
 }
 
