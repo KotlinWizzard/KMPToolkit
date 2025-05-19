@@ -15,6 +15,7 @@ plugins {
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.jetbrains.serialization) apply true
+    alias(libs.plugins.kotlinCocoapods)
 }
 
 group = libraryGroup
@@ -31,6 +32,10 @@ kotlin {
     iosArm64()
     iosSimulatorArm64()
 
+    cocoapods {
+        ios.deploymentTarget =libs.versions.ios.deploymentTarget.get()
+        pod("GoogleMLKit/TextRecognition", "8.0.0")
+    }
 
     sourceSets {
         val commonMain by getting {

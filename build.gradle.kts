@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.jetbrainsCompose) apply false
     alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.vanniktech.mavenPublish) apply false
+    alias(libs.plugins.kotlinCocoapods) apply false
 }
 
 val secretsFile = rootDir.resolve("secrets.gradle.properties")
