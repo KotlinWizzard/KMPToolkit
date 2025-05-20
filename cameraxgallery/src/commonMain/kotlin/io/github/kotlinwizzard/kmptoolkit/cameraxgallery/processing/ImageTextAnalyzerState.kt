@@ -14,7 +14,7 @@ class ImageTextAnalyzerState: ImageAnalyzerState() {
     private val textAnalyzer:ImageTextAnalyzer = ImageTextAnalyzer()
     private var isAnalyzing = false
 
-    override fun analyze(imageBytes: ByteArray) {
+    public override fun analyze(imageBytes: ByteArray) {
         if (isAnalyzing) return 
 
         isAnalyzing = true
