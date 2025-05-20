@@ -513,30 +513,13 @@ class CameraFrameAnalyzerDelegate(
         @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
         didOutputSampleBuffer: CMSampleBufferRef?,
         fromConnection: AVCaptureConnection,
-    ) {  println("****capture onFrame!!!")
-        //if (onFrame == null) return
+    ) {
         val uiImage = convertSampleBufferToUIImage(sampleBuffer = didOutputSampleBuffer) ?: return
         val byteArray = uiImage.toByteArray()
-        println("****capture onFrameWithBytes!!!")
         onFrame?.invoke(byteArray)
         cameraState.imageAnalyzers.forEach {
             it.analyze(byteArray)
         }
-        /*
-        return
-
-        val imageBuffer = CMSampleBufferGetImageBuffer(didOutputSampleBuffer) ?: return
-        CVPixelBufferLockBaseAddress(imageBuffer, 0uL)
-        val baseAddress = CVPixelBufferGetBaseAddress(imageBuffer)
-        val bufferSize = CVPixelBufferGetDataSize(imageBuffer)
-        val data = NSData.dataWithBytes(bytes = baseAddress, length = bufferSize)
-        CVPixelBufferUnlockBaseAddress(imageBuffer, 0uL)
-
-        val bytes = data.toByteArray()
-        onFrame?.invoke(bytes)
-        cameraState.imageAnalyzers.forEach {
-            it.analyze(bytes)
-        }*/
     }
 
     @OptIn(ExperimentalForeignApi::class)

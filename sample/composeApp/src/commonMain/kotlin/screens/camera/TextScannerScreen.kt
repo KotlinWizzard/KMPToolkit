@@ -39,11 +39,15 @@ import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.gallery.MediaPickerSele
 import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.gallery.MediaPickerSelectionType
 import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.gallery.rememberMediaPickerState
 import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.processing.ImageInput
+import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.processing.ImageRotation
 import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.processing.ImageTextAnalyzer
 import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.processing.ImageTextAnalyzerState
+import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.processing.rotateImage
 import io.github.kotlinwizzard.kmptoolkit.core.presentation.theme.ToolkitScaffold
 import io.github.kotlinwizzard.kmptoolkit.core.presentation.theme.ToolkitTheme
 import io.github.kotlinwizzard.kmptoolkit.core.presentation.theme.spacing
+import io.github.kotlinwizzard.kmptoolkit.core.service.image.ImageCompressor
+import io.github.kotlinwizzard.kmptoolkit.core.service.media.MediaCacheService
 import presentation.BackButtonToolbar
 import screens.SimpleTextButton
 
@@ -58,12 +62,16 @@ class TextScannerScreen : Screen {
             mediaPickerState.RegisterLauncher()
             val textAnalyzer = remember { ImageTextAnalyzerState() }
             val imagePaths = remember { mutableStateOf<List<String>?>(null) }
+            var imageBytes = remember { mutableStateOf<ByteArray?>(null) }
             mediaPickerState.ListenMediaPickerResult { result ->
                 when (result) {
                     MediaPickerResult.Cancelled -> Unit
                     is MediaPickerResult.Data -> {
                             result.results.mapNotNull { media -> media.filePath.takeIf { media.mediaType == MediaPickerMediaType.Image } }.let {
                                 imagePaths.value = it
+                                it.firstOrNull()?.let { path->
+                                    imageBytes.value = MediaCacheService.readCachedFileOrNull(path)
+                                }
                             }
                     }
                 }
@@ -83,14 +91,21 @@ class TextScannerScreen : Screen {
                 }, text = "Pick single image")
 
 
-                imagePaths.value?.firstOrNull()?.let {  path ->
+                imageBytes.value?.let {  bytes ->
                     SimpleTextButton(onClick = {
-                        val bytes = ImageInput.File(path).readBytes() ?: return@SimpleTextButton
                         textAnalyzer.analyze(bytes)
                     }, text = "Analyze text")
 
+                    SimpleTextButton(onClick = {
+                        imageBytes.value = ImageRotation.rotateImage(bytes,ImageRotation.Degree90)
+                    }, text = "Rotate 90°")
+
+                    SimpleTextButton(onClick = {
+                        imageBytes.value = ImageRotation.rotateImage(bytes,ImageRotation.DegreeNegative90)
+                    }, text = "Rotate -90°")
+
                     Column(Modifier.fillMaxWidth().weight(1F),horizontalAlignment = Alignment.CenterHorizontally) {
-                        AsyncImage(url = path, modifier = Modifier.size(80.dp))
+                        AsyncImage(imageBytes = bytes, modifier = Modifier.size(80.dp))
                         Text("AnalyzedText:\n${textAnalyzer.text?:""}", modifier = Modifier.fillMaxWidth().weight(1F))
                     }
                 }

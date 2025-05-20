@@ -44,7 +44,7 @@ actual class ImageTextAnalyzer {
 
     @OptIn(ExperimentalForeignApi::class)
     fun recognizeText(bytes:ByteArray, onTextGenerated: (text: String?) -> Unit) {
-        val image = bytesToUiImage(bytes) ?: return
+        val image = bytes.toUiImage() ?: return
         println("****capture recognise with bytes!!")
         val cgImage = image.CGImage
 
@@ -77,26 +77,7 @@ actual class ImageTextAnalyzer {
         }
     }
 
-    private fun bytesToUiImage(byteArray: ByteArray): UIImage? {
-        if (byteArray.isEmpty()) {
-            return null
-        }
 
-       return kotlin.runCatching {
-            val nsData = byteArray.toNSData()
-            UIImage(nsData)
-        }.getOrNull()
-    }
-
-
-
-    @OptIn(ExperimentalForeignApi::class)
-    fun ByteArray.toNSData(): NSData {
-        return this.usePinned {
-            NSData.dataWithBytes(
-                bytes = it.addressOf(0),
-                length = this.size.toULong()
-            )
-        }
-    }
 }
+
+
