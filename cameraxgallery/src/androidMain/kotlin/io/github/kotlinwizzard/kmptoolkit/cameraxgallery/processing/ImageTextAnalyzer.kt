@@ -6,7 +6,6 @@ import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.TextRecognizer
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import kotlinx.coroutines.tasks.await
-import java.util.concurrent.Executors
 
 actual class ImageTextAnalyzer {
     private val textRecognizer: TextRecognizer by lazy {
