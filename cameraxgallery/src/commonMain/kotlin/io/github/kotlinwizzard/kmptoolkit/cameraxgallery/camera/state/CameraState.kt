@@ -4,10 +4,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.processing.ImageAnalyzerState
 
 class CameraState(
     imageCompressionMode: ImageCompressionMode = ImageCompressionMode.None,
@@ -19,6 +21,9 @@ class CameraState(
         protected set
 
     var cameraCaptureOutputResult by mutableStateOf<CameraCaptureOutput?>(null)
+        private set
+
+    var imageAnalyzers = mutableStateListOf<ImageAnalyzerState>()
         private set
 
 
@@ -73,6 +78,14 @@ class CameraState(
         val currentCaptureState = getCaptureStateByMode(mode)
         captureState = currentCaptureState
         currentCaptureState.stopCapturing()
+    }
+
+    fun registerImageAnalyzer(imageAnalyzerState: ImageAnalyzerState){
+        imageAnalyzers.add(imageAnalyzerState)
+    }
+
+    fun unregisterImageAnalyzer(imageAnalyzerState: ImageAnalyzerState){
+        imageAnalyzers.remove(imageAnalyzerState)
     }
 
 

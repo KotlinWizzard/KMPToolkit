@@ -25,6 +25,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import com.github.panpf.sketch.SketchImage
 import com.github.panpf.sketch.decode.SvgDecoder
 import com.github.panpf.sketch.painter.asEquitable
+import com.github.panpf.sketch.painter.asPainter
 import com.github.panpf.sketch.rememberAsyncImagePainter
 import com.github.panpf.sketch.rememberAsyncImageState
 import com.github.panpf.sketch.request.ComposableImageRequest
@@ -39,6 +40,8 @@ import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.gallery.rememberMediaPi
 import io.github.kotlinwizzard.kmptoolkit.core.presentation.theme.ToolkitScaffold
 import io.github.kotlinwizzard.kmptoolkit.core.presentation.theme.ToolkitTheme
 import io.github.kotlinwizzard.kmptoolkit.core.presentation.theme.spacing
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.decodeToImageBitmap
 import presentation.BackButtonToolbar
 import screens.SimpleTextButton
 
@@ -167,5 +170,26 @@ fun AsyncImage(
         alignment = alignment,
         alpha = alpha,
         colorFilter = currentColorFilter,
+    )
+}
+
+@OptIn(ExperimentalResourceApi::class)
+@Composable
+fun AsyncImage(
+    modifier: Modifier=Modifier,
+    imageBytes:ByteArray,
+    contentDescription: String = "Image from url",
+    contentScale: ContentScale = ContentScale.Crop,
+    alignment: Alignment = Alignment.Center,
+    alpha: Float = 1F,
+) {
+
+    Image(
+        painter = imageBytes.decodeToImageBitmap().asPainter(),
+        contentDescription = contentDescription,
+        modifier = modifier,
+        contentScale = contentScale,
+        alignment = alignment,
+        alpha = alpha,
     )
 }

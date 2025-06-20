@@ -16,6 +16,7 @@ import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.camera.state.CameraCapt
 import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.camera.state.CameraFocusStatus
 import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.camera.state.CameraMode
 import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.camera.state.CameraState
+import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.gallery.toByteArray
 import io.github.kotlinwizzard.kmptoolkit.core.service.media.LocalCache
 import io.github.kotlinwizzard.kmptoolkit.core.util.LifecycleEffect
 import kotlinx.cinterop.BetaInteropApi
@@ -75,9 +76,13 @@ import platform.AVFoundation.setTorchMode
 import platform.AVFoundation.torchAvailable
 import platform.CoreGraphics.CGPointMake
 import platform.CoreGraphics.CGRectMake
+import platform.CoreImage.CIContext
+import platform.CoreImage.CIImage
+import platform.CoreImage.createCGImage
 import platform.CoreMedia.CMSampleBufferGetImageBuffer
 import platform.CoreMedia.CMSampleBufferRef
 import platform.CoreMedia.kCMPixelFormat_32BGRA
+import platform.CoreVideo.CVImageBufferRef
 import platform.CoreVideo.CVPixelBufferGetBaseAddress
 import platform.CoreVideo.CVPixelBufferGetDataSize
 import platform.CoreVideo.CVPixelBufferLockBaseAddress
@@ -170,12 +175,10 @@ private fun RealDeviceCamera(
     val videoOutput = remember { AVCaptureVideoDataOutput() }
     val videoOutputFile = remember { AVCaptureMovieFileOutput() }
 
-    val captureState = state.captureState
-
 
     val frameAnalyzerDelegate =
         remember {
-            CameraFrameAnalyzerDelegate(state.captureState.onFrame)
+            CameraFrameAnalyzerDelegate(state.captureState.onFrame, cameraState =state )
         }
 
 
@@ -207,9 +210,9 @@ private fun RealDeviceCamera(
                 captureSession.addOutput(capturePhotoOutput)
                 captureSession.addOutput(videoOutputFile)
 
-                if (captureSession.canAddOutput(videoOutputFile)) {
+                if (captureSession.canAddOutput(videoOutput)) {
                     val captureQueue = dispatch_queue_create("sampleBufferQueue", attr = null)
-                    videoOutput.setSampleBufferDelegate(frameAnalyzerDelegate, captureQueue)
+                    videoOutput.setSampleBufferDelegate(frameAnalyzerDelegate, queue)
                     videoOutput.alwaysDiscardsLateVideoFrames = true
                     videoOutput.videoSettings =
                         mapOf(
@@ -501,6 +504,7 @@ class OrientationListener(
 
 class CameraFrameAnalyzerDelegate(
     private val onFrame: ((frame: ByteArray) -> Unit)?,
+    private val cameraState: CameraState
 ) : NSObject(),
     AVCaptureVideoDataOutputSampleBufferDelegateProtocol {
     @OptIn(ExperimentalForeignApi::class)
@@ -510,17 +514,30 @@ class CameraFrameAnalyzerDelegate(
         didOutputSampleBuffer: CMSampleBufferRef?,
         fromConnection: AVCaptureConnection,
     ) {
-        if (onFrame == null) return
+        val uiImage = convertSampleBufferToUIImage(sampleBuffer = didOutputSampleBuffer) ?: return
+        val byteArray = uiImage.toByteArray()
+        onFrame?.invoke(byteArray)
+        cameraState.imageAnalyzers.forEach {
+            it.analyze(byteArray)
+        }
+    }
 
-        val imageBuffer = CMSampleBufferGetImageBuffer(didOutputSampleBuffer) ?: return
-        CVPixelBufferLockBaseAddress(imageBuffer, 0uL)
-        val baseAddress = CVPixelBufferGetBaseAddress(imageBuffer)
-        val bufferSize = CVPixelBufferGetDataSize(imageBuffer)
-        val data = NSData.dataWithBytes(bytes = baseAddress, length = bufferSize)
-        CVPixelBufferUnlockBaseAddress(imageBuffer, 0uL)
+    @OptIn(ExperimentalForeignApi::class)
+    private fun convertSampleBufferToUIImage(sampleBuffer: CMSampleBufferRef?): UIImage? {
+        if (sampleBuffer == null) return null
 
-        val bytes = data.toByteArray()
-        onFrame.invoke(bytes)
+
+        val imageBuffer: CVImageBufferRef = CMSampleBufferGetImageBuffer(sampleBuffer) ?: return null
+
+
+        val ciImage = CIImage.imageWithCVPixelBuffer(imageBuffer)
+        val ciContext = CIContext()
+
+
+        val cgImage = ciContext.createCGImage(ciImage, ciImage.extent)
+
+
+        return UIImage(cgImage)
     }
 }
 
