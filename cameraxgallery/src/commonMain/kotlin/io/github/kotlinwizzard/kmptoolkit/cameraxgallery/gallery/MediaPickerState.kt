@@ -14,7 +14,7 @@ import io.github.kotlinwizzard.kmptoolkit.core.service.media.MediaCache
 import io.github.kotlinwizzard.kmptoolkit.core.service.media.LocalCache
 
 class MediaPickerState(
-    private val imageCompressionMode: ImageCompressionMode = ImageCompressionMode.None,
+    private var imageCompressionMode: ImageCompressionMode = ImageCompressionMode.None,
     private val earlyLaunch: Boolean = false
 ) {
     private var mediaPickerStatus: MediaPickerStatus by mutableStateOf(
@@ -89,6 +89,10 @@ class MediaPickerState(
 
     fun resetResult(){
         mediaPickerResult = null
+    }
+
+    fun setImageCompression(imageCompressionMode: ImageCompressionMode) {
+       this.imageCompressionMode = imageCompressionMode
     }
 
     internal fun onResult(
