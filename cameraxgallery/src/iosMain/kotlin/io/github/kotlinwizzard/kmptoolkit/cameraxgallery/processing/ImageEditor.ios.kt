@@ -22,7 +22,8 @@ actual object ImageEditor {
         bitmapData: ByteArray,
         factor: Float
     ): ByteArray {
-        return applyCIColorControls(bitmapData, brightness = factor)
+        val mapped = (factor - 1.0f).coerceIn(-1.0f, 1.0f)
+        return applyCIColorControls(bitmapData, brightness = mapped)
     }
 
     actual suspend fun applyGreyscale(bitmapData: ByteArray): ByteArray {
@@ -50,18 +51,20 @@ actual object ImageEditor {
     }
 
     actual suspend fun applyTemperature(bitmapData: ByteArray, temperature: Float): ByteArray {
+        val clamped = temperature.coerceIn(-100f, 100f)
+        val targetK = 6500.0 + (clamped * 15.0) // linearer Bereich ±1500K
         return applyFilter(bitmapData, "CITemperatureAndTint") { filter ->
-            val neutral = CIVector(6500.0, 0.0)
-            val target = CIVector(6500.0 + temperature, 0.0)
+            val neutral = CIVector(x = 6500.0,  0.0)
+            val target = CIVector(x = targetK, 0.0)
             filter.setValue(neutral, forKey = "inputNeutral")
             filter.setValue(target, forKey = "inputTargetNeutral")
         }
     }
 
     actual suspend fun applyHue(bitmapData: ByteArray, angleDegrees: Float): ByteArray {
-        val angleRadians = angleDegrees * kotlin.math.PI / 180f
+        val radians = ((angleDegrees % 360f) * kotlin.math.PI / 180f).coerceIn(- kotlin.math.PI, kotlin.math.PI)
         return applyFilter(bitmapData, "CIHueAdjust") { filter ->
-            filter.setValue(angleRadians, forKey = kCIInputAngleKey)
+            filter.setValue(radians, forKey = kCIInputAngleKey)
         }
     }
 
