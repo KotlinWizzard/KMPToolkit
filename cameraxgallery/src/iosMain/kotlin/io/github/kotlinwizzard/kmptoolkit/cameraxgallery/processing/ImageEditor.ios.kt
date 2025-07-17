@@ -1,8 +1,21 @@
 package io.github.kotlinwizzard.kmptoolkit.cameraxgallery.processing
 
+import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.gallery.toByteArray
+import kotlinx.cinterop.ExperimentalForeignApi
+import platform.CoreImage.CIContext
 import platform.CoreImage.CIFilter
+import platform.CoreImage.CIImage
+import platform.CoreImage.CIVector
+import platform.CoreImage.createCGImage
 import platform.CoreImage.filterWithName
+import platform.CoreImage.kCIInputAngleKey
+import platform.CoreImage.kCIInputBrightnessKey
+import platform.CoreImage.kCIInputContrastKey
+import platform.CoreImage.kCIInputImageKey
+import platform.CoreImage.kCIInputIntensityKey
+import platform.CoreImage.kCIInputSaturationKey
 import platform.Foundation.setValue
+import platform.UIKit.UIImage
 
 actual object ImageEditor {
     actual suspend fun applyBrightness(
@@ -38,8 +51,8 @@ actual object ImageEditor {
 
     actual suspend fun applyTemperature(bitmapData: ByteArray, temperature: Float): ByteArray {
         return applyFilter(bitmapData, "CITemperatureAndTint") { filter ->
-            val neutral = CIVector(x = 6500.0, y = 0.0)
-            val target = CIVector(x = 6500.0 + temperature, y = 0.0)
+            val neutral = CIVector(6500.0, 0.0)
+            val target = CIVector(6500.0 + temperature, 0.0)
             filter.setValue(neutral, forKey = "inputNeutral")
             filter.setValue(target, forKey = "inputTargetNeutral")
         }
@@ -65,14 +78,15 @@ actual object ImageEditor {
         }
     }
 
+    @OptIn(ExperimentalForeignApi::class)
     private fun applyFilter(
         data: ByteArray,
         filterName: String,
         configure: (CIFilter) -> Unit = {}
     ): ByteArray {
         val nsData = data.toNSData()
-        val uiImage = UIImage(data = nsData) ?: return data
-        val ciImage = CIImage(image = uiImage) ?: return data
+        val uiImage = UIImage(data = nsData)
+        val ciImage = CIImage(nsData)
         val filter = CIFilter.filterWithName(filterName) as CIFilter
         filter.setValue(ciImage, forKey = kCIInputImageKey)
         configure(filter)
@@ -80,7 +94,6 @@ actual object ImageEditor {
         val context = CIContext()
         val cgImage = context.createCGImage(outputImage, fromRect = outputImage.extent) ?: return data
         val newUIImage = UIImage.imageWithCGImage(cgImage)
-        val pngData = newUIImage.pngData() ?: return data
-        return pngData.toByteArray()
+        return newUIImage.toByteArray()
     }
 }
