@@ -76,20 +76,6 @@ actual object ImageEditor {
         ))
 
         return applyColorMatrix(bmp, baseMatrix)
-        /*
-        val bmp = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.size)
-        val contrast = factor
-        val scale = contrast
-        val translate = (-0.5f * scale + 0.5f) * 255f
-
-        val matrix = ColorMatrix(floatArrayOf(
-            scale, 0f, 0f, 0f, translate,
-            0f, scale, 0f, 0f, translate,
-            0f, 0f, scale, 0f, translate,
-            0f, 0f, 0f, 1f, 0f
-        ))
-
-        return applyColorMatrix(bmp, matrix)*/
     }
 
     actual suspend fun applySaturation(
