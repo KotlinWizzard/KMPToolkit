@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Bitmap.createBitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
 import android.graphics.Paint
@@ -35,6 +36,18 @@ actual object ImageEditor {
 
     actual suspend fun applySepia(bitmapData: ByteArray): ByteArray {
         val bmp = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.size)
+        val sepiaMatrix = createSepiaMatrix(1.3F)
+        return applyColorMatrix(bmp, sepiaMatrix)
+
+        /*
+          val bmp = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.size)
+        val greyScale = ColorMatrix()
+        greyScale.setSaturation(0F)
+        val sepiaMatrix = ColorMatrix()
+        sepiaMatrix.setScale(1F,0.95F, 0.82F,1.0F)
+        greyScale.setConcat(sepiaMatrix,greyScale)
+        return applyColorMatrix(bmp, greyScale)
+        val bmp = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.size)
         val sepiaMatrix = ColorMatrix(
             floatArrayOf(
                 0.393f, 0.769f, 0.189f, 0f, 0f,
@@ -43,7 +56,24 @@ actual object ImageEditor {
                 0f, 0f, 0f, 1f, 0f
             )
         )
-        return applyColorMatrix(bmp, sepiaMatrix)
+        return applyColorMatrix(bmp, sepiaMatrix)*/
+    }
+
+    private fun createSepiaMatrix(intensity: Float): ColorMatrix {
+        val base = ColorMatrix(
+            floatArrayOf(
+                0.393f, 0.769f, 0.189f, 0f, 0f,
+                0.349f, 0.686f, 0.168f, 0f, 0f,
+                0.272f, 0.534f, 0.131f, 0f, 0f,
+                0f,     0f,     0f,    1f, 0f
+            )
+        )
+
+        val identity = ColorMatrix()
+        identity.setConcat(base, identity)
+        identity.postConcat(ColorMatrix().apply { setScale(intensity, intensity, intensity, 1f) })
+
+        return identity
     }
 
     actual suspend fun applyContrast(
@@ -111,11 +141,28 @@ actual object ImageEditor {
         angleDegrees: Float
     ): ByteArray {
         val bmp = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.size)
-        val matrix = ColorMatrix()
-        matrix.setRotate(0, angleDegrees)
-        matrix.setRotate(1, angleDegrees)
-        matrix.setRotate(2, angleDegrees)
-        return applyColorMatrix(bmp, matrix)
+        val width = bmp.width
+        val height = bmp.height
+
+        val pixels = IntArray(width * height)
+        bmp.getPixels(pixels, 0, width, 0, 0, width, height)
+
+        val hsv = FloatArray(3)
+        pixels.indices.chunked(5000).parallelStream().forEach { chunk ->
+            val localHSV = FloatArray(3) // avoid shared mutable state
+            for (i in chunk) {
+                Color.colorToHSV(pixels[i], localHSV)
+                localHSV[0] = ((localHSV[0] + angleDegrees) % 360 + 360) % 360
+                pixels[i] = Color.HSVToColor(Color.alpha(pixels[i]), localHSV)
+            }
+        }
+
+        val result = createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        result.setPixels(pixels, 0, width, 0, 0, width, height)
+
+        val output = ByteArrayOutputStream()
+        result.compress(Bitmap.CompressFormat.JPEG, 100, output)
+        return output.toByteArray()
     }
 
     private fun applyColorMatrix(bmp: Bitmap, matrix: ColorMatrix): ByteArray {

@@ -72,8 +72,7 @@ actual object ImageEditor {
     }
 
     actual suspend fun applyHue(bitmapData: ByteArray, angleDegrees: Float): ByteArray {
-        val mappedDegrees = angleDegrees * 1.5f
-        val radians = ((mappedDegrees % 360f) * kotlin.math.PI / 180f)
+        val radians = ((angleDegrees % 360f) * kotlin.math.PI / 180f)
         return applyFilter(bitmapData, "CIHueAdjust") { filter ->
             filter.setValue(radians, forKey = kCIInputAngleKey)
         }
