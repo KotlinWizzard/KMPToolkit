@@ -38,25 +38,6 @@ actual object ImageEditor {
         val bmp = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.size)
         val sepiaMatrix = createSepiaMatrix(1.3F)
         return applyColorMatrix(bmp, sepiaMatrix)
-
-        /*
-          val bmp = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.size)
-        val greyScale = ColorMatrix()
-        greyScale.setSaturation(0F)
-        val sepiaMatrix = ColorMatrix()
-        sepiaMatrix.setScale(1F,0.95F, 0.82F,1.0F)
-        greyScale.setConcat(sepiaMatrix,greyScale)
-        return applyColorMatrix(bmp, greyScale)
-        val bmp = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.size)
-        val sepiaMatrix = ColorMatrix(
-            floatArrayOf(
-                0.393f, 0.769f, 0.189f, 0f, 0f,
-                0.349f, 0.686f, 0.168f, 0f, 0f,
-                0.272f, 0.534f, 0.131f, 0f, 0f,
-                0f, 0f, 0f, 1f, 0f
-            )
-        )
-        return applyColorMatrix(bmp, sepiaMatrix)*/
     }
 
     private fun createSepiaMatrix(intensity: Float): ColorMatrix {
