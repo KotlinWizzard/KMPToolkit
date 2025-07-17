@@ -16,13 +16,14 @@ import platform.CoreImage.kCIInputIntensityKey
 import platform.CoreImage.kCIInputSaturationKey
 import platform.Foundation.setValue
 import platform.UIKit.UIImage
+import kotlin.math.abs
 
 actual object ImageEditor {
     actual suspend fun applyBrightness(
         bitmapData: ByteArray,
         factor: Float
     ): ByteArray {
-        val mapped = (factor - 1.0f).coerceIn(-1.0f, 1.0f)
+        val mapped = ((factor - 1.0f) * 0.5f).coerceIn(-1.0f, 1.0f)
         return applyCIColorControls(bitmapData, brightness = mapped)
     }
 
@@ -32,7 +33,7 @@ actual object ImageEditor {
 
     actual suspend fun applySepia(bitmapData: ByteArray): ByteArray {
         return applyFilter(bitmapData, "CISepiaTone") { filter ->
-            filter.setValue(1.0, forKey = kCIInputIntensityKey)
+            filter.setValue(1.3, forKey = kCIInputIntensityKey)
         }
     }
 
@@ -41,17 +42,28 @@ actual object ImageEditor {
     }
 
     actual suspend fun applySaturation(bitmapData: ByteArray, factor: Float): ByteArray {
-        return applyCIColorControls(bitmapData, saturation = factor)
+        val mapped = ((factor - 1f) * 0.4f + 1f).coerceIn(0f, 2f)
+        return applyCIColorControls(bitmapData, saturation = mapped)
     }
 
     actual suspend fun applyExposure(bitmapData: ByteArray, ev: Float): ByteArray {
         return applyFilter(bitmapData, "CIExposureAdjust") { filter ->
-            filter.setValue(ev.toDouble(), forKey = "inputEV")
+            val mappedEv = (ev * 2.0f)
+            filter.setValue(mappedEv.toDouble(), forKey = "inputEV")
         }
     }
 
     actual suspend fun applyTemperature(bitmapData: ByteArray, temperature: Float): ByteArray {
-        val clamped = temperature.coerceIn(-100f, 100f)
+        val clamped = abs(temperature.coerceIn(-100f, 100f)  - 100F)
+        val targetK = 6500.0 + (clamped * 50.0) // linearer Bereich ±1500K
+        return applyFilter(bitmapData, "CITemperatureAndTint") { filter ->
+            val neutral = CIVector(x = targetK,  0.0)
+            val target = CIVector(x = 1000.0, 0.0)
+            filter.setValue(neutral, forKey = "inputNeutral")
+            filter.setValue(target, forKey = "inputTargetNeutral")
+        }
+        /*
+         val clamped = temperature.coerceIn(-100f, 100f)
         val targetK = 6500.0 + (clamped * 15.0) // linearer Bereich ±1500K
         return applyFilter(bitmapData, "CITemperatureAndTint") { filter ->
             val neutral = CIVector(x = 6500.0,  0.0)
@@ -59,10 +71,12 @@ actual object ImageEditor {
             filter.setValue(neutral, forKey = "inputNeutral")
             filter.setValue(target, forKey = "inputTargetNeutral")
         }
+         */
     }
 
     actual suspend fun applyHue(bitmapData: ByteArray, angleDegrees: Float): ByteArray {
-        val radians = ((angleDegrees % 360f) * kotlin.math.PI / 180f).coerceIn(- kotlin.math.PI, kotlin.math.PI)
+        val mappedDegrees = angleDegrees * 1.5f
+        val radians = ((mappedDegrees % 360f) * kotlin.math.PI / 180f)
         return applyFilter(bitmapData, "CIHueAdjust") { filter ->
             filter.setValue(radians, forKey = kCIInputAngleKey)
         }
