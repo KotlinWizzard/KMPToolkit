@@ -1,0 +1,132 @@
+package io.github.kotlinwizzard.kmptoolkit.cameraxgallery.processing
+
+import android.graphics.Bitmap
+import android.graphics.Bitmap.createBitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
+import android.graphics.Paint
+import java.io.ByteArrayOutputStream
+import kotlin.math.pow
+
+actual object ImageEditor {
+    private val compressFormat = Bitmap.CompressFormat.JPEG
+    actual suspend fun applyBrightness(
+        bitmapData: ByteArray,
+        factor: Float
+    ): ByteArray {
+        val bmp = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.size)
+        val colorMatrix = ColorMatrix(floatArrayOf(
+            factor, 0f, 0f, 0f, 0f,
+            0f, factor, 0f, 0f, 0f,
+            0f, 0f, factor, 0f, 0f,
+            0f, 0f, 0f, 1f, 0f
+        ))
+        return applyColorMatrix(bmp, colorMatrix)
+    }
+
+    actual suspend fun applyGreyscale(bitmapData: ByteArray): ByteArray {
+        val bmp = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.size)
+        val matrix = ColorMatrix()
+        matrix.setSaturation(0f)
+        return applyColorMatrix(bmp, matrix)
+    }
+
+    actual suspend fun applySepia(bitmapData: ByteArray): ByteArray {
+        val bmp = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.size)
+        val sepiaMatrix = ColorMatrix(
+            floatArrayOf(
+                0.393f, 0.769f, 0.189f, 0f, 0f,
+                0.349f, 0.686f, 0.168f, 0f, 0f,
+                0.272f, 0.534f, 0.131f, 0f, 0f,
+                0f, 0f, 0f, 1f, 0f
+            )
+        )
+        return applyColorMatrix(bmp, sepiaMatrix)
+    }
+
+    actual suspend fun applyContrast(
+        bitmapData: ByteArray,
+        factor: Float
+    ): ByteArray {
+        val bmp = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.size)
+        val contrast = factor
+        val scale = contrast
+        val translate = (-0.5f * scale + 0.5f) * 255f
+
+        val matrix = ColorMatrix(floatArrayOf(
+            scale, 0f, 0f, 0f, translate,
+            0f, scale, 0f, 0f, translate,
+            0f, 0f, scale, 0f, translate,
+            0f, 0f, 0f, 1f, 0f
+        ))
+
+        return applyColorMatrix(bmp, matrix)
+    }
+
+    actual suspend fun applySaturation(
+        bitmapData: ByteArray,
+        factor: Float
+    ): ByteArray {
+        val bmp = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.size)
+        val matrix = ColorMatrix()
+        matrix.setSaturation(factor)
+        return applyColorMatrix(bmp, matrix)
+    }
+
+    actual suspend fun applyExposure(
+        bitmapData: ByteArray,
+        ev: Float
+    ): ByteArray {
+        val bmp = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.size)
+        val exposure = 2.0.pow(ev.toDouble()).toFloat()
+        val matrix = ColorMatrix(floatArrayOf(
+            exposure, 0f, 0f, 0f, 0f,
+            0f, exposure, 0f, 0f, 0f,
+            0f, 0f, exposure, 0f, 0f,
+            0f, 0f, 0f, 1f, 0f
+        ))
+        return applyColorMatrix(bmp, matrix)
+    }
+
+    actual suspend fun applyTemperature(
+        bitmapData: ByteArray,
+        temperature: Float
+    ): ByteArray {
+        val bmp = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.size)
+        val r = 1f + (temperature / 100f)
+        val b = 1f - (temperature / 100f)
+        val matrix = ColorMatrix(floatArrayOf(
+            r, 0f, 0f, 0f, 0f,
+            0f, 1f, 0f, 0f, 0f,
+            0f, 0f, b, 0f, 0f,
+            0f, 0f, 0f, 1f, 0f
+        ))
+        return applyColorMatrix(bmp, matrix)
+    }
+
+    actual suspend fun applyHue(
+        bitmapData: ByteArray,
+        angleDegrees: Float
+    ): ByteArray {
+        val bmp = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.size)
+        val matrix = ColorMatrix()
+        matrix.setRotate(0, angleDegrees)
+        matrix.setRotate(1, angleDegrees)
+        matrix.setRotate(2, angleDegrees)
+        return applyColorMatrix(bmp, matrix)
+    }
+
+    private fun applyColorMatrix(bmp: Bitmap, matrix: ColorMatrix): ByteArray {
+        val result = createBitmap(bmp.width, bmp.height, bmp.config)
+        val canvas = Canvas(result)
+        val paint = Paint()
+        paint.colorFilter = ColorMatrixColorFilter(matrix)
+        canvas.drawBitmap(bmp, 0f, 0f, paint)
+
+        val output = ByteArrayOutputStream()
+        result.compress(compressFormat, 100, output)
+        return output.toByteArray()
+    }
+}

@@ -20,6 +20,7 @@ import io.github.kotlinwizzard.kmptoolkit.core.presentation.theme.spacing
 import io.github.kotlinwizzard.kmptoolkit.navigation.LocalAppNavigator
 import screens.camera.CameraScreen
 import screens.camera.GalleryScreen
+import screens.camera.ImageEditorScreen
 import screens.camera.PdfPickerScreen
 import screens.camera.TextScannerScreen
 
@@ -41,6 +42,7 @@ class TemplateScreen : Screen {
                 TemplateItem(GalleryScreen(), "Gallery sample")
                 TemplateItem(PdfPickerScreen(), "PDF-Picker sample")
                 TemplateItem(TextScannerScreen(), "Text scanner")
+                TemplateItem(ImageEditorScreen(), "Image Editor")
             }
         }
     }
