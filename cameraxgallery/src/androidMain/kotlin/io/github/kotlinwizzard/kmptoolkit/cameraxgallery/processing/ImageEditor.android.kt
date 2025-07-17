@@ -17,7 +17,7 @@ actual object ImageEditor {
         bitmapData: ByteArray,
         factor: Float
     ): ByteArray {
-        val adjustedFactor = (factor*100).coerceIn(-250F,250F)
+        val adjustedFactor = (factor.coerceIn(-1F,1F)*250).coerceIn(-250F,250F)
         val bmp = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.size)
         val colorMatrix = ColorMatrix(floatArrayOf(
             1f, 0f, 0f, 0f, adjustedFactor,
@@ -63,6 +63,21 @@ actual object ImageEditor {
         factor: Float
     ): ByteArray {
         val bmp = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.size)
+        val contrast = factor.coerceIn(0f, 3f)
+
+        val scale = kotlin.math.abs(contrast)
+        val translate = 128f * (1f - scale)
+
+        val baseMatrix = ColorMatrix(floatArrayOf(
+            scale, 0f, 0f, 0f, translate,
+            0f, scale, 0f, 0f, translate,
+            0f, 0f, scale, 0f, translate,
+            0f, 0f, 0f, 1f, 0f
+        ))
+
+        return applyColorMatrix(bmp, baseMatrix)
+        /*
+        val bmp = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.size)
         val contrast = factor
         val scale = contrast
         val translate = (-0.5f * scale + 0.5f) * 255f
@@ -74,7 +89,7 @@ actual object ImageEditor {
             0f, 0f, 0f, 1f, 0f
         ))
 
-        return applyColorMatrix(bmp, matrix)
+        return applyColorMatrix(bmp, matrix)*/
     }
 
     actual suspend fun applySaturation(
