@@ -54,11 +54,18 @@ actual object ImageEditor {
     }
 
     actual suspend fun applyTemperature(bitmapData: ByteArray, temperature: Float): ByteArray {
-        val clamped = abs(temperature.coerceIn(-100f, 100f)  - 100F)
-        val targetK = 6500.0 + (clamped * 50.0) // linearer Bereich ±1500K
+        val clamped = temperature.coerceIn(-100f, 100f)
+        val isNegative = clamped<=0
+        val positiveDegrees = abs(clamped)
+        val target = 6500 - (positiveDegrees * 45.0)
+        //val targetK = 6500.0 + (clamped * 50.0)
+        val (neutralDegree,targetDegree) = when(isNegative){
+            true -> target to 0.0
+            false -> 0.0 to target
+        }
         return applyFilter(bitmapData, "CITemperatureAndTint") { filter ->
-            val neutral = CIVector(x = targetK,  0.0)
-            val target = CIVector(x = 1000.0, 0.0)
+            val neutral = CIVector(x = neutralDegree,  0.0)
+            val target = CIVector(x = targetDegree,0.0)
             filter.setValue(neutral, forKey = "inputNeutral")
             filter.setValue(target, forKey = "inputTargetNeutral")
         }
