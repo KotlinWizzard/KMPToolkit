@@ -57,11 +57,10 @@ actual object ImageEditor {
         val clamped = temperature.coerceIn(-100f, 100f)
         val isNegative = clamped<=0
         val positiveDegrees = abs(clamped)
-        val target = 6500 - (positiveDegrees * 45.0)
-        //val targetK = 6500.0 + (clamped * 50.0)
+        val mappedDegree = 6500 - (positiveDegrees * 45.0)
         val (neutralDegree,targetDegree) = when(isNegative){
-            true -> target to 0.0
-            false -> 0.0 to target
+            true -> mappedDegree to 0.0
+            false -> 0.0 to mappedDegree
         }
         return applyFilter(bitmapData, "CITemperatureAndTint") { filter ->
             val neutral = CIVector(x = neutralDegree,  0.0)
@@ -69,16 +68,6 @@ actual object ImageEditor {
             filter.setValue(neutral, forKey = "inputNeutral")
             filter.setValue(target, forKey = "inputTargetNeutral")
         }
-        /*
-         val clamped = temperature.coerceIn(-100f, 100f)
-        val targetK = 6500.0 + (clamped * 15.0) // linearer Bereich ±1500K
-        return applyFilter(bitmapData, "CITemperatureAndTint") { filter ->
-            val neutral = CIVector(x = 6500.0,  0.0)
-            val target = CIVector(x = targetK, 0.0)
-            filter.setValue(neutral, forKey = "inputNeutral")
-            filter.setValue(target, forKey = "inputTargetNeutral")
-        }
-         */
     }
 
     actual suspend fun applyHue(bitmapData: ByteArray, angleDegrees: Float): ByteArray {
