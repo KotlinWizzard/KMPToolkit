@@ -17,12 +17,13 @@ actual object ImageEditor {
         bitmapData: ByteArray,
         factor: Float
     ): ByteArray {
+        val adjustedFactor = (factor*100).coerceIn(-250F,250F)
         val bmp = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.size)
         val colorMatrix = ColorMatrix(floatArrayOf(
-            factor, 0f, 0f, 0f, 0f,
-            0f, factor, 0f, 0f, 0f,
-            0f, 0f, factor, 0f, 0f,
-            0f, 0f, 0f, 1f, 0f
+            1f, 0f, 0f, 0f, adjustedFactor,
+            0f, 1f, 0f, 0f, adjustedFactor,
+            0f, 0f, 1f, 0f, adjustedFactor,
+            0f, 0f, 0f, 1f, 0f,
         ))
         return applyColorMatrix(bmp, colorMatrix)
     }
