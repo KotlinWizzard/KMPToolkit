@@ -17,14 +17,16 @@ actual object ImageEditor {
         bitmapData: ByteArray,
         factor: Float
     ): ByteArray {
-        val adjustedFactor = (factor.coerceIn(-1F,1F)*250).coerceIn(-250F,250F)
+        val adjustedFactor = (factor.coerceIn(-1F, 1F) * 255).coerceIn(-255F, 255F)
         val bmp = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.size)
-        val colorMatrix = ColorMatrix(floatArrayOf(
-            1f, 0f, 0f, 0f, adjustedFactor,
-            0f, 1f, 0f, 0f, adjustedFactor,
-            0f, 0f, 1f, 0f, adjustedFactor,
-            0f, 0f, 0f, 1f, 0f,
-        ))
+        val colorMatrix = ColorMatrix(
+            floatArrayOf(
+                1f, 0f, 0f, 0f, adjustedFactor,
+                0f, 1f, 0f, 0f, adjustedFactor,
+                0f, 0f, 1f, 0f, adjustedFactor,
+                0f, 0f, 0f, 1f, 0f,
+            )
+        )
         return applyColorMatrix(bmp, colorMatrix)
     }
 
@@ -47,7 +49,7 @@ actual object ImageEditor {
                 0.393f, 0.769f, 0.189f, 0f, 0f,
                 0.349f, 0.686f, 0.168f, 0f, 0f,
                 0.272f, 0.534f, 0.131f, 0f, 0f,
-                0f,     0f,     0f,    1f, 0f
+                0f, 0f, 0f, 1f, 0f
             )
         )
 
@@ -63,17 +65,23 @@ actual object ImageEditor {
         factor: Float
     ): ByteArray {
         val bmp = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.size)
-        val contrast = factor.coerceIn(0f, 3f)
+        val clamped = factor.coerceIn(-1f, 1f)
+        val contrast = when {
+            clamped <= 0f -> (clamped + 1f)
+            else -> (clamped * 2) + 1f
+        }
 
         val scale = kotlin.math.abs(contrast)
         val translate = 128f * (1f - scale)
 
-        val baseMatrix = ColorMatrix(floatArrayOf(
-            scale, 0f, 0f, 0f, translate,
-            0f, scale, 0f, 0f, translate,
-            0f, 0f, scale, 0f, translate,
-            0f, 0f, 0f, 1f, 0f
-        ))
+        val baseMatrix = ColorMatrix(
+            floatArrayOf(
+                scale, 0f, 0f, 0f, translate,
+                0f, scale, 0f, 0f, translate,
+                0f, 0f, scale, 0f, translate,
+                0f, 0f, 0f, 1f, 0f
+            )
+        )
 
         return applyColorMatrix(bmp, baseMatrix)
     }
@@ -82,9 +90,14 @@ actual object ImageEditor {
         bitmapData: ByteArray,
         factor: Float
     ): ByteArray {
+        val clamped = factor.coerceIn(-1f, 1f)
+        val saturation = when {
+            clamped <= 0f -> (clamped + 1f)
+            else -> (clamped * 5) + 1f
+        }
         val bmp = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.size)
         val matrix = ColorMatrix()
-        matrix.setSaturation(factor)
+        matrix.setSaturation(saturation)
         return applyColorMatrix(bmp, matrix)
     }
 
@@ -93,13 +106,20 @@ actual object ImageEditor {
         ev: Float
     ): ByteArray {
         val bmp = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.size)
-        val exposure = 2.0.pow(ev.toDouble()).toFloat()
-        val matrix = ColorMatrix(floatArrayOf(
-            exposure, 0f, 0f, 0f, 0f,
-            0f, exposure, 0f, 0f, 0f,
-            0f, 0f, exposure, 0f, 0f,
-            0f, 0f, 0f, 1f, 0f
-        ))
+        var mappedEv = ev.coerceIn(-1f, 1f).toDouble()
+        mappedEv = when{
+            mappedEv <= 0F -> mappedEv.times(5)
+            else -> mappedEv.times(10)
+        }
+        val exposure = 2.0.pow(mappedEv).toFloat()
+        val matrix = ColorMatrix(
+            floatArrayOf(
+                exposure, 0f, 0f, 0f, 0f,
+                0f, exposure, 0f, 0f, 0f,
+                0f, 0f, exposure, 0f, 0f,
+                0f, 0f, 0f, 1f, 0f
+            )
+        )
         return applyColorMatrix(bmp, matrix)
     }
 
@@ -108,14 +128,17 @@ actual object ImageEditor {
         temperature: Float
     ): ByteArray {
         val bmp = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.size)
-        val r = 1f + (temperature / 100f)
-        val b = 1f - (temperature / 100f)
-        val matrix = ColorMatrix(floatArrayOf(
-            r, 0f, 0f, 0f, 0f,
-            0f, 1f, 0f, 0f, 0f,
-            0f, 0f, b, 0f, 0f,
-            0f, 0f, 0f, 1f, 0f
-        ))
+        val clamped = temperature.coerceIn(-1f, 1f)
+        val r = 1f + clamped
+        val b = 1f - clamped
+        val matrix = ColorMatrix(
+            floatArrayOf(
+                r, 0f, 0f, 0f, 0f,
+                0f, 1f, 0f, 0f, 0f,
+                0f, 0f, b, 0f, 0f,
+                0f, 0f, 0f, 1f, 0f
+            )
+        )
         return applyColorMatrix(bmp, matrix)
     }
 
@@ -135,7 +158,7 @@ actual object ImageEditor {
             val localHSV = FloatArray(3) // avoid shared mutable state
             for (i in chunk) {
                 Color.colorToHSV(pixels[i], localHSV)
-                localHSV[0] = ((localHSV[0] + angleDegrees) % 360 + 360) % 360
+                localHSV[0] = ((localHSV[0] + angleDegrees.coerceIn(-180F,180F)) % 360 + 360) % 360
                 pixels[i] = Color.HSVToColor(Color.alpha(pixels[i]), localHSV)
             }
         }
