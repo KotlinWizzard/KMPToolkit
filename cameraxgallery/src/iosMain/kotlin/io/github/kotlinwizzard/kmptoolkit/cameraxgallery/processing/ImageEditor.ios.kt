@@ -38,8 +38,7 @@ actual object ImageEditor {
     }
 
     actual suspend fun applyContrast(bitmapData: ByteArray, factor: Float): ByteArray {
-        val mapped = ((factor - 1f) * 0.4f + 1f).coerceIn(0f, 2f)
-        return applyCIColorControls(bitmapData, contrast = mapped)
+        return applyCIColorControls(bitmapData, contrast = factor.coerceIn(0F,3F))
     }
 
     actual suspend fun applySaturation(bitmapData: ByteArray, factor: Float): ByteArray {
