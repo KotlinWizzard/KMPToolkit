@@ -38,23 +38,33 @@ actual object ImageEditor {
     }
 
     actual suspend fun applyContrast(bitmapData: ByteArray, factor: Float): ByteArray {
-        return applyCIColorControls(bitmapData, contrast = factor.coerceIn(0F,3F))
+        val clamped = factor.coerceIn(-1f, 1f)
+        val contrast = when {
+            clamped <= 0f -> (clamped + 1f)
+            else -> (clamped * 2) + 1f
+        }
+        return applyCIColorControls(bitmapData, contrast = contrast)
     }
 
     actual suspend fun applySaturation(bitmapData: ByteArray, factor: Float): ByteArray {
-        val mapped = ((factor - 1f) * 0.4f + 1f).coerceIn(0f, 2f)
-        return applyCIColorControls(bitmapData, saturation = mapped)
+        val clamped = factor.coerceIn(-1f, 1f)
+        val saturation = when {
+            clamped <= 0f -> (clamped + 1f)
+            else -> (clamped * 5) + 1f
+        }
+        return applyCIColorControls(bitmapData, saturation = saturation)
     }
 
     actual suspend fun applyExposure(bitmapData: ByteArray, ev: Float): ByteArray {
         return applyFilter(bitmapData, "CIExposureAdjust") { filter ->
-            val mappedEv = (ev * 2.0f)
+            val clamped = ev.coerceIn(-1F,1F)
+            val mappedEv =  clamped.times(5)
             filter.setValue(mappedEv.toDouble(), forKey = "inputEV")
         }
     }
 
     actual suspend fun applyTemperature(bitmapData: ByteArray, temperature: Float): ByteArray {
-        val clamped = temperature.coerceIn(-100f, 100f)
+        val clamped = temperature.coerceIn(-1f, 1f).times(100)
         val isNegative = clamped<=0
         val positiveDegrees = abs(clamped)
         val mappedDegree = 6500 - (positiveDegrees * 45.0)
@@ -71,7 +81,7 @@ actual object ImageEditor {
     }
 
     actual suspend fun applyHue(bitmapData: ByteArray, angleDegrees: Float): ByteArray {
-        val radians = ((angleDegrees % 360f) * kotlin.math.PI / 180f)
+        val radians = ((angleDegrees % 360f + 360f) % 360f) * kotlin.math.PI.toFloat() / 180f
         return applyFilter(bitmapData, "CIHueAdjust") { filter ->
             filter.setValue(radians, forKey = kCIInputAngleKey)
         }
