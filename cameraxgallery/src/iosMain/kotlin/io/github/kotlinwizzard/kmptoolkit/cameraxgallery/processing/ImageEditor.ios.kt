@@ -23,7 +23,7 @@ actual object ImageEditor {
         bitmapData: ByteArray,
         factor: Float
     ): ByteArray {
-        val mapped = ((factor - 1.0f) * 0.5f).coerceIn(-1.0f, 1.0f)
+        val mapped = factor.coerceIn(-1F,1F)
         return applyCIColorControls(bitmapData, brightness = mapped)
     }
 
