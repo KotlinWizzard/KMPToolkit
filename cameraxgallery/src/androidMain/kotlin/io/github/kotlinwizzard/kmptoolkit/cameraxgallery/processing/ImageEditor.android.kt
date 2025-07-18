@@ -9,7 +9,6 @@ import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
 import android.graphics.Paint
 import java.io.ByteArrayOutputStream
-import kotlin.math.pow
 
 actual object ImageEditor {
     private val compressFormat = Bitmap.CompressFormat.JPEG
@@ -106,12 +105,11 @@ actual object ImageEditor {
         ev: Float
     ): ByteArray {
         val bmp = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.size)
-        var mappedEv = ev.coerceIn(-1f, 1f).toDouble()
-        mappedEv = when{
-            mappedEv <= 0F -> mappedEv.times(5)
-            else -> mappedEv.times(10)
-        }
-        val exposure = 2.0.pow(mappedEv).toFloat()
+        val clamped = ev.coerceIn(-1f, 1f).toDouble()
+        val exposure = when {
+            clamped <= 0f -> (clamped + 1f)
+            else -> (clamped * 4) + 1f
+        }.toFloat()
         val matrix = ColorMatrix(
             floatArrayOf(
                 exposure, 0f, 0f, 0f, 0f,
