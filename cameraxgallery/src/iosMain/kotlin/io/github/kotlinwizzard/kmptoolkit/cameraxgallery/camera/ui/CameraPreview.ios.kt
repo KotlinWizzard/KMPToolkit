@@ -17,6 +17,7 @@ import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.camera.state.CameraFocu
 import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.camera.state.CameraMode
 import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.camera.state.CameraState
 import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.gallery.toByteArray
+import io.github.kotlinwizzard.kmptoolkit.cameraxgallery.gallery.toResizedByteArray
 import io.github.kotlinwizzard.kmptoolkit.core.service.media.LocalCache
 import io.github.kotlinwizzard.kmptoolkit.core.util.LifecycleEffect
 import kotlinx.cinterop.BetaInteropApi
@@ -514,8 +515,9 @@ class CameraFrameAnalyzerDelegate(
         didOutputSampleBuffer: CMSampleBufferRef?,
         fromConnection: AVCaptureConnection,
     ) {
+        if(onFrame == null  &&  cameraState.imageAnalyzers.isEmpty()) return
         val uiImage = convertSampleBufferToUIImage(sampleBuffer = didOutputSampleBuffer) ?: return
-        val byteArray = uiImage.toByteArray()
+        val byteArray = uiImage.toResizedByteArray()
         onFrame?.invoke(byteArray)
         cameraState.imageAnalyzers.forEach {
             it.analyze(byteArray)

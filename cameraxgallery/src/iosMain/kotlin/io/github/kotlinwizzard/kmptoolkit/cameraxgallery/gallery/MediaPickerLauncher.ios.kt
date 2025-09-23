@@ -5,11 +5,16 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.cinterop.CPointed
 import kotlinx.cinterop.CPointer
+import kotlinx.cinterop.CValue
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.refTo
+import kotlinx.cinterop.useContents
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import platform.CoreGraphics.CGRectMake
+import platform.CoreGraphics.CGSize
+import platform.CoreGraphics.CGSizeMake
 import platform.Foundation.NSData
 import platform.PhotosUI.PHPickerConfiguration
 import platform.PhotosUI.PHPickerConfigurationSelectionOrdered
@@ -18,6 +23,7 @@ import platform.PhotosUI.PHPickerResult
 import platform.PhotosUI.PHPickerViewController
 import platform.PhotosUI.PHPickerViewControllerDelegateProtocol
 import platform.UIKit.UIApplication
+import platform.UIKit.UIGraphicsImageRenderer
 import platform.UIKit.UIImage
 import platform.UIKit.UIImageJPEGRepresentation
 import platform.darwin.NSObject
@@ -126,11 +132,52 @@ private fun CPointer<out CPointed>?.toByteArray(size:ULong): ByteArray? {
 }
 
 @OptIn(ExperimentalForeignApi::class)
+internal fun UIImage.resize(targetSize: CValue<CGSize>): UIImage {
+    val renderer = UIGraphicsImageRenderer(size = targetSize)
+    return renderer.imageWithActions { _ ->
+        this.drawInRect(CGRectMake(0.0, 0.0, targetSize.useContents { this.width }, targetSize.useContents { this.height }))
+    }
+}
+
+@OptIn(ExperimentalForeignApi::class)
+internal fun UIImage.resizePreservingAspectRatio(maxSize: Double): UIImage {
+    val originalWidth = this.size.useContents { width }
+    val originalHeight = this.size.useContents { height }
+
+    // Wenn das Bild bereits klein genug ist, gib es direkt zurück
+    if (originalWidth <= maxSize && originalHeight <= maxSize) {
+        return this
+    }
+
+    val widthRatio = maxSize / originalWidth
+    val heightRatio = maxSize / originalHeight
+    val scaleRatio = minOf(widthRatio, heightRatio)
+
+    val newWidth = originalWidth * scaleRatio
+    val newHeight = originalHeight * scaleRatio
+
+    val targetSize = CGSizeMake(newWidth, newHeight)
+
+    val renderer = UIGraphicsImageRenderer(size = targetSize)
+    return renderer.imageWithActions { _ ->
+        this.drawInRect(CGRectMake(0.0, 0.0, targetSize.useContents { width }, targetSize.useContents { height }))
+    }
+}
+
+
+
+internal fun UIImage.toResizedByteArray(maxSize:Double=1024.0, compressionQuality: Double=1.0): ByteArray {
+    val resizedImage = resizePreservingAspectRatio(maxSize)
+    return resizedImage.toByteArray(compressionQuality)
+}
+
+@OptIn(ExperimentalForeignApi::class)
 internal fun UIImage.toByteArray(compressionQuality: Double=1.0): ByteArray {
     val validCompressionQuality = compressionQuality.coerceIn(0.0, 1.0)
     val jpegData = UIImageJPEGRepresentation(this, validCompressionQuality)!!
     return ByteArray(jpegData.length.toInt()).apply {
         memcpy(this.refTo(0), jpegData.bytes, jpegData.length)
+        jpegData.finalize()
     }
 }
 
