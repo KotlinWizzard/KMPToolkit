@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 val libraryGroup: String by project
 val libraryVersion: String by project
 val libraryJvm: String by project
-val basePackage = "$libraryGroup.pagingxcaching"
+val basePackage = "$libraryGroup.paging"
 val defaultJvmTarget: JvmTarget  = JvmTarget.fromTarget(libraryJvm)
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -31,12 +31,16 @@ kotlin {
     iosX64()
     iosArm64()
     iosSimulatorArm64()
-    /*
+    js {
+        browser()
+        binaries.executable()
+    }
+
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         browser()
         binaries.executable()
-    }*/
+    }
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -45,7 +49,6 @@ kotlin {
                 implementation(libs.androidxKmp.lifecycle.runtimeCompose)
                 implementation(libs.androidxKmp.core.bundle)
                 implementation(project(":core"))
-               api(project(":paging"))
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.runtimeSaveable)
@@ -67,8 +70,6 @@ kotlin {
                 implementation(libs.ktor.client.logging)
                 implementation(libs.ktor.serializationKotlinxJson)
                 implementation(libs.androidx.paging.common)
-                implementation(libs.room.runtime)
-                implementation(libs.room.paging)
             }
         }
         val commonTest by getting {
@@ -116,11 +117,11 @@ mavenPublishing {
     publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
     signAllPublications()
 
-    coordinates(group.toString(), "pagingxcaching", version.toString())
+    coordinates(group.toString(), "paging", version.toString())
 
     pom {
-        name = "KMPToolkit pagingXcaching"
-        description = "A library for paging and caching in Kotlin Multiplatform."
+        name = "KMPToolkit paging"
+        description = "A library for paging in Kotlin Multiplatform."
         inceptionYear = "2025"
         url = "https://github.com/KotlinWizzard/KMPToolkit"
         licenses {

@@ -6,15 +6,15 @@ import kotlin.time.ExperimentalTime
 
 @OptIn(ExperimentalTime::class)
 sealed class CachedRefreshAction {
-    data object RefreshNever : io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.cache.infrastructure.CachedRefreshAction()
+    data object RefreshNever : CachedRefreshAction()
 
-    data object RefreshAndDelete : io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.cache.infrastructure.CachedRefreshAction()
+    data object RefreshAndDelete : CachedRefreshAction()
 
-    data object RefreshAndUpdate : io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.cache.infrastructure.CachedRefreshAction()
+    data object RefreshAndUpdate : CachedRefreshAction()
 
-    data class RefreshAndUpdateOnTime(val cacheTimeoutMillis: Long) : io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.cache.infrastructure.CachedRefreshAction()
+    data class RefreshAndUpdateOnTime(val cacheTimeoutMillis: Long) : CachedRefreshAction()
 
-    data class RefreshAndDeleteOnTime(val cacheTimeoutMillis: Long) : io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.cache.infrastructure.CachedRefreshAction()
+    data class RefreshAndDeleteOnTime(val cacheTimeoutMillis: Long) : CachedRefreshAction()
 
     companion object {
         fun getTimeInMillisFromUnit(

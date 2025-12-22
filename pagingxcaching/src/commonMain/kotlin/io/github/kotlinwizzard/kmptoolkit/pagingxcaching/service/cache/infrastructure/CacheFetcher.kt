@@ -1,7 +1,7 @@
 package io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.cache.infrastructure
 
-import io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.api.ApiResult
-import io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.paging.PageImpl
+import io.github.kotlinwizzard.kmptoolkit.paging.service.api.ApiResult
+import io.github.kotlinwizzard.kmptoolkit.paging.service.paging.PageImpl
 import io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.room.key.PagingQueryKey
 import io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.room.key.QueryKey
 

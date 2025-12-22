@@ -6,11 +6,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import io.github.kotlinwizzard.kmptoolkit.core.util.LifecycleEffect
-import io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.api.ApiResult
+import io.github.kotlinwizzard.kmptoolkit.paging.service.api.ApiResult
+import io.github.kotlinwizzard.kmptoolkit.paging.service.paging.infrastructure.ViewModelService
+import io.github.kotlinwizzard.kmptoolkit.paging.state.error.ErrorState
 import io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.cache.dao.CacheDao
-import io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.paging.infrastructure.ViewModelService
 import io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.room.key.QueryKey
-import io.github.kotlinwizzard.kmptoolkit.pagingxcaching.state.error.ErrorState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
