@@ -12,6 +12,6 @@ actual fun ImageCompressor.compressImage(
     val data = image.encodeToData(
         EncodedImageFormat.JPEG,
         (compressionRatio*100).toInt().coerceIn(0,100)
-    ) ?: error("Failed to encode image")
+    ) ?: return content
     return data.bytes
 }
