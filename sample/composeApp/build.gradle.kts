@@ -32,6 +32,7 @@ kotlin {
             linkerOpts.add("-lsqlite3")
         }
     }
+
     /*
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {

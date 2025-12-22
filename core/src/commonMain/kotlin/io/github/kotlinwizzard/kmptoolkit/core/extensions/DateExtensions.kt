@@ -1,6 +1,5 @@
 package io.github.kotlinwizzard.kmptoolkit.core.extensions
 
-import kotlinx.datetime.Clock
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.Instant
@@ -13,6 +12,7 @@ import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.ExperimentalTime
 
 fun LocalDate.withDayOfMonth(day: Int) =
     LocalDate(
@@ -67,14 +67,16 @@ fun LocalDate.daysUntil(
     }
 }
 
+@OptIn(ExperimentalTime::class)
 fun LocalDate.Companion.today(): LocalDate =
-    Clock.System
+    kotlin.time.Clock.System
         .now()
         .toLocalDateTime(TimeZone.currentSystemDefault())
         .date
 
 
-fun LocalDate.toInstant(hour: Int = 0, minute: Int = 0, second: Int = 0): Instant {
+@OptIn(ExperimentalTime::class)
+fun LocalDate.toInstant(hour: Int = 0, minute: Int = 0, second: Int = 0): kotlin.time.Instant {
     return this.toLocalDateTime(hour, minute, second).toInstant(TimeZone.currentSystemDefault())
 }
 

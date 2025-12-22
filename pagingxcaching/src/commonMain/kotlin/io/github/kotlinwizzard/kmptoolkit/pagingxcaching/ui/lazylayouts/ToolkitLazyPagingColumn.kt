@@ -61,7 +61,7 @@ fun <Actual : Any> ToolkitLazyPagingColumn(
             userScrollEnabled = userScrollEnabled,
         ) {
             header?.let {
-                stickyHeader {
+                stickyHeader { _ ->
                     it.invoke()
                 }
             }

@@ -41,8 +41,6 @@ fun <Actual : Any> ToolkitPullToRefresh(
                 pullToRefreshMode.indicatorModifier,
                 isRefreshing = false,
                 state = pullToRefreshState,
-                threshold =
-                pullToRefreshMode.distanceThreshold,
                 containerColor = pullToRefreshMode.indicatorColor(),
                 color = pullToRefreshMode.indicatorBackground(),
             )

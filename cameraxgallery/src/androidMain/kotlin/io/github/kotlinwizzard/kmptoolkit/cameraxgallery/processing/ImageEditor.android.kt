@@ -170,7 +170,7 @@ actual object ImageEditor {
     }
 
     private fun applyColorMatrix(bmp: Bitmap, matrix: ColorMatrix): ByteArray {
-        val result = createBitmap(bmp.width, bmp.height, bmp.config)
+        val result = createBitmap(bmp.width, bmp.height, bmp.config ?: Bitmap.Config.ARGB_8888)
         val canvas = Canvas(result)
         val paint = Paint()
         paint.colorFilter = ColorMatrixColorFilter(matrix)
