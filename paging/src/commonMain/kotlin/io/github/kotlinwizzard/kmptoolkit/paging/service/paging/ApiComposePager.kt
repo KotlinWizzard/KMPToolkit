@@ -6,9 +6,9 @@ import androidx.paging.PagingConfig
 import androidx.paging.RemoteMediator
 import androidx.paging.cachedIn
 import androidx.paging.map
+import io.github.kotlinwizzard.kmptoolkit.core.extensions.IO
 import io.github.kotlinwizzard.kmptoolkit.paging.service.paging.infrastructure.BasicApiPagingViewModelService
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch

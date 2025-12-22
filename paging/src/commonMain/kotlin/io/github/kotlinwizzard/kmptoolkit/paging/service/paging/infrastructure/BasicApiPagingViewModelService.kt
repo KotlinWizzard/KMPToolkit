@@ -6,11 +6,11 @@ import androidx.paging.PagingData
 import androidx.paging.RemoteMediator
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import io.github.kotlinwizzard.kmptoolkit.core.extensions.IO
 import io.github.kotlinwizzard.kmptoolkit.paging.service.paging.ApiComposePager
 import io.github.kotlinwizzard.kmptoolkit.paging.service.paging.PagingSourceProvider
 import io.github.kotlinwizzard.kmptoolkit.paging.state.error.ErrorState
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 

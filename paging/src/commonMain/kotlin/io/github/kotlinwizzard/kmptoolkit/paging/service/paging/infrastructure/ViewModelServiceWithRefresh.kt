@@ -3,8 +3,8 @@ package io.github.kotlinwizzard.kmptoolkit.paging.service.paging.infrastructure
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import io.github.kotlinwizzard.kmptoolkit.core.extensions.IO
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

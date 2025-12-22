@@ -11,7 +11,7 @@ kotlinxSerialization = "1.7.3"
 coroutinesVersion = "1.10.1"
 kotlinxIoCore = "0.5.4"
 cameraX = "1.4.1"
-okio = "3.9.1"
+okio = "3.16.4"
 benasher44-uuid = "0.8.2"
 voyager = "1.1.0-beta03"
 koin = "4.0.0"
@@ -42,6 +42,9 @@ androidx-camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycl
 androidx-camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "cameraX" }
 androidx-camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "cameraX" }
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
+okio-node = { module = "com.squareup.okio:okio-nodefilesystem", version.ref = "okio" }
+okio-wasi = { module = "com.squareup.okio:okio-wasifilesystem", version.ref = "okio" }
+okio-fake = { module = "com.squareup.okio:okio-fakefilesystem", version.ref = "okio" }
 uuid = { module = "com.benasher44:uuid", version.ref = "benasher44-uuid" }
 voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
 voyager-screenmodel = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyager" }
