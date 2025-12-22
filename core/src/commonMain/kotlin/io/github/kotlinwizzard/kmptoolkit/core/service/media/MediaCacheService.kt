@@ -41,7 +41,7 @@ sealed class MediaCacheService(
         FileSystem.SYSTEM.sink(tempFilePath).buffer().use { sink ->
             sink.write(bytes)
         }
-        return tempFilePath.toString()
+        return tempFilePath.toUriPathString()
     }
 
     fun copyFileToCache(sourcePath: String, filename: String = generateFilename()): String? {
@@ -57,7 +57,7 @@ sealed class MediaCacheService(
 
     fun getFullPathFromFilename(filename: String) = getPathFromFilename(filename).toString()
 
-    protected fun getPathFromFilename(filename: String) = getTempDirOrCreate() / filename.toPath()
+    protected fun getPathFromFilename(filename: String) =getTempDirOrCreate() / filename.toPath()
 
 
     private fun cleanupOldFiles() {
@@ -92,6 +92,7 @@ sealed class MediaCacheService(
         readCachedFile((tempDir / filename.toPath()).toString())
 
 
+    protected fun Path.toUriPathString() = getUriPath(this.toString())
     init {
         cleanupOldFiles()
     }
@@ -120,7 +121,7 @@ sealed class MediaCacheService(
             FileSystem.SYSTEM.sink(tempFilePath).buffer().use { sink ->
                 sink.write(bytes)
             }
-            return tempFilePath.toString()
+            return tempFilePath.toUriPathString()
         }
 
         companion object {
