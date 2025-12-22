@@ -14,6 +14,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import javax.imageio.ImageIO
 import javax.swing.JFileChooser
+import javax.swing.UIManager
 import javax.swing.filechooser.FileNameExtensionFilter
 
 @Composable
@@ -62,6 +63,7 @@ internal fun chooseFile(
     imageCache: MediaCacheService.Image,
     pdfCache: MediaCacheService.Pdf
 ) {
+    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
     val chooser = JFileChooser().apply {
         isMultiSelectionEnabled = pdfPickerSelectionMode == PdfPickerSelectionMode.Multiple
         fileFilter = FileNameExtensionFilter(

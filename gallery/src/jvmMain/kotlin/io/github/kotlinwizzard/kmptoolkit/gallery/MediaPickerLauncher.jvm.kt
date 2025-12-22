@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import java.io.File
 import javax.swing.JFileChooser
+import javax.swing.UIManager
 import javax.swing.filechooser.FileNameExtensionFilter
 
 @androidx.compose.runtime.Composable
@@ -49,6 +50,7 @@ internal fun chooseFile(
     mediaPickerMediaSelectionType: MediaPickerSelectionType,
     mediaPickerSelectionMode: MediaPickerSelectionMode,
 ) {
+    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
     val chooser = JFileChooser().apply {
         isMultiSelectionEnabled = mediaPickerSelectionMode is MediaPickerSelectionMode.Multiple
         fileFilter = when (mediaPickerMediaSelectionType) {
@@ -75,6 +77,7 @@ internal fun chooseFile(
     }
 
     val result = chooser.showOpenDialog(null)
+
 
     if (result == JFileChooser.APPROVE_OPTION) {
         val files: List<File> =
