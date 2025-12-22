@@ -18,6 +18,8 @@ import io.github.kotlinwizzard.kmptoolkit.core.presentation.theme.ToolkitScaffol
 import io.github.kotlinwizzard.kmptoolkit.core.presentation.theme.ToolkitTheme
 import io.github.kotlinwizzard.kmptoolkit.core.presentation.theme.spacing
 import io.github.kotlinwizzard.kmptoolkit.navigation.LocalAppNavigator
+import screens.test.GalleryScreen
+import screens.test.PdfPickerScreen
 import screens.test.TestScreen
 
 
@@ -35,6 +37,8 @@ class TemplateScreen : Screen {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 TemplateItem(TestScreen(), "Test sample")
+                TemplateItem(GalleryScreen(), "Gallery sample")
+                TemplateItem(PdfPickerScreen(), "PDF sample")
             }
         }
     }

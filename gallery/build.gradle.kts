@@ -21,6 +21,7 @@ group = libraryGroup
 version = libraryVersion
 
 kotlin {
+    jvm()
     androidTarget {
         publishLibraryVariants("release")
         compilerOptions {
@@ -30,6 +31,16 @@ kotlin {
     iosX64()
     iosArm64()
     iosSimulatorArm64()
+    js {
+        browser()
+        binaries.executable()
+    }
+
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
+        binaries.executable()
+    }
 
 
     sourceSets {
@@ -61,6 +72,12 @@ kotlin {
             dependencies {
                 implementation(libs.androidx.activity.compose)
                 implementation(libs.coroutines.playServices)
+            }
+        }
+
+        val jvmMain by getting {
+            dependencies {
+                implementation(libs.pdfBox)
             }
         }
 

@@ -27,6 +27,7 @@ sqllite = "2.6.2"
 sketch-image = "4.0.0-beta03"
 mlkitTextRecognition = "16.0.1"
 coroutinesVersionPlayServices="1.7.1"
+pdfBox="2.0.30"
 
 [libraries]
 mlkit-textRecognition = { group = "com.google.mlkit", name = "text-recognition", version.ref = "mlkitTextRecognition" }
@@ -78,6 +79,7 @@ sketch-svg = { module = "io.github.panpf.sketch4:sketch-svg", version.ref = "ske
 sketch-ktor = { module = "io.github.panpf.sketch4:sketch-http-ktor3", version.ref = "sketch-image" }
 sketch-animated = { module = "io.github.panpf.sketch4:sketch-animated-gif", version.ref = "sketch-image" }
 sketch-http = { module = "io.github.panpf.sketch4:sketch-http", version.ref = "sketch-image" }
+pdfBox = { module = "org.apache.pdfbox:pdfbox", version.ref = "pdfBox" }
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }

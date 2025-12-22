@@ -97,7 +97,7 @@ class MediaPickerState(
 
     internal fun onResult(
         result: List<Pair<ByteArray, MediaPickerMediaType>>,
-        cache: MediaCache
+        cache: MediaCache,
     ) {
         val resultData = result.map {
             when (it.second) {
