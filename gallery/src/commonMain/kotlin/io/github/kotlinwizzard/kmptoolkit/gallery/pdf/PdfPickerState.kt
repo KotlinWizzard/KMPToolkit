@@ -62,7 +62,7 @@ class PdfPickerState(private val earlyLaunch: Boolean = false) {
         }
     }
 
-    private fun onResult(data: List<PdfPickerResultData>) {
+    internal fun onResult(data: List<PdfPickerResultData>) {
         pdfPickerResult = when {
             data.isEmpty() -> PdfPickerResult.Cancelled
             else -> PdfPickerResult.Data(

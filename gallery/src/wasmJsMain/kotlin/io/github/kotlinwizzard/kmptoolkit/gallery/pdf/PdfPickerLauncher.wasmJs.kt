@@ -54,7 +54,7 @@ internal fun LaunchPdfPicker(
                     chooseFile(
                         document,
                         onResult = {
-                            onResult(it.mapFiles(imageCache = localCache.imageCache, pdfCacheService = localCache.pdf))
+                            onResult(it.mapFilesPdf(imageCache = localCache.imageCache, pdfCacheService = localCache.pdf))
                         },
                         multiple = pdfPickerSelectionMode == PdfPickerSelectionMode.Multiple,
                         extensions = listOf("pdf")
@@ -69,11 +69,11 @@ internal fun LaunchPdfPicker(
 }
 
 
-private fun initPdfJs() {
+internal fun initPdfJs() {
     GlobalWorkerOptions.workerSrc = pdfWorkerUrl()
 }
 @OptIn(ExperimentalWasmJsInterop::class)
-private suspend fun List<File>.mapFiles(
+internal suspend fun List<File>.mapFilesPdf(
     imageCache: MediaCacheService.Image,
     pdfCacheService: MediaCacheService.Pdf
 ): List<PdfPickerResultData> {

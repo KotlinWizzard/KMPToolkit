@@ -9,7 +9,6 @@ import io.github.kotlinwizzard.kmptoolkit.core.service.media.MediaCacheService
 import io.github.kotlinwizzard.kmptoolkit.gallery.MediaPickerLauncherState
 import io.github.kotlinwizzard.kmptoolkit.gallery.MediaPickerLauncherStatus
 import io.github.kotlinwizzard.kmptoolkit.gallery.chooseFile
-import io.github.kotlinwizzard.kmptoolkit.gallery.readFileAsByteArray
 import kotlinx.browser.document
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.await
@@ -55,7 +54,7 @@ internal fun LaunchPdfPicker(
                     chooseFile(
                         document,
                         onResult = {
-                            onResult(it.mapFiles(imageCache = localCache.imageCache, pdfCacheService = localCache.pdf))
+                            onResult(it.mapFilesPdf(imageCache = localCache.imageCache, pdfCacheService = localCache.pdf))
                         },
                         multiple = pdfPickerSelectionMode == PdfPickerSelectionMode.Multiple,
                         extensions = listOf("pdf")
@@ -73,7 +72,7 @@ private fun initPdfJs() {
     GlobalWorkerOptions.workerSrc = pdfWorkerSrc
 }
 
-private suspend fun List<File>.mapFiles(imageCache: MediaCacheService.Image, pdfCacheService: MediaCacheService.Pdf): List<PdfPickerResultData> {
+internal suspend fun List<File>.mapFilesPdf(imageCache: MediaCacheService.Image, pdfCacheService: MediaCacheService.Pdf): List<PdfPickerResultData> {
     return mapNotNull { file ->
         runCatching {
             // nur PDFs zulassen

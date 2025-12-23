@@ -5,6 +5,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import io.github.kotlinwizzard.kmptoolkit.core.extensions.IO
 import kotlinx.browser.document
+import kotlinx.browser.window
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.khronos.webgl.ArrayBuffer
@@ -14,6 +15,7 @@ import org.w3c.dom.Document
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.ItemArrayLike
 import org.w3c.dom.asList
+import org.w3c.dom.events.Event
 import org.w3c.files.File
 import org.w3c.files.FileReader
 import kotlin.coroutines.resume
@@ -50,11 +52,13 @@ internal fun LaunchMediaPicker(
                     chooseFile(
                         document,
                         onResult = {
+                            println("onResult=${it.size}")
                             onResult(it.mapFiles())
                         },
                         multiple = mediaPickerSelectionMode is MediaPickerSelectionMode.Multiple,
                         extensions = mediaPickerMediaSelectionType.extensions()
                     )
+                    mediaPickerLauncherState.reset()
                 }
                 mediaPickerLauncherState.launch()
             }
@@ -86,14 +90,14 @@ private fun MediaPickerSelectionType.extensions(): List<String> {
 }
 
 
-private suspend fun List<File>.mapFiles(): List<kotlin.Pair<ByteArray, io.github.kotlinwizzard.kmptoolkit.gallery.MediaPickerMediaType>> {
+internal suspend fun List<File>.mapFiles(): List<kotlin.Pair<ByteArray, io.github.kotlinwizzard.kmptoolkit.gallery.MediaPickerMediaType>> {
     return mapNotNull { file ->
         val mediaType = file.toMediaTypeOrNull() ?: return@mapNotNull null
         readFileAsByteArray(file) to mediaType
     }
 }
 
-private fun File.toMediaTypeOrNull(): MediaPickerMediaType? {
+internal fun File.toMediaTypeOrNull(): MediaPickerMediaType? {
     val nameLower = name.lowercase()
     return when {
         nameLower.endsWith(".jpg") || nameLower.endsWith(".jpeg") || nameLower.endsWith(".png") || nameLower.endsWith(
@@ -119,27 +123,50 @@ suspend fun chooseFile(
     onResult(file)
 }
 
+@OptIn(ExperimentalWasmJsInterop::class)
 private suspend fun Document.selectFilesFromDisk(
     accept: String,
     isMultiple: Boolean
-): List<File> = suspendCoroutine {
+): List<File> = suspendCoroutine { cont->
     val tempInput = (createElement("input") as HTMLInputElement).apply {
         type = "file"
         style.display = "none"
-
         this.accept = accept
         multiple = isMultiple
     }
 
-    tempInput.onchange = { changeEvt ->
-        val inputElement = changeEvt.target as HTMLInputElement
-        val files = inputElement.files?.asList() ?: emptyList()
-        it.resume(files)
+    var finished = false
+
+    fun finish(result: List<File>) {
+        if (finished) return
+        finished = true
+
+        tempInput.onchange = null
+        window.onfocus = null
+        tempInput.remove()
+        cont.resume(result)
     }
+
+    tempInput.onchange = { evt ->
+        val inputElement = evt.target as HTMLInputElement
+        val files = inputElement.files?.asList().orEmpty()
+        finish(files)
+    }
+
+    val onFocus: (Event) -> Unit = {
+        window.setTimeout({
+            if (!finished) {
+                val files = tempInput.files?.asList().orEmpty()
+                finish(files)
+            }
+            return@setTimeout null
+        }, 0)
+    }
+    window.addEventListener("focus", onFocus, true)
+
 
     body!!.append(tempInput)
     tempInput.click()
-    tempInput.remove()
 }
 
 internal suspend fun readFileAsByteArray(file: File): ByteArray = suspendCoroutine {
