@@ -87,6 +87,12 @@ kotlin {
             }
         }
 
+        val wasmJsMain by getting {
+            dependencies {
+                implementation(npm("pdfjs-dist", "3.11.174"))
+            }
+        }
+
 
     }
 }

@@ -86,7 +86,7 @@ kotlin {
         }
         val wasmJsMain by getting {
             dependencies {
-              
+
             }
         }
     }
