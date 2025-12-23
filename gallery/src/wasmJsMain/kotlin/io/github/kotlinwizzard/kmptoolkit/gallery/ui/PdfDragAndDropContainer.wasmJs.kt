@@ -63,16 +63,13 @@ actual fun PdfDragAndDropContainer(
 
 
             val limited = applySelectionMode(filtered, pdfPickerSelectionMode)
-            println("filter=${filtered.size} limited=${limited.size}")
 
             coroutineScope.launch(Dispatchers.IO) {
                 pdfPickerState.onResult(
                     limited.mapFilesPdf(
                         imageCache = cache.imageCache,
                         pdfCacheService = cache.pdf
-                    ).apply {
-                        println("onResult=${this.size}")
-                    }
+                    )
                 )
             }
         })
