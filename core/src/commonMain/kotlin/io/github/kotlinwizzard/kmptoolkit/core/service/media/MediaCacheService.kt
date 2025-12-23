@@ -57,7 +57,7 @@ sealed class MediaCacheService(
 
     fun getFullPathFromFilename(filename: String) = getPathFromFilename(filename).toString()
 
-    protected fun getPathFromFilename(filename: String) =getTempDirOrCreate() / filename.toPath()
+    protected fun getPathFromFilename(filename: String) = getTempDirOrCreate() / filename.toPath()
 
 
     private fun cleanupOldFiles() {
@@ -175,13 +175,17 @@ sealed class MediaCacheService(
         }
 
         private fun readCachedFile(path: String): ByteArray =
-            FileSystem.SYSTEM.source(path.toPath()).buffer().use { source ->
+            FileSystem.SYSTEM.source(path.pathWithoutScheme().toPath()).buffer().use { source ->
                 source.readByteArray()
             }
 
+        private fun String.pathWithoutScheme(): String{
+            return removePrefix(CUSTOM_SCHEME)
+        }
+
         fun readCachedFileOrNull(path: String): ByteArray? {
-            if (getPathIfExists(path.toPath()) == null) return null
-            return FileSystem.SYSTEM.source(path.toPath()).buffer().use { source ->
+            if (getPathIfExists(path.pathWithoutScheme().toPath()) == null) return null
+            return FileSystem.SYSTEM.source(path.pathWithoutScheme().toPath()).buffer().use { source ->
                 source.readByteArray()
             }
         }

@@ -81,12 +81,12 @@ kotlin {
         }
         val jsMain by getting {
             dependencies {
-                implementation(libs.okio.fake)
+
             }
         }
         val wasmJsMain by getting {
             dependencies {
-               implementation(libs.okio.fake)
+              
             }
         }
     }

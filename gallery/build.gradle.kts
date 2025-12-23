@@ -81,6 +81,12 @@ kotlin {
             }
         }
 
+        val jsMain by getting {
+            dependencies {
+                implementation(npm("pdfjs-dist", "3.11.174"))
+            }
+        }
+
 
     }
 }

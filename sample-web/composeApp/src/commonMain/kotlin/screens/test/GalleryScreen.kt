@@ -35,6 +35,7 @@ import io.github.kotlinwizzard.kmptoolkit.gallery.rememberMediaPickerState
 import io.github.kotlinwizzard.kmptoolkit.core.presentation.theme.ToolkitScaffold
 import io.github.kotlinwizzard.kmptoolkit.core.presentation.theme.ToolkitTheme
 import io.github.kotlinwizzard.kmptoolkit.core.presentation.theme.spacing
+import io.github.kotlinwizzard.kmptoolkit.image.core.sketch.supportLocalCache
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.decodeToImageBitmap
 import presentation.BackButtonToolbar
@@ -121,6 +122,7 @@ class GalleryScreen : Screen {
 
 
 
+
 @Composable
 fun AsyncImage(
     modifier: Modifier=Modifier,
@@ -147,6 +149,7 @@ fun AsyncImage(
                 }
                 components {
                     addDecoder(SvgDecoder.Factory())
+                    supportLocalCache()
                 }
             },
         )

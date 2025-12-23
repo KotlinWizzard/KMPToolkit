@@ -5,3 +5,6 @@ internal actual fun MediaCacheService.getUriPath(
 ): String {
    return path
 }
+
+actual val MediaCacheService.Companion.CUSTOM_SCHEME: String
+    get() = ""

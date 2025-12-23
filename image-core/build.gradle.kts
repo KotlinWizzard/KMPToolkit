@@ -57,6 +57,7 @@ kotlin {
                 implementation(libs.kotlinx.io.core)
                 implementation(libs.coroutines.core)
                 implementation(libs.stdlib)
+                implementation(libs.sketch.core)
                 implementation(project(":core"))
             }
         }
