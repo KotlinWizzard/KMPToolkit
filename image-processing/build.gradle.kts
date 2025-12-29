@@ -79,6 +79,25 @@ kotlin {
             }
         }
 
+        val jvmMain by getting {
+            dependencies {
+                implementation(libs.tess4j)
+            }
+        }
+
+        val jsMain by getting {
+            dependencies {
+                implementation(npm("tesseract.js", "^5.0.0"))
+            }
+        }
+
+        val wasmJsMain by getting {
+            dependencies {
+                implementation(npm("tesseract.js", "^5.0.0"))
+
+            }
+        }
+
 
     }
 }

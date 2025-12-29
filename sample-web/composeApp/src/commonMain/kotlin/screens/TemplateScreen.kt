@@ -22,6 +22,7 @@ import screens.test.GalleryScreen
 import screens.test.ImageEditorScreen
 import screens.test.PdfPickerScreen
 import screens.test.TestScreen
+import screens.test.TextScannerScreen
 
 
 class TemplateScreen : Screen {
@@ -41,6 +42,7 @@ class TemplateScreen : Screen {
                 TemplateItem(GalleryScreen(), "Gallery sample")
                 TemplateItem(PdfPickerScreen(), "PDF sample")
                 TemplateItem(ImageEditorScreen(), "Image Editor sample")
+                TemplateItem(TextScannerScreen(), "Text analyzer sample")
             }
         }
     }
