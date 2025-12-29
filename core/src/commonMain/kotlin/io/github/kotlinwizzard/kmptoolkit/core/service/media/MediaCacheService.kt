@@ -166,12 +166,12 @@ sealed class MediaCacheService(
         }
 
         fun getPathIfExists(path: String): String? {
-            if (FileSystem.SYSTEM.exists(path.toPath())) return path.toPath().toString()
+            if (FileSystem.SYSTEM.exists(path.pathWithoutScheme().toPath())) return path.toPath().toString()
             return null
         }
 
         fun doesPathExists(path: String): Boolean {
-            return FileSystem.SYSTEM.exists(path.toPath())
+            return FileSystem.SYSTEM.exists(path.pathWithoutScheme().toPath())
         }
 
         private fun readCachedFile(path: String): ByteArray =
@@ -180,11 +180,13 @@ sealed class MediaCacheService(
             }
 
         private fun String.pathWithoutScheme(): String{
-            return removePrefix(CUSTOM_SCHEME)
+            return removePrefix(CUSTOM_SCHEME).removePrefix("file:/")
         }
 
+
+
         fun readCachedFileOrNull(path: String): ByteArray? {
-            if (getPathIfExists(path.pathWithoutScheme().toPath()) == null) return null
+            val path = getPathIfExists(path.pathWithoutScheme().toPath()) ?: return null
             return FileSystem.SYSTEM.source(path.pathWithoutScheme().toPath()).buffer().use { source ->
                 source.readByteArray()
             }

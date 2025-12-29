@@ -21,11 +21,22 @@ group = libraryGroup
 version = libraryVersion
 
 kotlin {
+    jvm()
     androidTarget {
         publishLibraryVariants("release")
         compilerOptions {
             jvmTarget.set(defaultJvmTarget)
         }
+    }
+    js {
+        browser()
+        binaries.executable()
+    }
+
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
+        binaries.executable()
     }
     iosX64()
     iosArm64()

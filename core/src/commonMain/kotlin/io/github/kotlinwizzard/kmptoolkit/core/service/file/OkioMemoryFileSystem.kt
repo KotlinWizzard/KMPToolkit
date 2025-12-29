@@ -1,6 +1,5 @@
 package io.github.kotlinwizzard.kmptoolkit.core.service.file
 
-import io.github.kotlinwizzard.kmptoolkit.core.extensions.millis
 import kotlinx.atomicfu.locks.SynchronizedObject
 import kotlinx.atomicfu.locks.synchronized
 import okio.Buffer
@@ -15,7 +14,6 @@ import okio.Sink
 import okio.Source
 import okio.Timeout
 import kotlin.time.Clock
-import kotlin.time.Duration
 import kotlin.time.DurationUnit
 import kotlin.time.ExperimentalTime
 import kotlin.time.toDuration

@@ -28,6 +28,7 @@ sketch-image = "4.0.0-beta03"
 mlkitTextRecognition = "16.0.1"
 coroutinesVersionPlayServices="1.7.1"
 pdfBox="2.0.30"
+atomicfu="0.29.0"
 
 [libraries]
 mlkit-textRecognition = { group = "com.google.mlkit", name = "text-recognition", version.ref = "mlkitTextRecognition" }
@@ -91,3 +92,4 @@ vanniktech-mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.30
 jetbrains-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 room = { id = "androidx.room", version.ref = "room" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+atomicfu =  { id = "org.jetbrains.kotlinx.atomicfu", version.ref = "atomicfu" }

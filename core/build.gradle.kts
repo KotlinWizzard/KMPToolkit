@@ -15,6 +15,7 @@ plugins {
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.jetbrains.serialization) apply true
+    alias(libs.plugins.atomicfu) apply true
 }
 
 group = libraryGroup

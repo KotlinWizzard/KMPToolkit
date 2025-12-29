@@ -20,7 +20,7 @@ import platform.UIKit.UIImage
 import kotlin.math.PI
 
 
-actual fun ImageRotation.Companion.rotateImage(
+actual suspend fun ImageRotation.Companion.rotateImage(
     byteArray: ByteArray,
     rotateBy: ImageRotation
 ):ByteArray {

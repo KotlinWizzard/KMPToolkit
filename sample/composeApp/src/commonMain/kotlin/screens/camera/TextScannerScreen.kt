@@ -75,12 +75,16 @@ class TextScannerScreen : Screen {
                     }, text = "Analyze text")
 
                     SimpleTextButton(onClick = {
-                        imageBytes.value = ImageRotation.rotateImage(bytes,ImageRotation.Degree90)
-                    }, text = "Rotate 90°")
+                        ImageRotation.rotateImage(bytes,ImageRotation.Degree90){
+                            imageBytes.value = it
+                        }
+                           }, text = "Rotate 90°")
 
                     SimpleTextButton(onClick = {
-                        imageBytes.value = ImageRotation.rotateImage(bytes,ImageRotation.DegreeNegative90)
-                    }, text = "Rotate -90°")
+                        ImageRotation.rotateImage(bytes,ImageRotation.DegreeNegative90){
+                            imageBytes.value = it
+                        }
+                         }, text = "Rotate -90°")
 
                     Column(Modifier.fillMaxWidth().weight(1F),horizontalAlignment = Alignment.CenterHorizontally) {
                         AsyncImage(imageBytes = bytes, modifier = Modifier.size(80.dp))

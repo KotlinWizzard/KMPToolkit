@@ -159,7 +159,7 @@ private suspend fun Document.selectFilesFromDisk(
                 finish(files)
             }
             return@setTimeout null
-        }, 0)
+        }, 1000)
     }
     window.addEventListener("focus", onFocus, true)
 

@@ -37,6 +37,7 @@ kotlin {
                 implementation(project(":navigation"))
                implementation(project(":gallery"))
                 implementation(project(":paging"))
+                implementation(project(":image-processing"))
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.material3)

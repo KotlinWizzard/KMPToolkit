@@ -8,7 +8,7 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.decodeToImageBitmap
 
 @OptIn(ExperimentalResourceApi::class)
-actual fun ImageRotation.Companion.rotateImage(
+actual suspend fun ImageRotation.Companion.rotateImage(
     byteArray: ByteArray,
     rotateBy: ImageRotation
 ) :ByteArray{
