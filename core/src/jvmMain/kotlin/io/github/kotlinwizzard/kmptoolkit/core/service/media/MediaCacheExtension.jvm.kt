@@ -3,8 +3,8 @@ package io.github.kotlinwizzard.kmptoolkit.core.service.media
 import java.io.File
 
 internal actual fun MediaCacheService.getUriPath(path: String): String {
-  return  File(path).toURI().toString()
+  return MediaCacheService.CUSTOM_SCHEME + path
 }
 
 actual val MediaCacheService.Companion.CUSTOM_SCHEME: String
-    get() = ""
+    get() = "file:/"

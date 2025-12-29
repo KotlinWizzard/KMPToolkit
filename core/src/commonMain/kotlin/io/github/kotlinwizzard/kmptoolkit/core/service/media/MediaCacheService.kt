@@ -47,7 +47,7 @@ sealed class MediaCacheService(
     fun copyFileToCache(sourcePath: String, filename: String = generateFilename()): String? {
         val tempFilePath = getPathFromFilename(filename)
         return MediaCacheService.copy(
-            sourcePath,
+            sourcePath.pathWithoutScheme(),
             tempFilePath.toString()
         )
     }
@@ -180,7 +180,7 @@ sealed class MediaCacheService(
             }
 
         private fun String.pathWithoutScheme(): String{
-            return removePrefix(CUSTOM_SCHEME).removePrefix("file:/")
+            return removePrefix(CUSTOM_SCHEME)
         }
 
 
@@ -223,7 +223,7 @@ sealed class MediaCacheService(
             content: ByteArray,
             path: String
         ): String {
-            val tempFilePath = createDirectory(path = path.toPath(), recursive = true)
+            val tempFilePath = createDirectory(path = path.pathWithoutScheme().toPath(), recursive = true)
             val bytes = content
             FileSystem.SYSTEM.sink(tempFilePath).buffer().use { sink ->
                 sink.write(bytes)
