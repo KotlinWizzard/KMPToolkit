@@ -113,7 +113,7 @@ mavenPublishing {
     coordinates(group.toString(), "gallery", version.toString())
 
     pom {
-        name = "KMPToolkit cameraXgallery"
+        name = "KMPToolkit gallery"
         description = "A library for gallery in Kotlin Multiplatform."
         inceptionYear = "2025"
         url = "https://github.com/KotlinWizzard/KMPToolkit"
