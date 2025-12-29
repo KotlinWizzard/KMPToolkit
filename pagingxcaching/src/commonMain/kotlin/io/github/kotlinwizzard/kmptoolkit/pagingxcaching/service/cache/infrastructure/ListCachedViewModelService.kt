@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.firstOrNull
 abstract class ListCachedViewModelService<Key : QueryKey, Network : Any, Local : Any, Output : Any>(
     dao: CacheDao<Key, Network, Local, Output>,
     fetcher: CacheFetcher<Key, Network>,
-    refreshAction: io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.cache.infrastructure.CachedRefreshAction = io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.cache.infrastructure.CachedRefreshAction.RefreshAndUpdate,
+    refreshAction: CachedRefreshAction = CachedRefreshAction.RefreshAndUpdate,
 ) : CachedViewModelService<Key, Network, Local, Output, List<Output>>(
         dao = dao,
         fetcher = fetcher,

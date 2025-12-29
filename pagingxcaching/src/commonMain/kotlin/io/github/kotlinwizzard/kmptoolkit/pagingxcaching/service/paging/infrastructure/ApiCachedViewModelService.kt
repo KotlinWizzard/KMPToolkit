@@ -7,13 +7,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.paging.ExperimentalPagingApi
 import io.github.kotlinwizzard.kmptoolkit.core.classes.LazyLayoutKeyProvider
+import io.github.kotlinwizzard.kmptoolkit.paging.service.paging.PageImpl
+import io.github.kotlinwizzard.kmptoolkit.paging.service.paging.PagingSourceProvider
+import io.github.kotlinwizzard.kmptoolkit.paging.service.paging.infrastructure.BasicApiPagingViewModelService
 import io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.cache.dao.CachedPagingDaoWithRoomDao
 import io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.cache.infrastructure.CacheFetcher
 import io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.cache.mediator.PagingKeyProvider
 import io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.cache.mediator.PagingPrimaryKeyProvider
 import io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.cache.mediator.RemoteKeyPagingMediator
-import io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.paging.PageImpl
-import io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.paging.PagingSourceProvider
 import io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.room.key.PagingQueryKey
 import io.github.kotlinwizzard.kmptoolkit.pagingxcaching.service.room.remotekey.RemoteKeyDao
 import kotlin.reflect.KClass

@@ -32,6 +32,7 @@ kotlin {
             linkerOpts.add("-lsqlite3")
         }
     }
+
     /*
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
@@ -60,7 +61,9 @@ kotlin {
                 //put your multiplatform dependencies here
                 implementation(project(":core"))
                 implementation(project(":navigation"))
-                implementation(project(":cameraxgallery"))
+                implementation(project(":camera"))
+                implementation(project(":gallery"))
+                implementation(project(":image-processing"))
                 implementation(project(":pagingxcaching"))
                 implementation(compose.runtime)
                 implementation(compose.foundation)

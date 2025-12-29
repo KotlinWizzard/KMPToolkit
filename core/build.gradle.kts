@@ -15,6 +15,7 @@ plugins {
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.jetbrains.serialization) apply true
+    alias(libs.plugins.atomicfu) apply true
 }
 
 group = libraryGroup
@@ -32,12 +33,17 @@ kotlin {
     iosArm64()
     iosSimulatorArm64()
 
-    /*
+    js {
+        browser()
+        binaries.executable()
+    }
+
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         browser()
         binaries.executable()
-    }*/
+    }
+
 
     sourceSets {
         val commonMain by getting {
@@ -74,7 +80,19 @@ kotlin {
                 implementation(compose.desktop.common)
             }
         }
+        val jsMain by getting {
+            dependencies {
+
+            }
+        }
+        val wasmJsMain by getting {
+            dependencies {
+
+            }
+        }
     }
+
+
 }
 
 android {

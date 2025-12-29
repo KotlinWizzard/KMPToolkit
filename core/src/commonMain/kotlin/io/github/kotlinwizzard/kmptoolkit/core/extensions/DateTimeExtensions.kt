@@ -1,6 +1,5 @@
+@file:OptIn(ExperimentalTime::class)
 package io.github.kotlinwizzard.kmptoolkit.core.extensions
-
-import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimePeriod
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.Instant
@@ -11,13 +10,18 @@ import kotlinx.datetime.periodUntil
 import kotlinx.datetime.plus
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.toStdlibInstant
+import kotlin.time.ExperimentalTime
 
-fun Instant.toLocalDateTime(): LocalDateTime = this.toLocalDateTime(TimeZone.currentSystemDefault())
+@OptIn(ExperimentalTime::class)
+fun kotlin.time.Instant.toLocalDateTime(): LocalDateTime =
+   toLocalDateTime(TimeZone.currentSystemDefault())
 
-fun LocalDateTime.toInstant(): Instant = this.toInstant(TimeZone.currentSystemDefault())
+@OptIn(ExperimentalTime::class)
+fun LocalDateTime.toInstant(): kotlin.time.Instant = this.toInstant(TimeZone.currentSystemDefault())
 
-fun Instant.differenceOfDays(
-    to: Instant,
+fun kotlin.time.Instant.differenceOfDays(
+    to: kotlin.time.Instant,
     inclusive: Boolean = false,
 ): Int {
     val fromDate = this.toLocalDateTime().date
@@ -25,6 +29,7 @@ fun Instant.differenceOfDays(
     return fromDate.daysUntil(toDate, inclusive)
 }
 
+@OptIn(ExperimentalTime::class)
 fun LocalDateTime.periodUntil(other: LocalDateTime): DateTimePeriod {
     val timeZone = TimeZone.currentSystemDefault()
     return this.toInstant(timeZone).periodUntil(
@@ -33,9 +38,10 @@ fun LocalDateTime.periodUntil(other: LocalDateTime): DateTimePeriod {
     )
 }
 
-fun LocalDateTime.Companion.now() = Clock.System.now().toLocalDateTime()
+fun LocalDateTime.Companion.now() = kotlin.time.Clock.System.now().toLocalDateTime()
 
 
+@OptIn(ExperimentalTime::class)
 fun LocalDateTime.plusMinutes(minutes: Int) =
     this
         .toInstant()

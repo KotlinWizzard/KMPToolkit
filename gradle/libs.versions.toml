@@ -1,32 +1,35 @@
 [versions]
-agp = "8.5.2"
-kotlin = "2.1.0"
-android-minSdk = "24"
-android-compileSdk = "34"
-android-targetSdk = "34"
-compose-plugin = "1.7.3"
-kotlinxDateTime = "0.6.1"
+agp = "8.13.1"
+kotlin = "2.2.21"
+android-minSdk = "26"
+android-compileSdk = "36"
+android-targetSdk = "36"
+compose-plugin = "1.9.3"
+kotlinxDateTime = "0.7.1-0.6.x-compat"
 androidx-activityCompose = "1.8.2"
 kotlinxSerialization = "1.7.3"
 coroutinesVersion = "1.10.1"
 kotlinxIoCore = "0.5.4"
 cameraX = "1.4.1"
-okio = "3.9.1"
+okio = "3.16.4"
 benasher44-uuid = "0.8.2"
+tess4j = "5.17.0"
 voyager = "1.1.0-beta03"
 koin = "4.0.0"
 ktor = "3.0.2"
-pagingCommonVersion = "3.3.5"
+pagingCommonVersion = "3.4.0-beta01"
 androidx-lifecycle = "2.8.7"
 lifecycle = "2.8.7"
 androidxKmp-bundle = "1.0.0"
 androidxKmp-lifecycle = "2.8.0"
-room = "2.7.0-alpha10"
-ksp = "2.1.0-1.0.29"
-sqllite = "2.5.0-alpha13"
+room = "2.8.4"
+ksp = "2.2.21-2.0.4"
+sqllite = "2.6.2"
 sketch-image = "4.0.0-beta03"
 mlkitTextRecognition = "16.0.1"
 coroutinesVersionPlayServices="1.7.1"
+pdfBox="2.0.30"
+atomicfu="0.29.0"
 
 [libraries]
 mlkit-textRecognition = { group = "com.google.mlkit", name = "text-recognition", version.ref = "mlkitTextRecognition" }
@@ -42,6 +45,10 @@ androidx-camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycl
 androidx-camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "cameraX" }
 androidx-camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "cameraX" }
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
+okio-node = { module = "com.squareup.okio:okio-nodefilesystem", version.ref = "okio" }
+okio-wasi = { module = "com.squareup.okio:okio-wasifilesystem", version.ref = "okio" }
+okio-fake = { module = "com.squareup.okio:okio-fakefilesystem", version.ref = "okio" }
+tess4j = { module = "net.sourceforge.tess4j:tess4j", version.ref = "tess4j" }
 uuid = { module = "com.benasher44:uuid", version.ref = "benasher44-uuid" }
 voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
 voyager-screenmodel = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyager" }
@@ -70,11 +77,13 @@ room-paging = { module = "androidx.room:room-paging", version.ref = "room" }
 room-runtime-android = { module = "androidx.room:room-runtime-android", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 cache-driver = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqllite" }
+sketch-core = { module = "io.github.panpf.sketch4:sketch-core", version.ref = "sketch-image" }
 sketch-compose = { module = "io.github.panpf.sketch4:sketch-compose", version.ref = "sketch-image" }
 sketch-svg = { module = "io.github.panpf.sketch4:sketch-svg", version.ref = "sketch-image" }
 sketch-ktor = { module = "io.github.panpf.sketch4:sketch-http-ktor3", version.ref = "sketch-image" }
 sketch-animated = { module = "io.github.panpf.sketch4:sketch-animated-gif", version.ref = "sketch-image" }
 sketch-http = { module = "io.github.panpf.sketch4:sketch-http", version.ref = "sketch-image" }
+pdfBox = { module = "org.apache.pdfbox:pdfbox", version.ref = "pdfBox" }
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
@@ -85,3 +94,4 @@ vanniktech-mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.30
 jetbrains-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 room = { id = "androidx.room", version.ref = "room" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+atomicfu =  { id = "org.jetbrains.kotlinx.atomicfu", version.ref = "atomicfu" }

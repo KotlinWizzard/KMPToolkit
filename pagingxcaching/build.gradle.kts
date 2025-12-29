@@ -37,7 +37,6 @@ kotlin {
         browser()
         binaries.executable()
     }*/
-
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -46,6 +45,7 @@ kotlin {
                 implementation(libs.androidxKmp.lifecycle.runtimeCompose)
                 implementation(libs.androidxKmp.core.bundle)
                 implementation(project(":core"))
+               api(project(":paging"))
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.runtimeSaveable)
