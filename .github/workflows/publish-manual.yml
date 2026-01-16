@@ -1,0 +1,42 @@
+name: Publish (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      library:
+        description: "Which library should be published?"
+        type: choice
+        required: true
+        options:
+          - ":camera"
+          - ":core"
+          - ":gallery"
+          - ":image-core"
+          - ":image-processing"
+          - ":navigation"
+          - ":paging"
+          - ":pagingxcaching"
+      
+        
+
+jobs:
+  publish:
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: 21
+
+      - name: Publish selected
+        run: |
+            ./gradlew ${{ inputs.library }}:publishToMavenCentral --no-configuration-cache
+   
+        env:
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_KEY_CONTENTS }}

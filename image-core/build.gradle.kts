@@ -90,3 +90,37 @@ android {
 }
 
 
+
+mavenPublishing {
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+    signAllPublications()
+
+    coordinates(group.toString(), "image-core", version.toString())
+
+    pom {
+        name = "KMPToolkit image core"
+        description = "A library for image core in Kotlin Multiplatform."
+        inceptionYear = "2025"
+        url = "https://github.com/KotlinWizzard/KMPToolkit"
+        licenses {
+            license {
+                name = "Apache License 2.0"
+                url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+            }
+        }
+        developers {
+            developer {
+                id = "KotlinWizzard"
+                name = "KotlinWizzard"
+                url = "https://github.com/KotlinWizzard"
+            }
+        }
+        scm {
+            url = "https://github.com/KotlinWizzard/KMPToolkit"
+            connection = "scm:git:git://github.com/KotlinWizzard/KMPToolkit.git"
+            developerConnection = "scm:git:ssh://git@github.com:KotlinWizzard/KMPToolkit.git"
+        }
+    }
+}
+
+
