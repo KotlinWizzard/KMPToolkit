@@ -26,44 +26,18 @@ actual fun PdfDragAndDropContainer(
     pdfPickerSelectionMode: PdfPickerSelectionMode,
     pickFilesOnClick: Boolean
 ) {
-    val document = document
     val cache = LocalCache.current
-    val coroutineScope = rememberCoroutineScope()
-    WebElementView(modifier = modifier, factory = {
-        initPdfJs()
-        val div = (document.createElement("div") as HTMLDivElement).apply {
-
-        }
-        div.addEventListener("click", { e ->
-            e.preventDefault()
-            if(pickFilesOnClick){
-                pdfPickerState.launch(
-                    selectionMode = pdfPickerSelectionMode
-                )
-            }
-        })
-        div.addEventListener("dragover", { e ->
-            (e as DragEvent).preventDefault()
-        })
-        div.addEventListener("drop", { e ->
-            val ev = e as DragEvent
-            ev.preventDefault()
-
-            val dt = ev.dataTransfer ?: return@addEventListener
-            val files = dt.files ?: return@addEventListener
-
-            val filtered = buildList {
-                for (i in 0 until files.length) {
-                    val f = files.item(i) ?: continue
-                    if (matchesSelectionType(f.type)) {
-                        add(f)
-                    }
-                }
-            }
-
-
+    DragAndDropContainer(
+        modifier = modifier,
+        pickFilesOnClick = pickFilesOnClick,
+        onClick = { _ ->
+            pdfPickerState.launch(
+                selectionMode = pdfPickerSelectionMode
+            )
+        },
+        onDrop = { coroutineScope, files ->
+            val filtered = files.filter { matchesSelectionType(it.type) }
             val limited = applySelectionMode(filtered, pdfPickerSelectionMode)
-
             coroutineScope.launch(Dispatchers.IO) {
                 pdfPickerState.onResult(
                     limited.mapFilesPdf(
@@ -72,9 +46,8 @@ actual fun PdfDragAndDropContainer(
                     )
                 )
             }
-        })
-        div
-    })
+        }
+    )
 }
 
 

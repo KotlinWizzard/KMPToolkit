@@ -1,11 +1,18 @@
 package io.github.kotlinwizzard.kmptoolkit.gallery.ui
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.viewinterop.WebElementView
 import io.github.kotlinwizzard.kmptoolkit.core.extensions.IO
+import io.github.kotlinwizzard.kmptoolkit.core.extensions.clickableWithoutRipple
 import io.github.kotlinwizzard.kmptoolkit.core.service.media.LocalCache
 import io.github.kotlinwizzard.kmptoolkit.core.service.media.MediaCache
 import io.github.kotlinwizzard.kmptoolkit.core.service.media.MediaCacheService
@@ -19,9 +26,11 @@ import io.github.kotlinwizzard.kmptoolkit.gallery.pdf.mapFilesPdf
 import kotlinx.browser.document
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.w3c.dom.DragEvent
 import org.w3c.dom.HTMLDivElement
+import org.w3c.dom.HTMLElement
 import org.w3c.files.File
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -35,54 +44,33 @@ actual fun MediaImageOrPdfDragAndDropContainer(
 ) {
     val document = document
     val cache = LocalCache.current
-    val coroutineScope = rememberCoroutineScope()
 
-    WebElementView(modifier = modifier, factory = {
-        val div = (document.createElement("div") as HTMLDivElement).apply {
-
-        }
-        div.addEventListener("click", { e ->
-            e.preventDefault()
-            if (pickFilesOnClick) {
-                coroutineScope.launch {
-                    chooseFile(document, onResult = { files->
-                        handleFiles(
-                            files = files,
-                            coroutineScope = coroutineScope,
-                            mediaPickerState = mediaPickerState,
-                            pdfPickerState = pdfPickerState,
-                            mediaCache = cache
-                        )
-                    }, multiple = maxImages > 1, extensions = extensions)
-                }
+    DragAndDropContainer(
+        modifier = modifier,
+        pickFilesOnClick = pickFilesOnClick,
+        onClick = { coroutineScope ->
+            coroutineScope.launch {
+                chooseFile(document, onResult = { files ->
+                    handleFiles(
+                        files = files,
+                        coroutineScope = coroutineScope,
+                        mediaPickerState = mediaPickerState,
+                        pdfPickerState = pdfPickerState,
+                        mediaCache = cache
+                    )
+                }, multiple = maxImages > 1, extensions = extensions)
             }
-        })
-        div.addEventListener("dragover", { e ->
-            (e as DragEvent).preventDefault()
-        })
-        div.addEventListener("drop", { e ->
-            val ev = e as DragEvent
-            ev.preventDefault()
-
-            val dt = ev.dataTransfer ?: return@addEventListener
-            val files = dt.files ?: return@addEventListener
-            val filtered = buildList {
-                for (i in 0 until files.length) {
-                    val f = files.item(i) ?: continue
-                    add(f)
-                }
-            }
+        },
+        onDrop = { coroutineScope, files ->
             handleFiles(
-                filtered,
+                files,
                 coroutineScope,
                 mediaPickerState,
                 pdfPickerState,
                 mediaCache = cache
             )
-
-        })
-        div
-    })
+        }
+    )
 }
 
 private fun handleFiles(
