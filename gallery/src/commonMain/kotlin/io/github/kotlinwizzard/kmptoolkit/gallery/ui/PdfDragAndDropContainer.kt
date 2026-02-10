@@ -34,16 +34,19 @@ fun PdfDragAndDropLayout(
     pdfPickerState: PdfPickerState,
     pdfPickerSelectionMode: PdfPickerSelectionMode,
     pickFilesOnClick: Boolean = false,
+    enabled: Boolean = true,
     contentAlignment: Alignment = Alignment.TopStart,
     content: @Composable BoxScope.() -> Unit,
 ) {
     Box(modifier = modifier, contentAlignment = contentAlignment) {
-        PdfDragAndDropContainer(
-            modifier = Modifier.matchParentSize(),
-            pdfPickerState = pdfPickerState,
-            pdfPickerSelectionMode = pdfPickerSelectionMode,
-            pickFilesOnClick = pickFilesOnClick
-        )
+        if (enabled) {
+            PdfDragAndDropContainer(
+                modifier = Modifier.matchParentSize(),
+                pdfPickerState = pdfPickerState,
+                pdfPickerSelectionMode = pdfPickerSelectionMode,
+                pickFilesOnClick = pickFilesOnClick
+            )
+        }
         content()
     }
 }

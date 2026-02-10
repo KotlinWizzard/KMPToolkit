@@ -8,19 +8,19 @@ import androidx.compose.ui.Modifier
 import io.github.kotlinwizzard.kmptoolkit.gallery.MediaPickerSelectionMode
 import io.github.kotlinwizzard.kmptoolkit.gallery.MediaPickerSelectionType
 import io.github.kotlinwizzard.kmptoolkit.gallery.MediaPickerState
+import io.github.kotlinwizzard.kmptoolkit.gallery.pdf.PdfPickerState
 
 @Composable
 // Web-only API:
 // This composable is fully supported **only on Web targets** (JS & WASM).
 // On all other targets (e.g. Android, iOS, Desktop/JVM) this is provided
 // as a stub implementation without drag & drop functionality.
-expect fun MediaDragAndDropContainer(
+expect fun MediaImageOrPdfDragAndDropContainer(
     modifier: Modifier = Modifier,
     mediaPickerState: MediaPickerState,
-    mediaPickerSelectionMode: MediaPickerSelectionMode,
-    mediaPickerSelectionType: MediaPickerSelectionType,
+    pdfPickerState: PdfPickerState,
+    maxImages:Int = Int.MAX_VALUE,
     pickFilesOnClick: Boolean = false
-
 )
 
 
@@ -29,11 +29,11 @@ expect fun MediaDragAndDropContainer(
 // This composable is fully supported **only on Web targets** (JS & WASM).
 // On all other targets (e.g. Android, iOS, Desktop/JVM) this is provided
 // as a stub implementation without drag & drop functionality.
-fun MediaDragAndDropLayout(
+fun  MediaImageOrPdfDragAndDropLayout(
     modifier: Modifier = Modifier,
     mediaPickerState: MediaPickerState,
-    mediaPickerSelectionMode: MediaPickerSelectionMode,
-    mediaPickerSelectionType: MediaPickerSelectionType,
+    pdfPickerState: PdfPickerState,
+    maxImages:Int = Int.MAX_VALUE,
     contentAlignment: Alignment = Alignment.TopStart,
     pickFilesOnClick: Boolean = false,
     enabled: Boolean=true,
@@ -41,12 +41,12 @@ fun MediaDragAndDropLayout(
 ) {
     Box(modifier = modifier, contentAlignment = contentAlignment) {
         if(enabled) {
-            MediaDragAndDropContainer(
+            MediaImageOrPdfDragAndDropContainer(
                 modifier = Modifier.matchParentSize(),
                 mediaPickerState = mediaPickerState,
-                mediaPickerSelectionMode = mediaPickerSelectionMode,
-                mediaPickerSelectionType = mediaPickerSelectionType,
-                pickFilesOnClick = pickFilesOnClick
+                pickFilesOnClick = pickFilesOnClick,
+                pdfPickerState = pdfPickerState,
+                maxImages = maxImages
             )
         }
         content()
