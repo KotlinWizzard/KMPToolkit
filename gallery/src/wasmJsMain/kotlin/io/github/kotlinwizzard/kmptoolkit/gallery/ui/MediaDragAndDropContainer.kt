@@ -28,53 +28,29 @@ actual fun MediaDragAndDropContainer(
     mediaPickerSelectionType: MediaPickerSelectionType,
     pickFilesOnClick: Boolean
 ) {
-    val document = document
     val cache = LocalCache.current
-    val coroutineScope = rememberCoroutineScope()
-  
-    WebElementView(modifier = modifier, factory = {
-        val div = (document.createElement("div") as HTMLDivElement).apply {
 
-        }
-        div.addEventListener("click", { e ->
-            e.preventDefault()
-            if(pickFilesOnClick){
-                mediaPickerState.launch(
-                    mediaPickerMediaSelectionType = mediaPickerSelectionType,
-                    mediaPickerSelectionMode = mediaPickerSelectionMode
-                )
-            }
-        })
-        div.addEventListener("dragover", { e ->
-            (e as DragEvent).preventDefault()
-        })
-        div.addEventListener("drop", { e ->
-            val ev = e as DragEvent
-            ev.preventDefault()
 
-            val dt = ev.dataTransfer ?: return@addEventListener
-            val files = dt.files ?: return@addEventListener
-
-            val filtered = buildList {
-                for (i in 0 until files.length) {
-                    val f = files.item(i) ?: continue
-                    if (matchesSelectionType(f.type, mediaPickerSelectionType)) {
-                        add(f)
-                    }
-                }
-            }
-
+    DragAndDropContainer(
+        modifier = modifier,
+        pickFilesOnClick = pickFilesOnClick,
+        onClick = { _ ->
+            mediaPickerState.launch(
+                mediaPickerMediaSelectionType = mediaPickerSelectionType,
+                mediaPickerSelectionMode = mediaPickerSelectionMode
+            )
+        },
+        onDrop = { coroutineScope, files ->
+            val filtered = files.filter { matchesSelectionType(it.type, mediaPickerSelectionType) }
             val limited = applySelectionMode(filtered, mediaPickerSelectionMode)
-
             coroutineScope.launch(Dispatchers.IO) {
                 mediaPickerState.onResult(
                     limited.mapFiles(),
                     cache
                 )
             }
-        })
-        div
-    })
+        }
+    )
 }
 
 private fun matchesSelectionType(mime: String, type: MediaPickerSelectionType): Boolean {

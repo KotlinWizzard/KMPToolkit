@@ -2,6 +2,7 @@ package screens.test
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -32,6 +34,8 @@ import com.github.panpf.sketch.AsyncImage
 import com.github.panpf.sketch.painter.asPainter
 import com.github.panpf.sketch.rememberAsyncImageState
 import com.github.panpf.sketch.request.ImageOptions
+import io.github.kotlinwizzard.kmptoolkit.core.extensions.clickableWithRipple
+import io.github.kotlinwizzard.kmptoolkit.core.extensions.clickableWithoutRipple
 import io.github.kotlinwizzard.kmptoolkit.gallery.pdf.PdfPickerResult
 import io.github.kotlinwizzard.kmptoolkit.gallery.pdf.PdfPickerResultData
 import io.github.kotlinwizzard.kmptoolkit.gallery.pdf.PdfPickerSelectionMode
@@ -94,13 +98,18 @@ class MediaDragAndDropScreen : Screen {
                 )
             ) {
                MediaImageOrPdfDragAndDropLayout(
-                    modifier = Modifier.fillMaxWidth(0.8F).height(100.dp)
-                        .background(Color.LightGray),
+                    modifier = Modifier.fillMaxWidth(0.8F).height(100.dp).border(2.dp,Color.LightGray),
+                       // .background(Color.LightGray),
                     pdfPickerState = pdfPickerState,
                    mediaPickerState = mediaPickerState,
                     pickFilesOnClick = true,
                 ) {
-                    Text("Drag files here")
+                   Column {
+                       Box(Modifier.width(80.dp).height(20.dp).background(Color.Red).clickableWithRipple(onClick = {
+                           println("TEST_CLICK")
+                       }))
+                       Text("Drag files here")
+                   }
                 }
 
                 Column(Modifier.fillMaxWidth().height(500.dp)) {
