@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import io.github.kotlinwizzard.kmptoolkit.core.extensions.IO
+import io.github.kotlinwizzard.kmptoolkit.core.service.image.ImageCompressor
+import io.github.kotlinwizzard.kmptoolkit.core.service.image.compressImage
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.Dispatchers
@@ -68,7 +70,6 @@ internal fun LaunchMediaPicker(
 }
 
 
-
 private fun MediaPickerSelectionType.extensions(): List<String> {
     return when (this) {
         MediaPickerSelectionType.Image -> listOf(
@@ -126,7 +127,7 @@ suspend fun chooseFile(
 private suspend fun Document.selectFilesFromDisk(
     accept: String,
     isMultiple: Boolean
-): List<File> = suspendCoroutine { cont->
+): List<File> = suspendCoroutine { cont ->
     val tempInput = (createElement("input") as HTMLInputElement).apply {
         type = "file"
         style.display = "none"
@@ -177,7 +178,11 @@ internal suspend fun readFileAsByteArray(file: File): ByteArray = suspendCorouti
         for (i in 0 until array.length) {
             fileByteArray[i] = array[i]
         }
-        it.resumeWith(Result.success(fileByteArray))
+        val compressedBytes =  ImageCompressor.compressImage(
+            content = fileByteArray,
+            compressionRatio = 1F
+        )
+        it.resumeWith(Result.success(compressedBytes))
     }
     reader.readAsArrayBuffer(file)
 }

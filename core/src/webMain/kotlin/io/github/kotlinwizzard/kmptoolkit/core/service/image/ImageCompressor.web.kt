@@ -9,9 +9,11 @@ actual fun ImageCompressor.compressImage(
 ): ByteArray {
 
     val image = Image.makeFromEncoded(content)
-    val data = image.encodeToData(
+    val data =  image.encodeToData(
         EncodedImageFormat.JPEG,
         (compressionRatio*100).toInt().coerceIn(0,100)
-    ) ?: return content
+    ).apply {
+        println("encoded to jpeg")
+    } ?: return content
     return data.bytes
 }
