@@ -18,8 +18,12 @@ class CameraState(
 ) {
     var cameraMode: CameraMode by mutableStateOf(initialCameraMode)
         private set
-    var isCameraReady: Boolean by mutableStateOf(false)
-        protected set
+    var availabilityStatus: CameraAvailabilityStatus by
+        mutableStateOf(CameraAvailabilityStatus.Initializing)
+        private set
+
+    val isCameraReady: Boolean
+        get() = availabilityStatus == CameraAvailabilityStatus.Available
 
     var cameraCaptureOutputResult by mutableStateOf<CameraCaptureOutput?>(null)
         private set
@@ -118,7 +122,16 @@ class CameraState(
     }
 
     internal fun onCameraReady() {
-        isCameraReady = true
+        availabilityStatus = CameraAvailabilityStatus.Available
+    }
+
+    internal fun onCameraInitializing() {
+        availabilityStatus = CameraAvailabilityStatus.Initializing
+    }
+
+    internal fun onCameraUnavailable() {
+        availabilityStatus = CameraAvailabilityStatus.Unavailable
+        cameraTorchState.setTorchAvailability(false)
     }
 
     private fun onCapture(outputFilePath: String?) {

@@ -1,5 +1,6 @@
 package io.github.kotlinwizzard.kmptoolkit.camera.ui
 
+import android.util.Log
 import androidx.camera.core.CameraControl
 import androidx.camera.core.FocusMeteringAction
 import androidx.camera.core.ImageCapture
@@ -41,7 +42,7 @@ actual fun CameraPreview(
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    val cameraProvider: ProcessCameraProvider? by loadCameraProvider(context)
+    val cameraProvider: ProcessCameraProvider? by loadCameraProvider(context, cameraState)
     val preview =
         Preview
             .Builder()
@@ -58,11 +59,12 @@ actual fun CameraPreview(
     var cameraControl by remember { mutableStateOf<CameraControl?>(null) }
     cameraProvider?.DisposeOnEffect()
     LaunchedEffect(cameraState.cameraMode, cameraProvider, imageAnalyzer) {
-        if (cameraProvider != null) {
-            cameraState.onCameraReady()
-            cameraProvider?.unbindAll()
-            cameraProvider
-                ?.bindToLifecycle(
+        val provider = cameraProvider ?: return@LaunchedEffect
+        cameraState.onCameraInitializing()
+        try {
+            provider.unbindAll()
+            val camera =
+                provider.bindToLifecycle(
                     lifecycleOwner,
                     cameraSelector,
                     *listOfNotNull(
@@ -71,13 +73,15 @@ actual fun CameraPreview(
                         imageAnalyzer,
                         videoCapture
                     ).toTypedArray(),
-                ).apply {
-                    cameraState.cameraTorchState.setTorchAvailability(
-                        this?.cameraInfo?.hasFlashUnit() ?: false,
-                    )
-                    cameraControl = this?.cameraControl
-                }
+                )
+            cameraState.cameraTorchState.setTorchAvailability(camera.cameraInfo.hasFlashUnit())
+            cameraControl = camera.cameraControl
             preview.setSurfaceProvider(previewView.surfaceProvider)
+            cameraState.onCameraReady()
+        } catch (exception: Exception) {
+            cameraState.onCameraUnavailable()
+            cameraControl = null
+            Log.w(TAG, "Unable to bind camera use cases", exception)
         }
     }
 
@@ -253,4 +257,5 @@ private fun ListenFocusState(
 
 
 private val executor = Executors.newSingleThreadExecutor()
+private const val TAG = "KMPToolkitCamera"
 
