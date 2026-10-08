@@ -1,6 +1,7 @@
 package io.github.kotlinwizzard.kmptoolkit.camera.ui
 
 import android.content.Context
+import android.util.Log
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.resolutionselector.AspectRatioStrategy
@@ -14,19 +15,34 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import io.github.kotlinwizzard.kmptoolkit.camera.state.CameraMode
 import io.github.kotlinwizzard.kmptoolkit.camera.state.CameraState
-import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.concurrent.Executor
-import java.util.concurrent.Executors
 
 @Composable
-internal fun loadCameraProvider(context: Context): State<ProcessCameraProvider?> =
+internal fun loadCameraProvider(
+    context: Context,
+    cameraState: CameraState,
+): State<ProcessCameraProvider?> =
     produceState<ProcessCameraProvider?>(null, context) {
-        value =
-            withContext(Executors.newSingleThreadExecutor().asCoroutineDispatcher()) {
-                ProcessCameraProvider.getInstance(context).get()
+        cameraState.onCameraInitializing()
+        value = try {
+            withContext(Dispatchers.IO) {
+                ProcessCameraProvider.getInstance(context.applicationContext).get()
             }
+        } catch (exception: CancellationException) {
+            throw exception
+        } catch (exception: Exception) {
+            // A device may advertise camera features even when no camera can actually be opened.
+            // Keep the preview unavailable instead of crashing unrelated flows such as gallery use.
+            Log.w(TAG, "Camera provider is unavailable", exception)
+            cameraState.onCameraUnavailable()
+            null
+        }
     }
+
+private const val TAG = "KMPToolkitCamera"
 
 @Composable
 internal fun getCameraSelector(state: CameraState) =

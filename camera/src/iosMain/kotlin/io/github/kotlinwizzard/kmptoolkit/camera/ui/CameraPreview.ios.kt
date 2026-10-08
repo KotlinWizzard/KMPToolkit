@@ -145,7 +145,11 @@ actual fun CameraPreview(
                 .firstOrNull() as? AVCaptureDevice
         }
 
-    println("=== camera: $camera")
+    LaunchedEffect(camera) {
+        if (camera == null) {
+            cameraState.onCameraUnavailable()
+        }
+    }
 
     if (camera != null) {
         RealDeviceCamera(
@@ -226,6 +230,7 @@ private fun RealDeviceCamera(
 
     // Update captureSession with new camera configuration whenever isFrontCamera changed.
     LaunchedEffect(state.cameraMode) {
+        state.onCameraInitializing()
         val dispatchGroup = dispatch_group_create()
         captureSession.beginConfiguration()
         captureSession.inputs.forEach { captureSession.removeInput(it as AVCaptureInput) }
@@ -237,7 +242,13 @@ private fun RealDeviceCamera(
                 if (state.cameraMode == CameraMode.Front) AVCaptureDevicePositionFront else AVCaptureDevicePositionBack,
             ).devices.firstOrNull() as? AVCaptureDevice
 
-        newCamera?.let {
+        if (newCamera == null) {
+            captureSession.commitConfiguration()
+            state.onCameraUnavailable()
+            return@LaunchedEffect
+        }
+
+        newCamera.let {
             val newInput =
                 deviceInputWithDevice(it, error = null) as AVCaptureDeviceInput
             if (captureSession.canAddInput(newInput)) {
