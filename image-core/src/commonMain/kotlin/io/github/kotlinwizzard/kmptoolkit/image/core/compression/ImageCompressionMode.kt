@@ -4,7 +4,7 @@ import io.github.kotlinwizzard.kmptoolkit.core.service.image.ByteUnit
 import io.github.kotlinwizzard.kmptoolkit.core.service.image.ImageCompressor
 import io.github.kotlinwizzard.kmptoolkit.core.service.image.MaxByteCompression
 
-sealed class ImageCompressionMode {
+abstract class ImageCompressionMode {
 
     abstract fun compress(bytes: ByteArray): ByteArray
 
